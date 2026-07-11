@@ -1,0 +1,28 @@
+name: Link Check
+
+on:
+  pull_request:
+    branches: [main]
+  schedule:
+    - cron: "52 1 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: link-check-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  links:
+    name: Check internal and external links
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Run link checker
+        uses: lycheeverse/lychee-action@v2
+        with:
+          args: --no-progress --accept 200,204,206,301,302,403,429 './**/*.html' './**/*.md'
