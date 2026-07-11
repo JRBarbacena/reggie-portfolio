@@ -1,0 +1,11 @@
+{
+  "cleanUrls": false,
+  "headers": [
+    {
+      "source": "/(.*)\\.(css|js|svg|jpg|JPG|png)",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
+      ]
+    }
+  ]
+}

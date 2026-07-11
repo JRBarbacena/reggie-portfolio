@@ -1,0 +1,11 @@
+/* ==========================================================================
+   main.css — the ONLY stylesheet referenced by each page's <head>.
+   Imports layers in a defined order so the token layer is defined before it
+   is consumed by any later layer (Req 7.2, 7.3).
+   ========================================================================== */
+
+@import "tokens.css";       /* 1. Design System values (single source of truth) */
+@import "base.css";         /* 2. reset, base elements, layout, type scale       */
+@import "neumorphism.css";  /* 3. soft-UI surface + shadow states                */
+@import "motion.css";       /* 4. CSS-only motion + reduced-motion policy        */
+@import "components.css";   /* 5. reusable themed components                     */

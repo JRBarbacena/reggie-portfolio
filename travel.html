@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Travel | Reggie</title>
+    <meta
+      name="description"
+      content="A growing travel log from John Reggie Barbacena, from Hong Kong to memorable escapes around the Philippines."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/main.css" />
+    <script src="js/preloader.js"></script>
+    <script src="js/neumorphic-scrollbar.js" defer></script>
+    <script type="module" src="js/asset-guard.js" defer></script>
+    <script type="module" src="js/site-nav.js" defer></script>
+    <script type="module" src="js/site-footer.js" defer></script>
+    <script type="module" src="js/motion.js" defer></script>
+  </head>
+  <body class="story-page travel-page">
+    <p class="critical-error-banner" role="alert">
+      Some content couldn't be loaded. Please refresh the page.
+    </p>
+
+    <a class="skip-link" href="#main">Skip to content</a>
+
+    <header class="site-header">
+      <site-nav active-page="travel"></site-nav>
+    </header>
+
+    <main id="main" class="content-column">
+      <section class="story-hero travel-hero" aria-labelledby="travel-title">
+        <div class="story-hero__copy" data-reveal>
+          <p class="story-kicker"><span>Travel log</span></p>
+          <h1 id="travel-title">Collecting places, <em>not checklists.</em></h1>
+          <p class="hero__lead">
+            I am still early in the journey: one trip beyond the Philippines,
+            a lot more of home to explore, and a camera roll that grows every
+            time I take the long way around.
+          </p>
+          <dl class="story-stats" aria-label="Travel at a glance">
+            <div>
+              <dt>Places logged</dt>
+              <dd>02</dd>
+            </div>
+            <div>
+              <dt>First trip abroad</dt>
+              <dd>HKG</dd>
+            </div>
+            <div>
+              <dt>Home base</dt>
+              <dd>PH</dd>
+            </div>
+          </dl>
+        </div>
+
+        <div class="story-hero__visual travel-visual" data-reveal data-reveal-delay="2">
+          <figure class="travel-postcard card">
+            <div class="travel-postcard__image">
+              <img
+                src="assets/images/photos/Hundred_Island.JPG"
+                alt="Reggie overlooking the blue water and islands at Hundred Islands, Pangasinan"
+                width="1365"
+                height="2048"
+                fetchpriority="high"
+              />
+            </div>
+            <figcaption>
+              <span>Pangasinan, Philippines</span>
+              <strong>Hundred Islands</strong>
+            </figcaption>
+          </figure>
+
+          <div class="route-module neu-inset" aria-label="Route from the Philippines to Hong Kong">
+            <div class="route-module__labels" aria-hidden="true">
+              <span>MNL</span>
+              <span>HKG</span>
+            </div>
+            <svg class="route-map" viewBox="0 0 420 92" role="img" aria-label="A stylized route line from Manila to Hong Kong">
+              <path class="route-map__guide" d="M28 70 C126 4 286 6 392 60" />
+              <path class="route-map__line" d="M28 70 C126 4 286 6 392 60" />
+              <circle class="route-map__point" cx="28" cy="70" r="6" />
+              <circle class="route-map__point route-map__point--end" cx="392" cy="60" r="6" />
+            </svg>
+            <p><strong>First international chapter</strong><span>Philippines to Hong Kong</span></p>
+          </div>
+        </div>
+      </section>
+
+      <section class="travel-log" aria-labelledby="travel-log-title">
+        <div class="section-head">
+          <h2 id="travel-log-title">Stamped so far</h2>
+          <p>Two places, two very different kinds of energy.</p>
+        </div>
+
+        <div class="travel-entry card" data-reveal>
+          <figure class="travel-entry__media">
+            <img
+              src="assets/images/photos/Hundred_Island.JPG"
+              alt="Reggie at a viewpoint in Hundred Islands"
+              width="1365"
+              height="2048"
+              loading="lazy"
+            />
+            <figcaption>Blue water. Bright sky. No rush.</figcaption>
+          </figure>
+          <div class="travel-entry__copy">
+            <p class="timeline__meta">Pangasinan / Philippines</p>
+            <h3>Hundred Islands</h3>
+            <p>
+              The kind of day that resets everything: island views, clear
+              water, and enough open sky to make the week feel far away.
+            </p>
+            <ul class="detail-pills" aria-label="Hundred Islands highlights">
+              <li>Island views</li>
+              <li>Sea air</li>
+              <li>Core memory</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="travel-stamps">
+          <article class="passport-card card lift" data-reveal data-reveal-delay="1">
+            <div class="passport-card__topline">
+              <p class="timeline__meta">Beyond home</p>
+            </div>
+            <div class="passport-card__code" aria-hidden="true">HKG</div>
+            <h3>Hong Kong</h3>
+            <p>
+              My first trip outside the Philippines: bright lights, busy
+              streets, and food that still comes back to mind.
+            </p>
+            <span class="passport-card__stamp" aria-hidden="true">FIRST ABROAD</span>
+          </article>
+
+          <article class="next-stop card" data-reveal data-reveal-delay="2">
+            <span class="next-stop__pin" aria-hidden="true"></span>
+            <p class="timeline__meta">The route continues</p>
+            <h3>Next stop: open</h3>
+            <p>
+              No fixed map yet. Just a promise to keep adding real places,
+              honest notes, and better stories as they happen.
+            </p>
+            <div class="next-stop__track" aria-hidden="true"><span></span></div>
+          </article>
+        </div>
+      </section>
+
+      <section class="story-closing neu-inset" aria-label="Travel philosophy" data-reveal>
+        <blockquote>Go far enough to come home with a different story.</blockquote>
+        <span aria-hidden="true">RIDE / ROAM / RETURN</span>
+      </section>
+    </main>
+
+    <site-footer></site-footer>
+  </body>
+</html>

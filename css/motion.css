@@ -1,0 +1,89 @@
+/* ==========================================================================
+   motion.css — CSS-only motion (transitions + @keyframes)
+   No JS animation library (no GSAP). motion.js only toggles the .is-revealed
+   class; CSS owns all movement. Animates transform/opacity only.
+   Honors prefers-reduced-motion.
+   ========================================================================== */
+
+/* --- Entrance / scroll reveal -------------------------------------------- */
+/* Pre-reveal state: hidden + slightly offset. If JS/IntersectionObserver is
+   unavailable, the .no-js fallback (see below) shows content immediately. */
+[data-reveal] {
+  opacity: 0;
+  transform: translateY(var(--reveal-offset));
+  transition: opacity var(--duration-base) var(--ease-emphasized),
+    transform var(--duration-base) var(--ease-emphasized);
+  will-change: opacity, transform;
+}
+
+[data-reveal].is-revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Gentle stagger for grouped items */
+[data-reveal][data-reveal-delay="1"] { transition-delay: 60ms; }
+[data-reveal][data-reveal-delay="2"] { transition-delay: 120ms; }
+[data-reveal][data-reveal-delay="3"] { transition-delay: 180ms; }
+[data-reveal][data-reveal-delay="4"] { transition-delay: 240ms; }
+
+/* Fallback: if scripting is off, never hide content behind motion. */
+.no-js [data-reveal],
+html:not(.js) [data-reveal] {
+  opacity: 1;
+  transform: none;
+}
+
+/* --- Hover lift (composes with neumorphic hover shadow) ------------------ */
+.lift {
+  transition: transform var(--duration-fast) var(--ease-standard),
+    box-shadow var(--transition-shadow) var(--ease-standard);
+}
+
+.lift:hover {
+  transform: translateY(-2px);
+}
+
+.lift:active {
+  transform: translateY(0);
+}
+
+/* --- Hero headline entrance ---------------------------------------------- */
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-rise {
+  animation: rise-in var(--duration-base) var(--ease-emphasized) both;
+}
+
+/* --- Reduced motion: reduce/disable non-essential movement ---------------
+   Keeps focus indicators + discrete neumorphic/menu states legible while
+   removing translate/scale movement and near-zeroing durations. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  [data-reveal] {
+    opacity: 1;
+    transform: none;
+  }
+
+  .lift:hover,
+  .animate-rise {
+    transform: none;
+  }
+}

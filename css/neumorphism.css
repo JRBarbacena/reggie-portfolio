@@ -1,0 +1,48 @@
+/* ==========================================================================
+   neumorphism.css — soft-UI surfaces + resting/hover/pressed shadow states
+   Paired light+dark shadows on the single --bg-base tone. No translucency
+   (not glassmorphism) and no material textures (not skeuomorphism).
+   (Req 4.1, 4.3–4.8, 6.4)
+   ========================================================================== */
+
+.neu {
+  background-color: var(--bg-base);
+  border-radius: var(--radius-md);
+  box-shadow: var(--neu-resting);
+  /* Only shadow (+ compositor-friendly transform) transitions, bounded by
+     the 300ms upper limit. Shadow changes occur only on hover/activation. */
+  transition: box-shadow var(--transition-shadow) var(--ease-standard),
+    transform var(--duration-fast) var(--ease-standard);
+}
+
+/* Interactive neumorphic elements get distinct hover + pressed states. */
+.neu-interactive {
+  cursor: pointer;
+  background-color: var(--bg-base);
+  border: 0;
+  border-radius: var(--radius-md);
+  box-shadow: var(--neu-resting);
+  color: var(--text-primary);
+  transition: box-shadow var(--transition-shadow) var(--ease-standard),
+    transform var(--duration-fast) var(--ease-standard);
+}
+
+/* Resting -> hover: distinguishable elevated shadow (Req 4.3) */
+.neu-interactive:hover {
+  box-shadow: var(--neu-hover);
+}
+
+/* Activation -> pressed inset, distinct from resting AND hover (Req 4.4).
+   Applies on active (pointer) and on keyboard activation. */
+.neu-interactive:active,
+.neu-interactive[aria-pressed="true"],
+.neu-interactive[aria-expanded="true"] {
+  box-shadow: var(--neu-pressed);
+}
+
+/* Pressed / inset variant utility */
+.neu-inset {
+  background-color: var(--bg-base);
+  border-radius: var(--radius-md);
+  box-shadow: var(--neu-pressed);
+}

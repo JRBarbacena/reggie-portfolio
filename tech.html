@@ -1,0 +1,245 @@
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Tech | Reggie</title>
+    <meta
+      name="description"
+      content="John Reggie Barbacena's software engineering journey, working stack, design interests, and tech community experiences."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/main.css" />
+    <script src="js/preloader.js"></script>
+    <script src="js/neumorphic-scrollbar.js" defer></script>
+    <script type="module" src="js/asset-guard.js" defer></script>
+    <script type="module" src="js/site-nav.js" defer></script>
+    <script type="module" src="js/site-footer.js" defer></script>
+    <script type="module" src="js/motion.js" defer></script>
+    <script type="module" src="js/terminal.js" defer></script>
+    <script type="module" src="js/tech-albums.js" defer></script>
+  </head>
+  <body class="story-page tech-page">
+    <p class="critical-error-banner" role="alert">
+      Some content couldn't be loaded. Please refresh the page.
+    </p>
+
+    <a class="skip-link" href="#main">Skip to content</a>
+
+    <header class="site-header">
+      <site-nav active-page="tech"></site-nav>
+    </header>
+
+    <main id="main" class="content-column">
+      <section class="tech-hero" aria-labelledby="tech-title">
+        <h1 id="tech-title">Turning ideas into thoughtful digital experiences.</h1>
+        <p class="tech-hero__subhead">
+          A Computer Science student specializing in Software Engineering, focused
+          on frontend development and UI/UX where clear interfaces meet dependable code.
+        </p>
+        <div class="terminal" aria-label="Animated developer introduction" data-reveal>
+          <div class="terminal__bar">terminal - reggie@portfolio:</div>
+          <div class="terminal__body">
+            <p><span class="terminal__prompt">reggie@screen ~ $</span> <span data-terminal-command></span><span class="terminal__cursor" aria-hidden="true"></span></p>
+            <p class="terminal__output" data-terminal-output></p>
+          </div>
+        </div>
+      </section>
+
+      <section class="tech-path" aria-labelledby="path-title">
+        <div class="section-head">
+          <h2 id="path-title">Learning the whole system</h2>
+          <p>Starting with foundations, then connecting code, design, and people.</p>
+        </div>
+
+        <article class="experience-log tech-experience card" data-reveal>
+          <div class="experience-log__entry">
+            <p class="experience-log__time">Current</p>
+            <span class="experience-log__marker" aria-hidden="true"></span>
+            <div class="experience-log__content">
+              <p class="timeline__meta">Education &amp; community</p>
+              <h3>BS Computer Science, major in Software Engineering</h3>
+              <p class="experience-log__school">FEU Institute of Technology</p>
+              <p>
+                I am building the technical foundation to create reliable software,
+                while leaning further into frontend development and UI/UX design.
+                I also take part in ACM community activities and events at school.
+              </p>
+            </div>
+          </div>
+        </article>
+      </section>
+
+      <section class="tech-toolbox" id="stack" aria-labelledby="stack-title">
+        <div class="section-head">
+          <h2 id="stack-title">Tools in the garage</h2>
+          <p>A growing toolkit, organized by the kind of problem each tool helps solve.</p>
+        </div>
+
+        <div class="stack-grid">
+          <article class="stack-card stack-card--frontend card" data-reveal>
+            <p class="timeline__meta">Frontend &amp; interface</p>
+            <h3>Building what people touch</h3>
+            <p>Structure, interaction, responsive layouts, and visual systems.</p>
+            <ul class="tech-tags">
+              <li>HTML</li><li>CSS</li><li>JavaScript</li><li>TypeScript</li>
+              <li>React</li><li>Next.js</li><li>Tailwind</li><li>Figma</li>
+            </ul>
+          </article>
+
+          <article class="stack-card stack-card--backend card" data-reveal data-reveal-delay="1">
+            <p class="timeline__meta">Backend &amp; data</p>
+            <h3>Making the interface work</h3>
+            <p>Services, APIs, databases, and the logic behind a reliable experience.</p>
+            <ul class="tech-tags">
+              <li>Node.js</li><li>Python</li><li>Java</li><li>PHP</li><li>Laravel</li>
+              <li>MySQL</li><li>PostgreSQL</li><li>MongoDB</li><li>Supabase</li>
+            </ul>
+          </article>
+
+          <article class="stack-card stack-card--motion card" data-reveal data-reveal-delay="2">
+            <p class="timeline__meta">Animation &amp; 3D</p>
+            <h3>Adding depth with purpose</h3>
+            <p>Motion and spatial details that give an interface more feeling and clarity.</p>
+            <ul class="tech-tags">
+              <li>GSAP</li><li>Lenis</li><li>Three.js</li><li>WebGL</li><li>Blender</li>
+            </ul>
+          </article>
+
+          <article class="stack-card stack-card--tools card" data-reveal data-reveal-delay="3">
+            <p class="timeline__meta">Engineering tools</p>
+            <h3>Keeping builds dependable</h3>
+            <p>Practical tools for versioning, repeatability, and a cleaner workflow.</p>
+            <ul class="tech-tags"><li>Git</li><li>Docker</li><li>Bash</li></ul>
+          </article>
+        </div>
+      </section>
+
+      <section class="tech-certificates" aria-labelledby="certificates-title">
+        <div class="section-head">
+          <h2 id="certificates-title">Learning, verified</h2>
+          <p>Formal checkpoints across programming, engineering practice, and project delivery.</p>
+        </div>
+
+        <div class="credential-shelf">
+          <a class="credential-book" href="assets/images/certificates/cert-python.png" target="_blank" rel="noopener" aria-label="Open the Python Information Technology Specialist certificate" data-reveal>
+            <figure>
+                <img
+                  src="assets/images/certificates/cert-python.png"
+                  alt="Information Technology Specialist certification in Python awarded to John Reggie Manuel Barbacena"
+                  width="1584"
+                  height="1224"
+                  loading="lazy"
+                />
+                <figcaption><strong>Python</strong><span>Certiport</span></figcaption>
+              </figure>
+          </a>
+
+          <a class="credential-book" href="assets/images/certificates/cert-matlab.png" target="_blank" rel="noopener" aria-label="Open the Learning MATLAB certificate" data-reveal data-reveal-delay="1">
+            <figure>
+                <img
+                  src="assets/images/certificates/cert-matlab.png"
+                  alt="LinkedIn Learning MATLAB course completion certificate awarded to John Reggie Barbacena"
+                  width="1584"
+                  height="1224"
+                  loading="lazy"
+                />
+                <figcaption><strong>MATLAB</strong><span>LinkedIn Learning</span></figcaption>
+              </figure>
+          </a>
+
+          <a class="credential-book" href="assets/images/certificates/cert-barbacena.png" target="_blank" rel="noopener" aria-label="Open the PMI Project Management Ready certificate" data-reveal data-reveal-delay="2">
+            <figure>
+                <img
+                  src="assets/images/certificates/cert-barbacena.png"
+                  alt="PMI Project Management Ready credential awarded to John Reggie Manuel Barbacena"
+                  width="1584"
+                  height="1224"
+                  loading="lazy"
+                />
+                <figcaption><strong>Project Management</strong><span>PMI</span></figcaption>
+              </figure>
+          </a>
+
+          <a class="credential-book" href="assets/images/certificates/cert-agile.png" target="_blank" rel="noopener" aria-label="Open the Agile Software Development certificate" data-reveal data-reveal-delay="3">
+            <figure>
+                <img
+                  src="assets/images/certificates/cert-agile.png"
+                  alt="LinkedIn Learning Agile Software Development course completion certificate awarded to John Reggie Barbacena"
+                  width="1584"
+                  height="1224"
+                  loading="lazy"
+                />
+                <figcaption><strong>Agile Development</strong><span>LinkedIn Learning</span></figcaption>
+              </figure>
+          </a>
+        </div>
+      </section>
+
+      <section class="recent-projects-section" aria-labelledby="projects-title">
+        <div class="section-head">
+          <h2 id="projects-title">Recent projects</h2>
+          <p>A space for the case studies and experiments I am preparing to share.</p>
+        </div>
+
+        <div class="project-queue card" data-reveal>
+          <div class="project-queue__screen" aria-hidden="true">
+            <span>PROJECT ARCHIVE</span>
+            <i></i><i></i><i></i>
+          </div>
+          <div class="project-queue__copy">
+            <p class="timeline__meta">In progress</p>
+            <h3>The next case study is taking shape.</h3>
+            <p>Real project notes, process snapshots, and the finished build will live here soon.</p>
+          </div>
+          <div class="project-queue__slots" aria-label="Future project placeholders">
+            <span>Project one</span><span>Project two</span><span>Project three</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="tech-community" id="community" aria-labelledby="community-title">
+        <div class="section-head">
+          <h2 id="community-title">Albums from the field</h2>
+          <p>Moments from the communities, build nights, and spaces helping shape my tech journey.</p>
+        </div>
+
+        <div class="album-grid">
+          <button class="album-card card" type="button" data-album-id="aws" data-reveal>
+            <img src="assets/images/photos/KiroVerse.JPG" alt="Reggie with friends in front of an AWS wall sign" width="2048" height="1536" loading="lazy" />
+            <span>AWS community</span><strong>Learning with the room</strong><small>Open album</small>
+          </button>
+          <button class="album-card card" type="button" data-album-id="build-nights" data-reveal data-reveal-delay="1">
+            <img src="assets/images/photos/BuildNights_AWS.JPG" alt="A packed room during an AWS Build Night" width="1536" height="2048" loading="lazy" />
+            <span>Build nights</span><strong>Where ideas get tested</strong><small>Open album</small>
+          </button>
+          <button class="album-card card" type="button" data-album-id="cursor" data-reveal data-reveal-delay="2">
+            <img src="assets/images/photos/Cursor_Cafe.JPG" alt="Reggie at Cafe Cursor Manila holding a coffee" width="1536" height="2048" loading="lazy" />
+            <span>AI tooling / Manila</span><strong>Cafe Cursor</strong><small>Open album</small>
+          </button>
+        </div>
+      </section>
+
+      <dialog class="album-modal" data-album-modal aria-labelledby="album-modal-title">
+        <div class="album-modal__bar">
+          <div><p>Photo album</p><h2 id="album-modal-title" data-album-title></h2></div>
+          <button class="album-modal__close" type="button" data-album-close aria-label="Close photo album">&#215;</button>
+        </div>
+        <p class="album-modal__description" data-album-description></p>
+        <div class="album-modal__gallery" data-album-gallery></div>
+      </dialog>
+
+      <section class="story-closing neu-inset" aria-label="Technology philosophy" data-reveal>
+        <blockquote>Build useful things. Make them feel human.</blockquote>
+        <span aria-hidden="true">THINK / DESIGN / SHIP</span>
+      </section>
+    </main>
+
+    <site-footer></site-footer>
+  </body>
+</html>
