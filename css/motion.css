@@ -9,16 +9,32 @@
 /* Pre-reveal state: hidden + slightly offset. If JS/IntersectionObserver is
    unavailable, the .no-js fallback (see below) shows content immediately. */
 [data-reveal] {
+  --reveal-y: 1.75rem;
+  --reveal-blur: 4px;
+  --reveal-base-transform: none;
   opacity: 0;
-  transform: translateY(var(--reveal-offset));
-  transition: opacity var(--duration-base) var(--ease-emphasized),
-    transform var(--duration-base) var(--ease-emphasized);
-  will-change: opacity, transform;
+  filter: blur(var(--reveal-blur));
+  transform: var(--reveal-base-transform) translate3d(0, var(--reveal-y), 0);
+  transition:
+    opacity 640ms cubic-bezier(0.22, 1, 0.36, 1),
+    filter 640ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 720ms cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: opacity, filter, transform;
 }
 
 [data-reveal].is-revealed {
   opacity: 1;
-  transform: translateY(0);
+  filter: blur(0);
+  transform: var(--reveal-base-transform) translate3d(0, 0, 0);
+}
+
+[data-reveal="text"] {
+  --reveal-y: 1.1rem;
+  --reveal-blur: 2px;
+}
+
+[data-reveal].reveal-complete {
+  will-change: auto;
 }
 
 /* Gentle stagger for grouped items */
@@ -29,9 +45,12 @@
 
 /* Fallback: if scripting is off, never hide content behind motion. */
 .no-js [data-reveal],
-html:not(.js) [data-reveal] {
+html:not(.js) [data-reveal],
+.motion-disabled [data-reveal] {
   opacity: 1;
-  transform: none;
+  filter: none;
+  transform: var(--reveal-base-transform);
+  transition: none;
 }
 
 /* --- Hover lift (composes with neumorphic hover shadow) ------------------ */
@@ -79,7 +98,8 @@ html:not(.js) [data-reveal] {
 
   [data-reveal] {
     opacity: 1;
-    transform: none;
+    filter: none;
+    transform: var(--reveal-base-transform);
   }
 
   .lift:hover,

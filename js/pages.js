@@ -6,9 +6,9 @@
 // tier   = 'primary' (direct top-level link) | 'overflow' (inside "..." menu)
 
 export const PAGES = [
-  { id: "home", label: "Home", href: "index.html", tier: "primary" },
-  { id: "tech", label: "Tech", href: "tech.html", tier: "primary" },
-  { id: "travel", label: "Travel", href: "travel.html", tier: "primary" },
-  { id: "life", label: "Life", href: "life.html", tier: "primary" },
-  { id: "designs", label: "Designs", href: "designs.html", tier: "overflow" },
+  { id: "home", label: "Home", href: "/", tier: "primary" },
+  { id: "tech", label: "Tech", href: "/tech", tier: "primary" },
+  { id: "travel", label: "Travel", href: "/travel", tier: "primary" },
+  { id: "life", label: "Life", href: "/life", tier: "primary" },
+  { id: "designs", label: "Designs", href: "/designs", tier: "overflow" },
 ];

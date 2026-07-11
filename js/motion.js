@@ -12,8 +12,26 @@ function revealAll(elements) {
 }
 
 function initReveal() {
-  // Mark that JS is available so CSS pre-reveal state applies only with JS.
+  // Replace the server-safe fallback class once scripting is confirmed.
+  document.documentElement.classList.remove("no-js");
   document.documentElement.classList.add("js");
+
+  // Designs and the exception page keep their intentionally static layouts.
+  if (document.body.matches(".error-page") || location.pathname.includes("designs")) {
+    document.documentElement.classList.add("motion-disabled");
+    return;
+  }
+
+  // Section heading text is safe, lightweight automatic reveal content.
+  // Complex components opt in themselves so their layout transforms never conflict.
+  const automaticTargets = document.querySelectorAll(
+    "main section:not(:first-child) > .section-head > :is(h2, p):not([data-reveal])"
+  );
+  automaticTargets.forEach((element) => {
+    if (element.closest("[data-reveal]")) return;
+    element.setAttribute("data-reveal", "text");
+    if (element.matches("p")) element.setAttribute("data-reveal-delay", "1");
+  });
 
   const targets = Array.from(document.querySelectorAll("[data-reveal]"));
   if (targets.length === 0) return;
@@ -30,11 +48,16 @@ function initReveal() {
       for (const entry of entries) {
         if (entry.isIntersecting) {
           entry.target.classList.add("is-revealed");
+          entry.target.addEventListener(
+            "transitionend",
+            () => entry.target.classList.add("reveal-complete"),
+            { once: true }
+          );
           obs.unobserve(entry.target);
         }
       }
     },
-    { rootMargin: "0px 0px -10% 0px", threshold: 0.1 }
+    { rootMargin: "0px 0px -18% 0px", threshold: 0.12 }
   );
 
   targets.forEach((el) => observer.observe(el));

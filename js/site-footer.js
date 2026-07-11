@@ -44,11 +44,11 @@ class SiteFooter extends HTMLElement {
     this.innerHTML = `
       <footer class="site-footer">
         <div class="content-column">
-          <div class="site-footer__cta">
+          <div class="site-footer__cta" data-reveal>
             <h2>Let's talk</h2>
             <p>A small corner for a hello, a new idea, or a future collaboration.</p>
           </div>
-          <section class="contact-panel card" aria-label="Contact information">
+          <section class="contact-panel card" aria-label="Contact information" data-reveal data-reveal-delay="1">
             <div class="contact-panel__main">
               <p class="contact-panel__eyebrow">Greetings</p>
               <h3>Have something in mind?</h3>
@@ -56,7 +56,16 @@ class SiteFooter extends HTMLElement {
                 Whether it is a project, an idea, or simply a quick hello,
                 my inbox is always a good place to start.
               </p>
-              <a class="btn btn-primary" href="mailto:${OWNER.email}">Send a message</a>
+              <div class="contact-panel__actions">
+                <a class="btn btn-primary" href="mailto:${OWNER.email}">Send a message</a>
+                <a
+                  class="btn btn-secondary btn-disabled"
+                  href="#"
+                  aria-disabled="true"
+                  data-resume-placeholder
+                  aria-label="Download my resume coming soon"
+                >Download my resume</a>
+              </div>
             </div>
             <aside class="contact-panel__status" aria-label="Live status">
               <p class="contact-panel__eyebrow">Live status</p>
@@ -79,6 +88,14 @@ class SiteFooter extends HTMLElement {
     `;
 
     this.configureHomeDock();
+    this.configureResumePlaceholder();
+  }
+
+  configureResumePlaceholder() {
+    const resumeLink = this.querySelector("[data-resume-placeholder]");
+    resumeLink?.addEventListener("click", (event) => {
+      event.preventDefault();
+    });
   }
 
   configureHomeDock() {

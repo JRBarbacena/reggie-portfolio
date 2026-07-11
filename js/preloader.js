@@ -25,10 +25,20 @@
     }
   }
 
-  function revealPage() {
+  function revealPage(enteredThroughGate = false) {
     root.classList.remove("preloader-pending");
     root.classList.add("preloader-complete");
+    if (enteredThroughGate) root.classList.add("preloader-entered");
     document.dispatchEvent(new CustomEvent("portfolio:entered"));
+  }
+
+  function replayHomeEntrance() {
+    if (!document.body || !document.body.classList.contains("home")) return;
+    root.classList.remove("preloader-complete");
+    window.requestAnimationFrame(() => {
+      root.classList.add("preloader-complete");
+      document.dispatchEvent(new CustomEvent("portfolio:entered"));
+    });
   }
 
   function mountGate() {
@@ -39,8 +49,10 @@
     gate.setAttribute("aria-labelledby", "preloader-title");
     gate.innerHTML = `
       <div class="site-preloader__panel">
-        <div class="site-preloader__mark" aria-hidden="true">reggie<span>.</span></div>
-        <h1 id="preloader-title">Welcome.</h1>
+        <div class="site-preloader__mark" aria-hidden="true">
+          <img src="/assets/images/brand/rb-monogram.png" alt="" width="80" height="80" />
+        </div>
+        <h1 id="preloader-title">Welcome</h1>
         <button class="site-preloader__enter" type="button">
           <span>Enter portfolio</span>
         </button>
@@ -48,14 +60,13 @@
     `;
     document.body.append(gate);
     const enter = gate.querySelector(".site-preloader__enter");
-    enter.focus();
     enter.addEventListener("click", () => {
       enter.disabled = true;
       markVisited();
       gate.classList.add("is-leaving");
       window.setTimeout(() => {
         gate.remove();
-        revealPage();
+        revealPage(true);
       }, 520);
     });
   }
@@ -71,4 +82,8 @@
   } else {
     start();
   }
+
+  window.addEventListener("pageshow", (event) => {
+    if (event.persisted) replayHomeEntrance();
+  });
 })();

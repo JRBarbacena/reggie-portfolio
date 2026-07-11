@@ -47,10 +47,8 @@ class SiteNav extends HTMLElement {
 
     this.innerHTML = `
       <nav class="site-nav" aria-label="Primary" data-menu-open="false">
-        <!-- LOGO PLACEHOLDER: "reggie." is a text stand-in for Reggie's real
-             logo. Swap this <a> content for the logo image/SVG when ready. -->
-        <a class="site-nav__brand" href="index.html" aria-label="Home — Reggie">
-          reggie<span class="brand-accent">.</span>
+        <a class="site-nav__brand" href="/" aria-label="Home — Reggie">
+          <img src="/assets/images/brand/rb-monogram.png" alt="" width="48" height="48" />
         </a>
 
         <button

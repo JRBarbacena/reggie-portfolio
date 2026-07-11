@@ -66,6 +66,14 @@
 }
 
 .site-nav__brand {
+  display: inline-flex;
+  width: 3.25rem;
+  height: 3.25rem;
+  flex: 0 0 3.25rem;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border-radius: var(--radius-sm);
   font-weight: var(--weight-bold);
   font-size: var(--font-size-3);
   letter-spacing: -0.02em;
@@ -216,6 +224,8 @@
     display: grid;
     grid-template-columns: 1fr auto 1fr;
     align-items: center;
+    max-width: none;
+    padding-inline: clamp(var(--space-3), 4vw, var(--space-6));
   }
 
   .site-header--home .site-nav__brand {
@@ -251,6 +261,16 @@
 body.home {
   --home-nav-h: 4.5rem;
   --hero-frame-h: 100svh;
+}
+
+.site-nav__brand img {
+  width: 3.25rem;
+  max-width: 3.25rem;
+  height: 3.25rem;
+  flex: 0 0 auto;
+  object-fit: cover;
+  object-position: 50% 45%;
+  mix-blend-mode: multiply;
 }
 
 .home-section {
@@ -647,12 +667,12 @@ body:not(.home) .contact-panel {
   }
 
   /* Photo windows — corners + a couple mid, framing the motto */
-  .pos-photo-1 { top: 11%; left: 4%; transform: rotate(-4deg); }
-  .pos-photo-2 { top: 19%; right: 3%; transform: rotate(3deg); }
-  .pos-photo-3 { top: 47%; left: 19%; transform: rotate(2deg); }
-  .pos-photo-4 { top: 73%; left: 4%; transform: rotate(-3deg); }
-  .pos-photo-5 { top: 76%; right: 20%; transform: rotate(3deg); }
-  .pos-photo-6 { top: 56%; right: 10%; transform: rotate(-2deg); }
+  .pos-photo-1 { top: 11%; left: 4%; --reveal-base-transform: rotate(-4deg); transform: var(--reveal-base-transform); }
+  .pos-photo-2 { top: 19%; right: 3%; --reveal-base-transform: rotate(3deg); transform: var(--reveal-base-transform); }
+  .pos-photo-3 { top: 47%; left: 19%; --reveal-base-transform: rotate(2deg); transform: var(--reveal-base-transform); }
+  .pos-photo-4 { top: 73%; left: 4%; --reveal-base-transform: rotate(-3deg); transform: var(--reveal-base-transform); }
+  .pos-photo-5 { top: 76%; right: 20%; --reveal-base-transform: rotate(3deg); transform: var(--reveal-base-transform); }
+  .pos-photo-6 { top: 56%; right: 10%; --reveal-base-transform: rotate(-2deg); transform: var(--reveal-base-transform); }
 
   .pos-photo-1,
   .pos-photo-2 {
@@ -1380,8 +1400,24 @@ body:not(.home) .contact-panel {
   color: var(--text-muted);
 }
 
-.contact-panel__main .btn {
+.contact-panel__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
   margin-top: var(--space-4);
+}
+
+.contact-panel__actions .btn {
+  margin-top: 0;
+}
+
+.btn-disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.btn-disabled:hover {
+  transform: none;
 }
 
 .contact-panel__status {
@@ -3910,7 +3946,8 @@ body.tech-page {
   display: block;
   min-width: 0;
   color: inherit;
-  transform: rotate(var(--book-tilt, 0deg));
+  --reveal-base-transform: rotate(var(--book-tilt, 0deg));
+  transform: var(--reveal-base-transform);
   transform-origin: bottom center;
   transition: transform var(--duration-base) var(--ease-emphasized);
 }
@@ -4284,6 +4321,7 @@ html.preloader-pending body > :not(.site-preloader) {
   opacity: 1;
   transition: opacity 500ms var(--ease-emphasized),
     transform 500ms var(--ease-emphasized);
+  animation: preloader-fade-in 420ms var(--ease-emphasized) both;
 }
 
 .site-preloader.is-leaving {
@@ -4301,16 +4339,32 @@ html.preloader-pending body > :not(.site-preloader) {
   background: var(--bg-base);
   box-shadow: var(--neu-resting);
   text-align: center;
+  animation: preloader-panel-in 620ms var(--ease-emphasized) both;
 }
 
 .site-preloader__mark {
-  padding: var(--space-2) var(--space-3);
-  border-radius: var(--radius-pill);
+  display: grid;
+  width: 5rem;
+  height: 5rem;
+  place-items: center;
+  overflow: hidden;
+  border-radius: var(--radius-md);
   box-shadow: var(--neu-pressed);
   color: var(--text-large);
   font-family: var(--font-family-display);
   font-size: var(--font-size-3);
   font-weight: var(--weight-bold);
+}
+
+.site-preloader__mark img {
+  width: 5rem;
+  max-width: none;
+  height: 5rem;
+  display: block;
+  object-fit: contain;
+  object-position: center;
+  transform: none;
+  mix-blend-mode: multiply;
 }
 
 .site-preloader__mark::before {
@@ -4359,6 +4413,16 @@ html.preloader-pending body > :not(.site-preloader) {
   box-shadow: var(--neu-hover);
   color: var(--accent-primary);
   transform: translateY(-2px);
+}
+
+@keyframes preloader-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes preloader-panel-in {
+  from { opacity: 0; transform: translateY(20px) scale(0.985); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
 }
 
 /* Keep the Home scatter as soft-UI icons: no orbit rings or extra markers. */
@@ -4410,8 +4474,7 @@ html.preloader-pending body > :not(.site-preloader) {
 
 @media (max-width: 768px) {
   .neo-scrollbar {
-    right: 3px;
-    width: 0.38rem;
+    display: none;
   }
 }
 
@@ -4437,11 +4500,11 @@ html.preloader-pending body > :not(.site-preloader) {
 
 .preloader-complete .collage .photo-window,
 .preloader-complete .collage .hero-chip {
-  animation: post-gate-fade 520ms var(--ease-emphasized) both;
+  animation: post-gate-fade 680ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
-.preloader-complete .collage > :nth-child(2n) { animation-delay: 80ms; }
-.preloader-complete .collage > :nth-child(3n) { animation-delay: 150ms; }
+.preloader-complete .collage > :nth-child(2n) { animation-delay: 90ms; }
+.preloader-complete .collage > :nth-child(3n) { animation-delay: 180ms; }
 
 @keyframes post-gate-rise {
   from { opacity: 0; transform: translateY(18px); }
@@ -4449,12 +4512,15 @@ html.preloader-pending body > :not(.site-preloader) {
 }
 
 @keyframes post-gate-fade {
-  from { opacity: 0; filter: blur(6px); }
-  to { opacity: 1; filter: blur(0); }
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .site-preloader__mark::before,
+  .site-preloader,
+  .site-preloader__panel,
+  .site-preloader__mark,
   .preloader-complete .hero--home .hero__center,
   .preloader-complete .collage .photo-window,
   .preloader-complete .collage .hero-chip,
@@ -4465,6 +4531,241 @@ html.preloader-pending body > :not(.site-preloader) {
   .preloader-complete .story-hero__visual,
   .preloader-complete .page-intro {
     animation: none;
+  }
+}
+
+/* --- 2026 responsive editorial pass ------------------------------------ */
+/* The closing quote now uses its available width, keeping the statement
+   compact instead of producing an oversized poster on wide screens. */
+.travel-page .story-closing,
+.life-page .story-closing {
+  grid-template-columns: minmax(0, 1fr) auto;
+  padding: clamp(var(--space-3), 4vw, var(--space-5));
+}
+
+.travel-page .story-closing blockquote,
+.life-page .story-closing blockquote {
+  max-width: 34ch;
+  font-size: clamp(1.65rem, 3vw, 2.75rem);
+}
+
+/* Life hero: editorial photo stack that connects the opening directly to
+   the real sport and off-clock stories further down the page. */
+.life-collage {
+  min-height: 34rem;
+  display: grid;
+  grid-template-columns: 1fr 0.72fr;
+  grid-template-rows: 1fr 0.72fr;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-3) var(--space-4) 0;
+}
+
+.life-collage__photo {
+  min-width: 0;
+  height: 100%;
+  padding: var(--space-1);
+  overflow: hidden;
+}
+
+.life-collage__photo--main {
+  grid-row: 1 / -1;
+  --reveal-base-transform: rotate(-1.5deg);
+  transform: var(--reveal-base-transform);
+}
+
+.life-collage__photo--secondary {
+  --reveal-base-transform: rotate(2deg);
+  transform: var(--reveal-base-transform);
+}
+
+.life-collage__photo img {
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  border-radius: calc(var(--radius-lg) - var(--space-1));
+  object-fit: cover;
+}
+
+.life-collage__photo--main img {
+  object-position: 50% 44%;
+}
+
+.life-collage__photo--secondary img {
+  object-position: 50% 38%;
+}
+
+.life-collage__note {
+  align-self: stretch;
+  padding: var(--space-3);
+  border-radius: var(--radius-lg);
+}
+
+.life-collage__note span {
+  color: var(--accent-primary);
+  font-size: 0.7rem;
+  font-weight: var(--weight-bold);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.life-collage__note strong {
+  display: block;
+  margin-top: var(--space-2);
+  font-family: var(--font-family-display);
+  font-size: clamp(1.2rem, 2vw, 1.75rem);
+  line-height: 1.15;
+}
+
+/* Custom not-found view: same surface language, intentionally restrained. */
+.error-page .site-footer {
+  margin-top: 0;
+}
+
+.error-page .social-dock {
+  display: none;
+}
+
+.error-main {
+  display: grid;
+  min-height: calc(100svh - 11rem);
+  place-items: center;
+  padding-block: var(--space-5);
+}
+
+.error-card {
+  position: relative;
+  width: min(100%, 58rem);
+  overflow: hidden;
+  padding: clamp(var(--space-4), 7vw, var(--space-7));
+  text-align: center;
+}
+
+.error-card::after {
+  content: "404";
+  position: absolute;
+  right: -0.04em;
+  bottom: -0.3em;
+  color: rgb(213 0 28 / 6%);
+  font-family: var(--font-family-display);
+  font-size: clamp(10rem, 28vw, 22rem);
+  font-weight: var(--weight-bold);
+  line-height: 1;
+  pointer-events: none;
+}
+
+.error-card > * {
+  position: relative;
+  z-index: 1;
+}
+
+.error-card__code {
+  color: var(--accent-primary);
+  font-size: var(--font-size-1);
+  font-weight: var(--weight-bold);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.error-card h1 {
+  margin-top: var(--space-2);
+  font-family: var(--font-family-display);
+  font-size: clamp(2.75rem, 8vw, 5.5rem);
+}
+
+.error-card__copy {
+  max-width: 42ch;
+  margin: var(--space-2) auto 0;
+  color: var(--text-muted);
+}
+
+.error-card .btn {
+  margin-top: var(--space-4);
+}
+
+@media (max-width: 900px) {
+  /* Mobile Home is photo-first: remove the tiny metadata controls and turn
+     the existing personal photos into a clean, touch-friendly grid. */
+  .hero--home {
+    min-height: 100svh;
+    justify-content: flex-start;
+    padding-top: 6.25rem;
+    overflow: hidden;
+  }
+
+  .hero--home .hero__center {
+    margin-top: var(--space-2);
+  }
+
+  .hero--home .collage {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-2);
+    width: min(100%, 37rem);
+    margin-top: var(--space-4);
+  }
+
+  .hero--home .hero-chip {
+    display: none;
+  }
+
+  .hero--home .photo-window {
+    display: block;
+    width: 100%;
+    padding: var(--space-1);
+    transform: none;
+  }
+
+  .hero--home .photo-window__img {
+    width: 100%;
+    height: clamp(7rem, 24vw, 9.5rem);
+    object-fit: cover;
+  }
+
+  .hero--home .photo-window__name {
+    margin-left: 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .story-closing {
+    grid-template-columns: 1fr;
+  }
+
+  .life-collage {
+    min-height: 30rem;
+    margin-top: var(--space-2);
+    padding: 0 0 var(--space-3);
+  }
+
+  .life-collage__note {
+    padding: var(--space-2);
+  }
+
+  .error-main {
+    min-height: calc(100svh - 9rem);
+  }
+}
+
+@media (max-width: 480px) {
+  .hero--home {
+    padding-top: 5.5rem;
+  }
+
+  .hero--home .hero__motto {
+    max-width: 12ch;
+  }
+
+  .hero--home .photo-window__bar {
+    padding-bottom: var(--space-1);
+  }
+
+  .life-collage {
+    min-height: 27rem;
+    grid-template-columns: 1.15fr 0.85fr;
+  }
+
+  .life-collage__note strong {
+    font-size: 1rem;
   }
 }
 

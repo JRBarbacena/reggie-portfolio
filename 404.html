@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
+    <title>404 Not Found | Reggie</title>
+    <meta name="description" content="The requested page could not be found." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/main.css" />
+    <script type="module" src="/js/site-nav.js" defer></script>
+    <script type="module" src="/js/site-footer.js" defer></script>
+    <script type="module" src="/js/motion.js" defer></script>
+  </head>
+  <body class="error-page">
+    <a class="skip-link" href="#main">Skip to content</a>
+
+    <header class="site-header">
+      <site-nav></site-nav>
+    </header>
+
+    <main id="main" class="error-main content-column">
+      <section class="error-card card" aria-labelledby="error-title" data-reveal>
+        <p class="error-card__code">Error 404</p>
+        <h1 id="error-title">Page not found.</h1>
+        <p class="error-card__copy">
+          This route does not exist or may have moved. Head back home and pick up from there.
+        </p>
+        <a class="btn btn-primary" href="/">Return home</a>
+      </section>
+    </main>
+
+    <site-footer></site-footer>
+  </body>
+</html>

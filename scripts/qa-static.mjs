@@ -2,7 +2,7 @@ import { existsSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
 
 const root = process.cwd();
-const pages = ["index.html", "tech.html", "travel.html", "life.html", "designs.html"];
+const pages = ["index.html", "tech.html", "travel.html", "life.html", "designs.html", "404.html"];
 const missing = [];
 const invalidHeadings = [];
 
@@ -13,7 +13,11 @@ for (const page of pages) {
     .filter((reference) => !/^(https?:|mailto:|#)/.test(reference));
 
   for (const reference of references) {
-    if (!existsSync(resolve(root, reference))) missing.push(`${page}: ${reference}`);
+    const cleanRoute = reference.match(/^\/(?:([a-z0-9-]+))?$/i);
+    const target = cleanRoute
+      ? cleanRoute[1] ? `${cleanRoute[1]}.html` : "index.html"
+      : reference.startsWith("/") ? reference.slice(1) : reference;
+    if (!existsSync(resolve(root, target))) missing.push(`${page}: ${reference}`);
   }
 
   const h1Count = [...source.matchAll(/<h1\b/g)].length;

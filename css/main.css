@@ -7,5 +7,5 @@
 @import "tokens.css";       /* 1. Design System values (single source of truth) */
 @import "base.css";         /* 2. reset, base elements, layout, type scale       */
 @import "neumorphism.css";  /* 3. soft-UI surface + shadow states                */
-@import "motion.css";       /* 4. CSS-only motion + reduced-motion policy        */
-@import "components.css";   /* 5. reusable themed components                     */
+@import "components.css";   /* 4. reusable themed components                     */
+@import "motion.css";       /* 5. final motion layer + reduced-motion policy     */
