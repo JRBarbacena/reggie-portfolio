@@ -9,3 +9,5 @@ Thumbs.db
 .agents/
 .kiro/
 .vscode/
+
+.vercel
