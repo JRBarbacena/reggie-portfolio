@@ -155,17 +155,41 @@ class SiteNav extends HTMLElement {
     if (typeof fetch !== "function") return;
 
     event.preventDefault();
+    const fallbackHref =
+      href === "/"
+        ? "/index.html"
+        : href.startsWith("/") && !href.includes(".")
+          ? `${href}.html`
+          : href;
     try {
       const res = await fetch(href, { method: "HEAD" });
       if (res.ok) {
         window.location.href = href;
-      } else {
-        this.showUnavailable(link);
+        return;
+      }
+
+      if (fallbackHref !== href) {
+        const fallbackRes = await fetch(fallbackHref, { method: "HEAD" });
+        if (fallbackRes.ok) {
+          window.location.href = fallbackHref;
+          return;
+        }
       }
     } catch {
-      // Network/host error — keep current page, indicate unavailability.
-      this.showUnavailable(link);
+      if (fallbackHref !== href) {
+        try {
+          const fallbackRes = await fetch(fallbackHref, { method: "HEAD" });
+          if (fallbackRes.ok) {
+            window.location.href = fallbackHref;
+            return;
+          }
+        } catch {
+          // Continue to the unavailable notice below.
+        }
+      }
     }
+
+    this.showUnavailable(link);
   }
 
   showUnavailable(link) {
