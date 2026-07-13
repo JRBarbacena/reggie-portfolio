@@ -9,7 +9,8 @@
     "test:unit": "vitest --run",
     "test:e2e": "playwright test",
     "qa:static": "node scripts/qa-static.mjs",
-    "qa": "npm run qa:static && npm test"
+    "qa:responsive": "node scripts/qa-responsive.mjs",
+    "qa": "npm run qa:static && npm run qa:responsive && npm test"
   },
   "devDependencies": {
     "fast-check": "^3.19.0",
