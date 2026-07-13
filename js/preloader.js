@@ -1,27 +1,30 @@
 (function () {
   const root = document.documentElement;
   const VISITED_KEY = "reggie-portfolio-visited";
+  const AUTO_ENTER_DELAY = 2600;
   root.classList.add("preloader-pending");
-
-  function navigationType() {
-    const entry = performance.getEntriesByType("navigation")[0];
-    if (entry) return entry.type;
-    return performance.navigation && performance.navigation.type === 1 ? "reload" : "navigate";
-  }
 
   function hasVisited() {
     try {
-      return sessionStorage.getItem(VISITED_KEY) === "true";
+      return localStorage.getItem(VISITED_KEY) === "true";
     } catch {
-      return false;
+      try {
+        return sessionStorage.getItem(VISITED_KEY) === "true";
+      } catch {
+        return false;
+      }
     }
   }
 
   function markVisited() {
     try {
-      sessionStorage.setItem(VISITED_KEY, "true");
+      localStorage.setItem(VISITED_KEY, "true");
     } catch {
-      // The preloader still works if storage is blocked.
+      try {
+        sessionStorage.setItem(VISITED_KEY, "true");
+      } catch {
+        // The preloader still works if storage is blocked.
+      }
     }
   }
 
@@ -60,7 +63,8 @@
     `;
     document.body.append(gate);
     const enter = gate.querySelector(".site-preloader__enter");
-    enter.addEventListener("click", () => {
+    const enterPortfolio = () => {
+      if (!gate.isConnected || enter.disabled) return;
       enter.disabled = true;
       markVisited();
       gate.classList.add("is-leaving");
@@ -68,11 +72,13 @@
         gate.remove();
         revealPage(true);
       }, 520);
-    });
+    };
+    enter.addEventListener("click", enterPortfolio);
+    window.setTimeout(enterPortfolio, AUTO_ENTER_DELAY);
   }
 
   function start() {
-    const showGate = navigationType() === "reload" || !hasVisited();
+    const showGate = !hasVisited();
     if (showGate) mountGate();
     else revealPage();
   }

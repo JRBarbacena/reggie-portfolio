@@ -11,7 +11,11 @@ for (const page of pages) {
   const source = readFileSync(resolve(root, page), "utf8");
   const references = [...source.matchAll(/(?:src|href)="([^"]+)"/g)]
     .map((match) => match[1])
-    .filter((reference) => !/^(https?:|mailto:|#)/.test(reference));
+    .filter((reference) => !/^(https?:|mailto:|#)/.test(reference))
+    .map((reference) => {
+      const [pathOnly] = reference.split(/[?#]/);
+      return pathOnly;
+    });
 
   for (const reference of references) {
     const cleanRoute = reference.match(/^\/(?:([a-z0-9-]+))?$/i);
