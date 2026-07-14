@@ -1,31 +1,26 @@
 (function () {
   const root = document.documentElement;
-  const VISITED_KEY = "reggie-portfolio-visited";
+  const SESSION_KEY = "reggie-portfolio-session-started";
   const AUTO_ENTER_DELAY = 2600;
-  const MOBILE_QUERY = "(max-width: 768px)";
   root.classList.add("preloader-pending");
 
-  function hasVisited() {
+  function navigationType() {
     try {
-      return localStorage.getItem(VISITED_KEY) === "true";
+      return performance.getEntriesByType("navigation")[0]?.type || "navigate";
     } catch {
-      try {
-        return sessionStorage.getItem(VISITED_KEY) === "true";
-      } catch {
-        return false;
-      }
+      return "navigate";
     }
   }
 
-  function markVisited() {
+  function shouldShowGate() {
+    const isRefresh = navigationType() === "reload";
     try {
-      localStorage.setItem(VISITED_KEY, "true");
+      const isFirstPage = sessionStorage.getItem(SESSION_KEY) !== "true";
+      sessionStorage.setItem(SESSION_KEY, "true");
+      return isRefresh || isFirstPage;
     } catch {
-      try {
-        sessionStorage.setItem(VISITED_KEY, "true");
-      } catch {
-        // The preloader still works if storage is blocked.
-      }
+      // A refresh can still be detected when browser storage is blocked.
+      return isRefresh;
     }
   }
 
@@ -67,7 +62,6 @@
     const enterPortfolio = () => {
       if (!gate.isConnected || enter.disabled) return;
       enter.disabled = true;
-      markVisited();
       gate.classList.add("is-leaving");
       window.setTimeout(() => {
         gate.remove();
@@ -79,11 +73,9 @@
   }
 
   function start() {
-    // Mobile browsers should never block the current page behind the intro.
-    // Their viewport and back-forward cache behavior make a gate feel like a
-    // stale page when the user is checking a newly deployed build.
-    const isMobile = window.matchMedia?.(MOBILE_QUERY).matches ?? false;
-    const showGate = !hasVisited() && !isMobile;
+    // Show on the first page and every real refresh. Internal links and the
+    // back-forward cache keep the current page state without replaying it.
+    const showGate = shouldShowGate();
     if (showGate) mountGate();
     else revealPage();
   }

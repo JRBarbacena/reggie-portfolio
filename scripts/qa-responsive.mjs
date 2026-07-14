@@ -100,8 +100,12 @@ if (contentStyleVersions.size > 1) {
   issues.push(`content pages use different stylesheet versions: ${[...contentStyleVersions].join(", ")}`);
 }
 
-if (!readFileSync(resolve(root, "js/preloader.js"), "utf8").includes('!hasVisited() && !isMobile')) {
-  issues.push("js/preloader.js: mobile devices must reveal the current page without the entry gate");
+const preloaderSource = readFileSync(resolve(root, "js/preloader.js"), "utf8");
+if (!preloaderSource.includes('navigationType() === "reload"')) {
+  issues.push("js/preloader.js: refreshes must replay the entry gate");
+}
+if (!preloaderSource.includes("SESSION_KEY")) {
+  issues.push("js/preloader.js: page navigation state must stay scoped to the current tab");
 }
 
 const pageContracts = {
