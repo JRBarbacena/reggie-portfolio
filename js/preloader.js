@@ -2,6 +2,7 @@
   const root = document.documentElement;
   const VISITED_KEY = "reggie-portfolio-visited";
   const AUTO_ENTER_DELAY = 2600;
+  const MOBILE_QUERY = "(max-width: 768px)";
   root.classList.add("preloader-pending");
 
   function hasVisited() {
@@ -78,7 +79,11 @@
   }
 
   function start() {
-    const showGate = !hasVisited();
+    // Mobile browsers should never block the current page behind the intro.
+    // Their viewport and back-forward cache behavior make a gate feel like a
+    // stale page when the user is checking a newly deployed build.
+    const isMobile = window.matchMedia?.(MOBILE_QUERY).matches ?? false;
+    const showGate = !hasVisited() && !isMobile;
     if (showGate) mountGate();
     else revealPage();
   }

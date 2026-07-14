@@ -4769,4 +4769,320 @@ html.preloader-pending body > :not(.site-preloader) {
   }
 }
 
+/* Shared mobile parity layer --------------------------------------------
+   Every page keeps one HTML structure. This final layer normalizes the
+   actual phone viewport after page-specific desktop rules have loaded. */
+@media (max-width: 768px) {
+  html,
+  body {
+    min-width: 0;
+  }
+
+  body {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  .content-column {
+    padding-inline: max(var(--space-3), env(safe-area-inset-left))
+      max(var(--space-3), env(safe-area-inset-right));
+  }
+
+  .site-header {
+    padding-top: env(safe-area-inset-top);
+  }
+
+  .site-nav {
+    position: relative;
+    min-height: 4.25rem;
+    padding-inline: max(var(--space-3), env(safe-area-inset-left))
+      max(var(--space-3), env(safe-area-inset-right));
+  }
+
+  .site-nav__brand,
+  .site-nav__brand img {
+    width: 2.8rem;
+    height: 2.8rem;
+    flex-basis: 2.8rem;
+  }
+
+  .site-nav__mobile-toggle {
+    min-width: 2.75rem;
+    min-height: 2.75rem;
+    font-size: 1.2rem;
+  }
+
+  .site-nav__menu {
+    top: calc(100% + var(--space-1));
+    left: max(var(--space-3), env(safe-area-inset-left));
+    right: max(var(--space-3), env(safe-area-inset-right));
+    z-index: var(--z-overlay);
+    max-height: calc(100svh - 6rem);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .site-nav__link {
+    min-height: 2.75rem;
+    align-items: center;
+  }
+
+  .hero--home {
+    min-height: 100svh;
+    padding-inline: max(var(--space-3), env(safe-area-inset-left))
+      max(var(--space-3), env(safe-area-inset-right));
+  }
+
+  .hero--home .collage {
+    width: 100%;
+    max-width: 37rem;
+  }
+
+  .section-head {
+    margin-bottom: var(--space-3);
+  }
+
+  .section-head h2,
+  .page-intro h1 {
+    font-size: clamp(1.9rem, 8vw, 2.8rem);
+  }
+
+  .hero__lead,
+  .story-hero .hero__lead,
+  .tech-hero__subhead {
+    font-size: 1rem;
+    line-height: 1.55;
+  }
+
+  .page-intro,
+  .tech-hero {
+    margin-top: var(--space-5);
+    margin-bottom: var(--space-6);
+  }
+
+  .tech-hero {
+    width: 100%;
+  }
+
+  .tech-hero h1 {
+    max-width: 12ch;
+    font-size: clamp(2.3rem, 11vw, 3.6rem);
+    line-height: 1.05;
+  }
+
+  .terminal {
+    margin-top: var(--space-4);
+  }
+
+  .terminal__body {
+    min-height: 0;
+    overflow-wrap: anywhere;
+  }
+
+  .story-hero {
+    gap: var(--space-4);
+    padding-block: var(--space-5) var(--space-3);
+  }
+
+  .story-hero h1 {
+    max-width: 10ch;
+    font-size: clamp(2.75rem, 14vw, 4.5rem);
+  }
+
+  .story-stats {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-1);
+  }
+
+  .story-stats > div {
+    min-width: 0;
+  }
+
+  .travel-visual,
+  .life-visual {
+    min-height: 0;
+  }
+
+  .travel-postcard {
+    width: min(100%, 27rem);
+    margin-inline: auto;
+    transform: none;
+  }
+
+  .route-module {
+    position: relative;
+    inset: auto;
+    width: min(92%, 25rem);
+    margin: calc(var(--space-3) * -1) auto 0;
+  }
+
+  .travel-entry,
+  .race-console,
+  .coffee-story {
+    grid-template-columns: 1fr;
+    gap: var(--space-3);
+  }
+
+  .travel-entry__copy,
+  .race-console__copy,
+  .coffee-story > div {
+    padding: var(--space-3);
+  }
+
+  .travel-entry__media img,
+  .coffee-story img {
+    min-height: 0;
+    height: auto;
+    aspect-ratio: 4 / 5;
+  }
+
+  .travel-stamps,
+  .life-gallery,
+  .small-wins__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .passport-card,
+  .next-stop,
+  .home-card {
+    min-height: 18rem;
+  }
+
+  .race-console {
+    min-height: 0;
+  }
+
+  .race-console__track {
+    min-height: min(24rem, 82vw);
+  }
+
+  .telemetry-card {
+    transform: none;
+  }
+
+  .life-visual__tag {
+    display: none;
+  }
+
+  .life-shot,
+  .life-shot--wide {
+    grid-column: auto;
+  }
+
+  .life-shot figure,
+  .life-shot img,
+  .life-shot--wide figure,
+  .life-shot--wide img {
+    min-height: 0;
+    aspect-ratio: 4 / 5;
+  }
+
+  .life-shot--wide figure,
+  .life-shot--wide img {
+    aspect-ratio: 4 / 3;
+  }
+
+  .stack-grid,
+  .album-grid,
+  .gallery,
+  .gallery--lanes {
+    grid-template-columns: 1fr;
+  }
+
+  .credential-shelf {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .project-queue {
+    min-height: 0;
+  }
+
+  .project-queue__screen {
+    min-height: 12rem;
+  }
+
+  .album-modal {
+    width: min(calc(100vw - var(--space-3)), 42rem);
+    max-height: calc(100svh - 2 * var(--space-3));
+    margin: auto;
+  }
+
+  .site-footer {
+    padding-bottom: max(var(--space-5), env(safe-area-inset-bottom));
+  }
+
+  .social-dock {
+    right: max(var(--space-2), env(safe-area-inset-right));
+    bottom: max(var(--space-2), env(safe-area-inset-bottom));
+  }
+}
+
+@media (max-width: 480px) {
+  .content-column {
+    padding-inline: max(var(--space-2), env(safe-area-inset-left))
+      max(var(--space-2), env(safe-area-inset-right));
+  }
+
+  .site-nav {
+    padding-inline: max(var(--space-2), env(safe-area-inset-left))
+      max(var(--space-2), env(safe-area-inset-right));
+  }
+
+  .site-nav__menu {
+    left: max(var(--space-2), env(safe-area-inset-left));
+    right: max(var(--space-2), env(safe-area-inset-right));
+  }
+
+  .hero--home {
+    padding-inline: max(var(--space-2), env(safe-area-inset-left))
+      max(var(--space-2), env(safe-area-inset-right));
+  }
+
+  .hero--home .collage {
+    gap: var(--space-1);
+  }
+
+  .hero--home .photo-window__img {
+    height: clamp(6.75rem, 30vw, 8.5rem);
+  }
+
+  .story-stats {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .story-stats > div {
+    padding-inline: var(--space-2);
+  }
+
+  .current-build__flag {
+    min-height: 13rem;
+  }
+
+  .credential-shelf {
+    gap: var(--space-3) var(--space-1);
+    padding-inline: var(--space-2);
+  }
+
+  .project-queue__slots {
+    grid-template-columns: 1fr;
+  }
+
+  .album-modal__bar h2 {
+    max-width: 10ch;
+    font-size: clamp(1.7rem, 9vw, 2.5rem);
+  }
+
+  .site-preloader {
+    padding: max(var(--space-2), env(safe-area-inset-top))
+      max(var(--space-2), env(safe-area-inset-right))
+      max(var(--space-2), env(safe-area-inset-bottom))
+      max(var(--space-2), env(safe-area-inset-left));
+  }
+
+  .site-preloader__panel {
+    width: min(100%, 23rem);
+    padding: var(--space-4) var(--space-3);
+  }
+}
+
 

@@ -13,6 +13,7 @@ const pages = [
 const css = readFileSync(resolve(root, "css/components.css"), "utf8");
 const baseCss = readFileSync(resolve(root, "css/base.css"), "utf8");
 const issues = [];
+const contentStyleVersions = new Set();
 
 function html(page) {
   return readFileSync(resolve(root, page), "utf8");
@@ -58,8 +59,7 @@ for (const page of pages) {
   const source = html(page.file);
 
   includesAll(source, page.file, [
-    ["mobile viewport", '<meta name="viewport" content="width=device-width, initial-scale=1" />'],
-    ["shared stylesheet", '<link rel="stylesheet" href="css/main.css" />'],
+    ["mobile viewport", '<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />'],
     ["asset guard", '<script type="module" src="js/asset-guard.js" defer></script>'],
     ["shared navigation component", '<script type="module" src="js/site-nav.js" defer></script>'],
     ["shared footer component", '<script type="module" src="js/site-footer.js" defer></script>'],
@@ -69,6 +69,13 @@ for (const page of pages) {
     ["main landmark", '<main id="main"'],
     ["shared footer element", "<site-footer></site-footer>"],
   ]);
+
+  const stylesheet = source.match(/<link rel="stylesheet" href="css\/main\.css\?v=([^"]+)" \/>/);
+  if (!stylesheet) {
+    issues.push(`${page.file}: missing versioned shared stylesheet`);
+  } else {
+    contentStyleVersions.add(stylesheet[1]);
+  }
 
   const preloader = source.match(/<script src="(js\/preloader\.js\?v=[^"]+)"><\/script>/);
   if (!preloader) {
@@ -87,6 +94,14 @@ for (const page of pages) {
 
 if (contentPreloaderVersions.size > 1) {
   issues.push(`content pages use different preloader versions: ${[...contentPreloaderVersions].join(", ")}`);
+}
+
+if (contentStyleVersions.size > 1) {
+  issues.push(`content pages use different stylesheet versions: ${[...contentStyleVersions].join(", ")}`);
+}
+
+if (!readFileSync(resolve(root, "js/preloader.js"), "utf8").includes('!hasVisited() && !isMobile')) {
+  issues.push("js/preloader.js: mobile devices must reveal the current page without the entry gate");
 }
 
 const pageContracts = {
