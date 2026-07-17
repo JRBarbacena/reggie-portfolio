@@ -1,7 +1,6 @@
 (function () {
   const root = document.documentElement;
   const SESSION_KEY = "reggie-portfolio-session-started";
-  const AUTO_ENTER_DELAY = 2600;
   root.classList.add("preloader-pending");
 
   function navigationType() {
@@ -69,7 +68,6 @@
       }, 520);
     };
     enter.addEventListener("click", enterPortfolio);
-    window.setTimeout(enterPortfolio, AUTO_ENTER_DELAY);
   }
 
   function start() {

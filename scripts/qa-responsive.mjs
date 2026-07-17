@@ -107,6 +107,9 @@ if (!preloaderSource.includes('navigationType() === "reload"')) {
 if (!preloaderSource.includes("SESSION_KEY")) {
   issues.push("js/preloader.js: page navigation state must stay scoped to the current tab");
 }
+if (preloaderSource.includes("AUTO_ENTER_DELAY") || preloaderSource.includes("setTimeout(enterPortfolio")) {
+  issues.push("js/preloader.js: the entry gate must wait for an explicit user click");
+}
 
 const pageContracts = {
   "index.html": [".hero--home", ".gallery--lanes", ".gallery", ".photo-window"],
