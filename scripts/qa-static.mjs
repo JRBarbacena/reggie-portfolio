@@ -29,16 +29,16 @@ for (const page of pages) {
   if (h1Count !== 1) invalidHeadings.push(`${page}: expected one h1, found ${h1Count}`);
 
   if (page === "tech.html") {
-    const hasCurrentBuild = source.includes('class="current-build card"');
-    const hasCurrentFocus = source.includes('class="current-build__focus"');
-    const hasLegacyCurrentLog = source.includes('class="experience-log tech-experience card"');
+    const hasExperienceLog = source.includes('class="experience-log tech-experience card"');
+    const hasCurrentTime = source.includes('class="experience-log__time">Current</p>');
+    const hasLegacyCurrentBuild = source.includes('class="current-build card"');
 
-    if (!hasCurrentBuild || !hasCurrentFocus) {
-      responsiveContractIssues.push(`${page}: current system must use shared current-build markup`);
+    if (!hasExperienceLog || !hasCurrentTime) {
+      responsiveContractIssues.push(`${page}: education and experience must use the shared simple experience log markup`);
     }
 
-    if (hasLegacyCurrentLog) {
-      responsiveContractIssues.push(`${page}: remove legacy current experience-log markup`);
+    if (hasLegacyCurrentBuild) {
+      responsiveContractIssues.push(`${page}: remove the expanded current-build markup`);
     }
   }
 }
