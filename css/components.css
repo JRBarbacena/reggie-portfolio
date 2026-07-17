@@ -4319,14 +4319,14 @@ html.preloader-pending body > :not(.site-preloader) {
   padding: var(--space-3);
   background: var(--bg-base);
   opacity: 1;
-  transition: opacity 500ms var(--ease-emphasized),
-    transform 500ms var(--ease-emphasized);
-  animation: preloader-fade-in 420ms var(--ease-emphasized) both;
+  transition: opacity var(--duration-enter) var(--ease-fluid),
+    transform var(--duration-enter) var(--ease-fluid);
+  animation: preloader-fade-in var(--duration-enter) var(--ease-fluid) both;
 }
 
 .site-preloader.is-leaving {
   opacity: 0;
-  transform: scale(1.02);
+  transform: translateY(-0.5rem);
   pointer-events: none;
 }
 
@@ -4339,7 +4339,7 @@ html.preloader-pending body > :not(.site-preloader) {
   background: var(--bg-base);
   box-shadow: var(--neu-resting);
   text-align: center;
-  animation: preloader-panel-in 620ms var(--ease-emphasized) both;
+  animation: preloader-panel-in var(--duration-enter) var(--ease-fluid) both;
 }
 
 .site-preloader__mark {
@@ -4421,8 +4421,8 @@ html.preloader-pending body > :not(.site-preloader) {
 }
 
 @keyframes preloader-panel-in {
-  from { opacity: 0; transform: translateY(20px) scale(0.985); }
-  to { opacity: 1; transform: translateY(0) scale(1); }
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 /* Keep the Home scatter as soft-UI icons: no orbit rings or extra markers. */
@@ -4486,7 +4486,7 @@ html.preloader-pending body > :not(.site-preloader) {
 .preloader-complete .story-hero__copy,
 .preloader-complete .story-hero__visual,
 .preloader-complete .page-intro {
-  animation: post-gate-rise 650ms var(--ease-emphasized) both;
+  animation: post-gate-rise var(--duration-enter) var(--ease-fluid) both;
 }
 
 .preloader-complete .tech-hero__subhead,
@@ -4500,14 +4500,14 @@ html.preloader-pending body > :not(.site-preloader) {
 
 .preloader-complete .collage .photo-window,
 .preloader-complete .collage .hero-chip {
-  animation: post-gate-fade 680ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation: post-gate-fade var(--duration-enter) var(--ease-fluid) both;
 }
 
 .preloader-complete .collage > :nth-child(2n) { animation-delay: 90ms; }
 .preloader-complete .collage > :nth-child(3n) { animation-delay: 180ms; }
 
 @keyframes post-gate-rise {
-  from { opacity: 0; transform: translateY(18px); }
+  from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: translateY(0); }
 }
 

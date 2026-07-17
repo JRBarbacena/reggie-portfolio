@@ -81,13 +81,14 @@
   --transition-shadow: 300ms; /* upper bound for shadow-state changes */
 
   /* --- Motion (single source of truth; CSS-only, Req: design motion) ------
-     Durations kept <= 300ms so all motion stays coherent with the
-     neumorphic shadow-state transition upper bound. */
+     Micro-interactions stay quick while content entrances use a softer pace. */
   --duration-fast: 150ms;  /* micro state changes (hover lift, focus) */
   --duration-base: 250ms;  /* reveals, menu open/close                */
   --duration-slow: 300ms;  /* upper bound; == --transition-shadow     */
+  --duration-enter: 780ms; /* shared content entrance, intentionally unhurried */
   --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
   --ease-emphasized: cubic-bezier(0.2, 0, 0, 1);
+  --ease-fluid: cubic-bezier(0.22, 0.8, 0.24, 1);
   --ease-exit: cubic-bezier(0.4, 0, 1, 1);
   --reveal-offset: 12px;   /* translateY distance for entrance reveals */
 
