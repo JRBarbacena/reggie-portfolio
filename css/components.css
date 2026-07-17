@@ -4683,13 +4683,14 @@ html.preloader-pending body > :not(.site-preloader) {
 }
 
 @media (max-width: 900px) {
-  /* Mobile Home is photo-first: remove the tiny metadata controls and turn
-     the existing personal photos into a clean, touch-friendly grid. */
+  /* Keep the same visual inventory as desktop: photos plus the six profile
+     chips. On touch screens those items become a readable grid rather than a
+     decorative absolute scatter. */
   .hero--home {
     min-height: 100svh;
     justify-content: flex-start;
     padding-top: 6.25rem;
-    overflow: hidden;
+    overflow: visible;
   }
 
   /* The desktop headline and collage are flex children.  At narrow widths a
@@ -4721,8 +4722,51 @@ html.preloader-pending body > :not(.site-preloader) {
     margin-top: var(--space-4);
   }
 
+  /* Pair each photo with its matching profile cue, preserving the mixed
+     desktop collage rhythm instead of presenting a separate photo gallery. */
+  .pos-photo-1 { order: 1; }
+  .pos-chip-1 { order: 2; }
+  .pos-photo-2 { order: 3; }
+  .pos-chip-2 { order: 4; }
+  .pos-photo-3 { order: 5; }
+  .pos-chip-3 { order: 6; }
+  .pos-photo-4 { order: 7; }
+  .pos-chip-4 { order: 8; }
+  .pos-photo-5 { order: 9; }
+  .pos-chip-5 { order: 10; }
+  .pos-photo-6 { order: 11; }
+  .pos-chip-6 { order: 12; }
+
   .hero--home .hero-chip {
-    display: none;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    min-width: 0;
+    min-height: 3.75rem;
+    padding: var(--space-1);
+    border-radius: var(--radius-md);
+    background: var(--bg-base);
+    box-shadow: var(--neu-resting);
+    text-align: left;
+  }
+
+  .hero--home .hero-chip__icon {
+    width: 2.75rem;
+    height: 2.75rem;
+    flex: 0 0 2.75rem;
+  }
+
+  .hero--home .hero-chip__label {
+    min-width: 0;
+    overflow-wrap: anywhere;
+    color: var(--text-primary);
+    font-size: 0.75rem;
+    font-weight: var(--weight-bold);
+  }
+
+  .hero--home .hero-chip__detail {
+    top: calc(100% + var(--space-1));
+    max-width: min(14rem, calc(100vw - 2 * var(--space-2)));
   }
 
   .hero--home .photo-window {
