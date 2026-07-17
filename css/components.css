@@ -4692,8 +4692,24 @@ html.preloader-pending body > :not(.site-preloader) {
     overflow: hidden;
   }
 
+  /* The desktop headline and collage are flex children.  At narrow widths a
+     long heading must be allowed to shrink; otherwise its min-content width
+     expands the hero and pushes the mobile navigation and second photo column
+     beyond the viewport (which body overflow-x used to hide). */
+  .hero--home > * {
+    min-width: 0;
+  }
+
   .hero--home .hero__center {
+    width: 100%;
     margin-top: var(--space-2);
+  }
+
+  .hero--home .hero__motto {
+    width: min(100%, 12ch);
+    max-width: 100%;
+    margin-inline: auto;
+    overflow-wrap: anywhere;
   }
 
   .hero--home .collage {
@@ -4701,6 +4717,7 @@ html.preloader-pending body > :not(.site-preloader) {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: var(--space-2);
     width: min(100%, 37rem);
+    min-width: 0;
     margin-top: var(--space-4);
   }
 
