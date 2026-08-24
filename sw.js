@@ -1,4 +1,4 @@
-const CACHE_NAME = "reggie-portfolio-v20260717-3";
+const CACHE_NAME = "reggie-portfolio-v20260825-2";
 
 const APP_SHELL = [
   "/",
@@ -7,7 +7,7 @@ const APP_SHELL = [
   "/travel",
   "/life",
   "/designs",
-  "/css/main.css?v=20260714-1",
+  "/css/main.css?v=20260825-2",
   "/js/site-cache.js",
   "/js/site-nav.js",
   "/js/site-footer.js",

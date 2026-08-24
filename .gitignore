@@ -3,11 +3,13 @@ node_modules/
 coverage/
 playwright-report/
 test-results/
+.lighthouseci/
 *.log
 .DS_Store
 Thumbs.db
 .agents/
 .kiro/
 .vscode/
+.cursor/
 
 .vercel

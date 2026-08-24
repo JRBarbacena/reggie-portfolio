@@ -31,5 +31,7 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      # Pin exact CLI version via npx so @lhci/cli (and its puppeteer tree)
+      # never enter package-lock.json / npm audit.
       - name: Run Lighthouse CI
-        run: npx @lhci/cli@0.15.x autorun
+        run: npx --yes @lhci/cli@0.15.1 autorun

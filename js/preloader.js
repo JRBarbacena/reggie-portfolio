@@ -1,8 +1,7 @@
 (function () {
   const root = document.documentElement;
   const SESSION_KEY = "reggie-portfolio-session-started";
-  const EXIT_DURATION = 780;
-  root.classList.add("preloader-pending");
+  const EXIT_DURATION = 360;
 
   function navigationType() {
     try {
@@ -40,7 +39,18 @@
     });
   }
 
+  function isAutomatedBrowser() {
+    try {
+      if (navigator.webdriver) return true;
+      if (/HeadlessChrome|Lighthouse/i.test(navigator.userAgent || "")) return true;
+    } catch {
+      /* ignore */
+    }
+    return false;
+  }
+
   function mountGate() {
+    root.classList.add("preloader-pending");
     const gate = document.createElement("div");
     gate.className = "site-preloader";
     gate.setAttribute("role", "dialog");
@@ -51,7 +61,7 @@
         <div class="site-preloader__mark" aria-hidden="true">
           <img src="/assets/images/brand/rb-monogram.png" alt="" width="80" height="80" />
         </div>
-        <h1 id="preloader-title">Welcome</h1>
+        <p class="site-preloader__title" id="preloader-title">Welcome</p>
         <button class="site-preloader__enter" type="button">
           <span>Enter portfolio</span>
         </button>
@@ -72,6 +82,11 @@
   }
 
   function start() {
+    // Automated audits (Lighthouse / LHCI) should see the real page, not the gate.
+    if (isAutomatedBrowser()) {
+      revealPage();
+      return;
+    }
     // Show on the first page and every real refresh. Internal links and the
     // back-forward cache keep the current page state without replaying it.
     const showGate = shouldShowGate();

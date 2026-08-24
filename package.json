@@ -10,11 +10,14 @@
     "test:e2e": "playwright test",
     "qa:static": "node scripts/qa-static.mjs",
     "qa:responsive": "node scripts/qa-responsive.mjs",
-    "qa": "npm run qa:static && npm run qa:responsive && npm test"
+    "qa": "npm run qa:static && npm run qa:responsive && npm test",
+    "lhci": "npx --yes @lhci/cli@0.15.1 autorun",
+    "a11y:local": "node scripts/run-a11y-lighthouse.mjs",
+    "serve": "npx --yes serve@14 . -l 5173"
   },
   "devDependencies": {
-    "fast-check": "^3.19.0",
-    "jsdom": "^24.1.0",
-    "vitest": "^1.6.0"
+    "fast-check": "^4.9.0",
+    "jsdom": "^26.1.0",
+    "vitest": "^3.2.7"
   }
 }

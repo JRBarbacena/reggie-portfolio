@@ -24,6 +24,659 @@
     color var(--duration-fast) var(--ease-standard);
 }
 
+/* Glass + neumorphism editorial rebuild -----------------------------------
+   Glass carries imagery and hierarchy. Soft shadows keep objects grounded.
+   Text always sits on an opaque enough panel, never directly on busy photos. */
+.glass-panel {
+  border: 1px solid rgb(255 255 255 / 58%);
+  background: linear-gradient(135deg, rgb(255 255 255 / 52%), rgb(220 229 242 / 40%));
+  box-shadow: 12px 12px 28px rgb(132 145 166 / 24%), -8px -8px 20px rgb(255 255 255 / 62%);
+  backdrop-filter: blur(18px) saturate(125%);
+  -webkit-backdrop-filter: blur(18px) saturate(125%);
+}
+
+/* Travel — personal atlas ------------------------------------------------ */
+.atlas {
+  padding-bottom: var(--space-7);
+}
+
+.atlas .story-hero {
+  display: grid;
+  grid-template-columns: 0.75fr minmax(19rem, 1.3fr) 0.75fr;
+  grid-template-areas:
+    "eyebrow eyebrow eyebrow"
+    "title map metrics";
+  align-items: center;
+  gap: clamp(var(--space-3), 4vw, var(--space-6));
+  min-height: min(52rem, calc(100svh - 4.75rem));
+  padding-block: clamp(var(--space-4), 7vw, var(--space-7));
+}
+
+.atlas__eyebrow {
+  grid-area: eyebrow;
+  color: var(--accent-primary);
+  font-size: var(--font-size-1);
+  font-weight: var(--weight-bold);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.atlas__title-wrap {
+  grid-area: title;
+  align-self: end;
+}
+
+.atlas__title-wrap h1 {
+  max-width: 8ch;
+  margin: 0;
+  font-size: clamp(3.75rem, 7vw, 7.5rem);
+  line-height: 0.86;
+}
+
+.atlas__title-wrap h1 em,
+.signal__title h1 em {
+  color: var(--accent-primary);
+  font-style: normal;
+}
+
+.atlas__title-wrap > p {
+  max-width: 28ch;
+  margin-top: var(--space-3);
+  color: var(--text-muted);
+}
+
+.atlas__map-window {
+  grid-area: map;
+  position: relative;
+  min-height: clamp(27rem, 48vw, 42rem);
+  overflow: hidden;
+  border-radius: 50% 50% var(--radius-lg) var(--radius-lg);
+  padding: var(--space-2);
+  transform: rotate(2deg);
+}
+
+.atlas__map-window::before {
+  content: "";
+  position: absolute;
+  inset: 1.25rem;
+  z-index: 1;
+  border: 1px solid rgb(255 255 255 / 45%);
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+.atlas__map-window img {
+  width: 100%;
+  height: 100%;
+  min-height: inherit;
+  border-radius: inherit;
+  object-fit: cover;
+  filter: saturate(88%) contrast(94%);
+}
+
+.atlas__map-window figcaption {
+  position: absolute;
+  z-index: 2;
+  right: var(--space-4);
+  bottom: var(--space-4);
+  display: grid;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-md);
+  background: rgb(228 233 240 / 78%);
+  box-shadow: var(--neu-resting);
+  backdrop-filter: blur(12px);
+}
+
+.atlas__map-window figcaption span,
+.atlas__map-window figcaption strong {
+  font-size: var(--font-size-1);
+}
+
+.atlas__map-window figcaption span {
+  color: var(--text-muted);
+  letter-spacing: 0.1em;
+}
+
+.atlas__stamp {
+  position: absolute;
+  z-index: 2;
+  top: 8%;
+  left: -0.75rem;
+  padding: var(--space-1) var(--space-2);
+  border: 2px solid var(--accent-primary);
+  border-radius: var(--radius-pill);
+  color: var(--accent-primary);
+  font-size: var(--font-size-1);
+  font-weight: var(--weight-bold);
+  letter-spacing: 0.12em;
+  transform: rotate(-10deg);
+}
+
+.atlas__metrics {
+  grid-area: metrics;
+  display: grid;
+  gap: var(--space-2);
+  align-self: start;
+  margin: 0;
+}
+
+.atlas__metrics > div {
+  min-width: 0;
+  padding: var(--space-2);
+  border: 1px solid rgb(255 255 255 / 50%);
+  background: rgb(255 255 255 / 35%);
+  box-shadow: var(--neu-pressed);
+}
+
+.atlas__metrics > div:nth-child(2) {
+  margin-left: clamp(-2rem, -3vw, -0.5rem);
+}
+
+.atlas__metrics > div:nth-child(3) {
+  margin-left: clamp(-0.5rem, -2vw, 1.5rem);
+}
+
+.atlas__chapter,
+.atlas__dispatches,
+.atlas__ledger,
+.atlas__closing,
+.signal__race,
+.signal__court,
+.signal__rituals,
+.signal__closing {
+  margin-top: clamp(var(--space-6), 12vw, 11rem);
+}
+
+.atlas__chapter-head,
+.signal__section-title {
+  max-width: 45rem;
+}
+
+.atlas__chapter-head h2,
+.signal__section-title h2 {
+  margin-top: var(--space-1);
+  font-size: clamp(2.5rem, 6vw, 5rem);
+  line-height: 0.92;
+}
+
+.atlas__chapter-grid {
+  display: grid;
+  grid-template-columns: 0.72fr 1fr 0.48fr;
+  align-items: end;
+  gap: clamp(var(--space-2), 3vw, var(--space-5));
+  margin-top: var(--space-5);
+}
+
+.atlas__note {
+  min-height: 24rem;
+  padding: var(--space-4);
+  border-radius: var(--radius-lg);
+}
+
+.atlas__note-number {
+  display: block;
+  color: var(--accent-primary);
+  font-family: var(--font-family-display);
+  font-size: clamp(3rem, 6vw, 5rem);
+  line-height: 1;
+}
+
+.atlas__note h3 {
+  margin-top: var(--space-4);
+}
+
+.atlas__note > p {
+  margin-top: var(--space-2);
+  color: var(--text-muted);
+}
+
+.atlas__note .detail-pills {
+  margin-top: var(--space-4);
+}
+
+.atlas__portrait {
+  overflow: hidden;
+  border-radius: 16rem 16rem var(--radius-lg) var(--radius-lg);
+  padding: var(--space-2);
+  transform: translateY(var(--space-5));
+}
+
+.atlas__portrait img {
+  width: 100%;
+  height: 34rem;
+  border-radius: inherit;
+  object-fit: cover;
+}
+
+.atlas__portrait figcaption {
+  padding: var(--space-2) var(--space-1) 0;
+  color: var(--text-muted);
+  font-size: var(--font-size-1);
+}
+
+.atlas__pullquote {
+  padding-bottom: var(--space-5);
+  color: var(--accent-primary);
+  font-family: var(--font-family-display);
+  font-size: clamp(1.35rem, 2.2vw, 2rem);
+  font-weight: var(--weight-bold);
+  line-height: 1.1;
+}
+
+.atlas__dispatch-grid {
+  display: grid;
+  grid-template-columns: 1fr 0.8fr;
+  gap: var(--space-3);
+  margin-top: var(--space-5);
+}
+
+.atlas-ticket {
+  position: relative;
+  min-height: 25rem;
+  overflow: hidden;
+  padding: var(--space-4);
+  border-radius: var(--radius-lg);
+}
+
+.atlas-ticket::after {
+  content: "";
+  position: absolute;
+  top: -4rem;
+  right: -4rem;
+  width: 13rem;
+  aspect-ratio: 1;
+  border: 1px solid rgb(255 255 255 / 64%);
+  border-radius: 50%;
+  box-shadow: var(--neu-pressed);
+}
+
+.atlas-ticket > * {
+  position: relative;
+  z-index: 1;
+}
+
+.atlas-ticket > p:first-child,
+.atlas-ticket > span {
+  color: var(--text-muted);
+  font-size: var(--font-size-1);
+  font-weight: var(--weight-bold);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.atlas-ticket strong {
+  display: block;
+  margin-block: var(--space-5) var(--space-2);
+  color: var(--accent-primary);
+  font-family: var(--font-family-display);
+  font-size: clamp(5rem, 14vw, 12rem);
+  letter-spacing: -0.1em;
+  line-height: 0.7;
+}
+
+.atlas-ticket h3 {
+  margin-top: var(--space-3);
+}
+
+.atlas-ticket > p:last-child {
+  max-width: 38ch;
+  margin-top: var(--space-3);
+  color: var(--text-muted);
+}
+
+.atlas-ticket--future {
+  margin-top: var(--space-6);
+}
+
+.atlas-ticket--future strong {
+  color: var(--text-large);
+}
+
+.atlas__ledger {
+  display: grid;
+  grid-template-columns: 0.8fr 1.2fr;
+  gap: var(--space-5);
+  padding: clamp(var(--space-3), 5vw, var(--space-5));
+  border-radius: var(--radius-lg);
+}
+
+.atlas__ledger h2 {
+  margin-top: var(--space-2);
+  font-size: clamp(2rem, 4vw, 3.5rem);
+}
+
+.atlas__ledger ol {
+  list-style: none;
+}
+
+.atlas__ledger li {
+  display: grid;
+  grid-template-columns: 2rem 1fr auto;
+  gap: var(--space-2);
+  align-items: center;
+  padding-block: var(--space-2);
+  border-bottom: 1px solid rgb(87 103 124 / 15%);
+}
+
+.atlas__ledger li:last-child { border-bottom: 0; }
+.atlas__ledger li span { color: var(--accent-primary); font-weight: var(--weight-bold); }
+.atlas__ledger li em { color: var(--text-muted); font-size: var(--font-size-1); font-style: normal; }
+
+.atlas__closing,
+.signal__closing {
+  display: flex;
+  min-height: 22rem;
+  align-items: end;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: clamp(var(--space-3), 5vw, var(--space-5));
+  border-radius: var(--radius-lg);
+}
+
+.atlas__closing blockquote,
+.signal__closing blockquote {
+  max-width: 16ch;
+  color: var(--text-large);
+  font-family: var(--font-family-display);
+  font-size: clamp(2rem, 5vw, 4.5rem);
+  font-weight: var(--weight-bold);
+  line-height: 0.9;
+}
+
+.atlas__next,
+.signal__closing a {
+  flex: 0 0 auto;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-pill);
+  background: rgb(255 255 255 / 45%);
+  box-shadow: var(--neu-resting);
+  color: var(--text-primary);
+  font-size: var(--font-size-1);
+  font-weight: var(--weight-bold);
+}
+
+/* Life — weekend radio --------------------------------------------------- */
+.signal { padding-bottom: var(--space-7); }
+
+.signal .story-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  min-height: auto;
+  padding-block: var(--space-5);
+}
+
+.signal__masthead {
+  position: relative;
+  min-height: min(50rem, calc(100svh - 8rem));
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+  background: #1e2530;
+  box-shadow: var(--neu-resting);
+}
+
+.signal__frame,
+.signal__frame img {
+  width: 100%;
+  height: 100%;
+  min-height: inherit;
+}
+
+.signal__frame img {
+  object-fit: cover;
+  object-position: center;
+  opacity: 0.66;
+  filter: saturate(75%) contrast(105%);
+}
+
+.signal__masthead::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(110deg, rgb(24 30 40 / 85%) 6%, rgb(24 30 40 / 32%) 60%, rgb(24 30 40 / 65%));
+  pointer-events: none;
+}
+
+.signal__frame figcaption,
+.signal__title,
+.signal__dial {
+  position: absolute;
+  z-index: 1;
+}
+
+.signal__frame figcaption {
+  top: var(--space-3);
+  left: var(--space-3);
+  color: rgb(255 255 255 / 76%);
+  font-size: var(--font-size-1);
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
+
+.signal__title {
+  bottom: clamp(var(--space-4), 8vw, var(--space-7));
+  left: clamp(var(--space-3), 8vw, var(--space-7));
+  max-width: 50rem;
+}
+
+.signal__title > p,
+.signal__title > span {
+  color: rgb(255 255 255 / 76%);
+  font-size: var(--font-size-1);
+  font-weight: var(--weight-bold);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.signal__title h1 {
+  margin-block: var(--space-2);
+  color: #fff;
+  font-size: clamp(4rem, 10vw, 10rem);
+  line-height: 0.8;
+}
+
+.signal__dial {
+  right: clamp(var(--space-3), 5vw, var(--space-5));
+  bottom: clamp(var(--space-3), 5vw, var(--space-5));
+  width: min(19rem, 35%);
+  padding: var(--space-3);
+  border-radius: var(--radius-lg);
+}
+
+.signal__dial span {
+  display: block;
+  color: var(--text-muted);
+  font-size: var(--font-size-1);
+  font-weight: var(--weight-bold);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.signal__dial strong {
+  display: block;
+  margin-block: var(--space-1);
+  color: var(--accent-primary);
+  font-family: var(--font-family-display);
+  font-size: var(--font-size-3);
+}
+
+.signal__dial p { color: var(--text-primary); font-size: var(--font-size-1); }
+
+.signal__race-card {
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  gap: var(--space-5);
+  margin-top: var(--space-5);
+  padding: var(--space-4);
+  border-radius: var(--radius-lg);
+}
+
+.signal__track {
+  position: relative;
+  min-height: 22rem;
+  border-radius: var(--radius-md);
+  background: rgb(255 255 255 / 28%);
+  box-shadow: var(--neu-pressed);
+}
+
+.signal__track svg {
+  position: absolute;
+  inset: 9%;
+  width: 82%;
+  height: 82%;
+  fill: none;
+  stroke: var(--accent-primary);
+  stroke-width: 4;
+}
+
+.signal__track span {
+  position: absolute;
+  right: var(--space-3);
+  bottom: var(--space-3);
+  color: var(--text-muted);
+  font-size: var(--font-size-1);
+  letter-spacing: 0.12em;
+}
+
+.signal__race-card > div:last-child {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.signal__race-card h3 { margin-top: var(--space-2); font-size: clamp(2rem, 4vw, 3.5rem); }
+.signal__race-card h3 + p { margin-top: var(--space-3); color: var(--text-muted); }
+
+.signal__mosaic {
+  display: grid;
+  grid-template-columns: 1.1fr 0.72fr 0.72fr;
+  grid-template-rows: minmax(18rem, 31rem) minmax(14rem, 22rem);
+  gap: var(--space-3);
+  margin-top: var(--space-5);
+}
+
+.signal__tile {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+  padding: var(--space-2);
+}
+
+.signal__tile img {
+  width: 100%;
+  height: 100%;
+  border-radius: calc(var(--radius-lg) - var(--space-1));
+  object-fit: cover;
+}
+
+.signal__tile figcaption {
+  position: absolute;
+  right: var(--space-3);
+  bottom: var(--space-3);
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-pill);
+  background: rgb(228 233 240 / 76%);
+  box-shadow: var(--neu-resting);
+  color: var(--text-primary);
+  font-size: var(--font-size-1);
+  font-weight: var(--weight-bold);
+}
+
+.signal__tile--team { grid-row: 1 / span 2; }
+.signal__tile--champ { grid-column: 2; }
+.signal__tile--court { grid-column: 3; grid-row: 1 / span 2; }
+
+.signal__mosaic-note {
+  align-self: center;
+  padding: var(--space-3);
+  color: var(--text-large);
+  font-family: var(--font-family-display);
+  font-size: clamp(2rem, 4vw, 4rem);
+  font-weight: var(--weight-bold);
+  line-height: 0.85;
+}
+.signal__mosaic-note em { color: var(--accent-primary); font-style: normal; }
+
+.signal__ritual-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  gap: var(--space-3);
+  margin-top: var(--space-5);
+}
+
+.signal__coffee {
+  display: grid;
+  grid-template-columns: 0.85fr 1fr;
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+}
+.signal__coffee img { width: 100%; height: 24rem; object-fit: cover; }
+.signal__coffee > div { display: flex; flex-direction: column; justify-content: end; padding: var(--space-4); }
+.signal__coffee h3 { margin-top: var(--space-2); font-size: clamp(2rem, 4vw, 3.5rem); }
+.signal__coffee h3 + p { margin-top: var(--space-2); color: var(--text-muted); }
+
+.signal__home {
+  position: relative;
+  min-height: 24rem;
+  overflow: hidden;
+  padding: var(--space-4);
+  border-radius: 50% 50% var(--radius-lg) var(--radius-lg);
+}
+.signal__home > span { color: var(--accent-primary); font-size: var(--font-size-1); font-weight: var(--weight-bold); letter-spacing: 0.12em; }
+.signal__home h3 { margin-top: 35%; font-size: clamp(2rem, 4vw, 3.5rem); }
+.signal__home p { max-width: 25ch; margin-top: var(--space-2); color: var(--text-muted); }
+.signal__home i { position: absolute; top: -2rem; right: -2rem; width: 13rem; aspect-ratio: 1; border: 1px solid rgb(255 255 255 / 72%); border-radius: 50%; box-shadow: var(--neu-pressed); }
+
+@media (max-width: 900px) {
+  .atlas .story-hero { grid-template-columns: 0.85fr 1.15fr; grid-template-areas: "eyebrow eyebrow" "title map" "metrics metrics"; }
+  .atlas__metrics { grid-template-columns: repeat(3, 1fr); }
+  .atlas__metrics > div:nth-child(n) { margin-left: 0; }
+  .atlas__chapter-grid { grid-template-columns: 0.75fr 1fr; }
+  .atlas__pullquote { grid-column: 1 / -1; padding: 0; }
+  .signal__mosaic { grid-template-columns: 1fr 1fr; }
+  .signal__tile--court { grid-column: 2; }
+}
+
+@media (max-width: 768px) {
+  .atlas .story-hero { display: grid; grid-template-columns: 1fr; grid-template-areas: "eyebrow" "title" "map" "metrics"; min-height: 0; }
+  .atlas__title-wrap h1 { max-width: 9ch; font-size: clamp(3.75rem, 17vw, 6.5rem); }
+  .atlas__map-window { min-height: 32rem; transform: none; }
+  .atlas__metrics { grid-template-columns: 1fr 1fr; }
+  .atlas__metrics > div:last-child { grid-column: 1 / -1; }
+  .atlas__chapter-grid, .atlas__dispatch-grid, .atlas__ledger, .signal__race-card, .signal__ritual-grid { grid-template-columns: 1fr; }
+  .atlas__portrait { transform: none; }
+  .atlas__portrait img { height: 28rem; }
+  .atlas-ticket--future { margin-top: 0; }
+  .atlas__closing, .signal__closing { min-height: 18rem; flex-direction: column; align-items: start; justify-content: end; }
+  .signal__masthead { min-height: 42rem; }
+  .signal__title h1 { font-size: clamp(4rem, 18vw, 7.5rem); }
+  .signal__dial { right: var(--space-3); width: min(18rem, calc(100% - var(--space-6))); }
+  .signal__mosaic { grid-template-columns: 1fr 1fr; grid-template-rows: 22rem 18rem 17rem; }
+  .signal__tile--team { grid-column: 1 / -1; grid-row: 1; }
+  .signal__tile--champ { grid-column: 1; grid-row: 2; }
+  .signal__tile--court { grid-column: 2; grid-row: 2; }
+  .signal__mosaic-note { grid-column: 1 / -1; grid-row: 3; padding: var(--space-2); }
+}
+
+@media (max-width: 560px) {
+  .atlas__metrics { grid-template-columns: 1fr; }
+  .atlas__metrics > div:last-child { grid-column: auto; }
+  .atlas__map-window { min-height: 26rem; }
+  .atlas__portrait img { height: 24rem; }
+  .atlas__ledger li { grid-template-columns: 1.5rem 1fr; }
+  .atlas__ledger li em { grid-column: 2; }
+  .signal__masthead { min-height: 39rem; }
+  .signal__title { left: var(--space-3); bottom: 8.5rem; }
+  .signal__title h1 { font-size: clamp(3.5rem, 18vw, 5.5rem); }
+  .signal__dial { bottom: var(--space-3); }
+  .signal__race-card { padding: var(--space-2); }
+  .signal__track { min-height: 16rem; }
+  .signal__mosaic { grid-template-columns: 1fr; grid-template-rows: 22rem 20rem 20rem auto; }
+  .signal__tile--team, .signal__tile--champ, .signal__tile--court { grid-column: 1; }
+  .signal__tile--team { grid-row: 1; }.signal__tile--champ { grid-row: 2; }.signal__tile--court { grid-row: 3; }
+  .signal__mosaic-note { grid-column: 1; grid-row: 4; }
+  .signal__coffee { grid-template-columns: 1fr; }.signal__coffee img { height: 19rem; }
+}
+
 .btn:hover {
   box-shadow: var(--neu-hover);
   transform: translateY(-2px);
@@ -4319,9 +4972,9 @@ html.preloader-pending body > :not(.site-preloader) {
   padding: var(--space-3);
   background: var(--bg-base);
   opacity: 1;
-  transition: opacity var(--duration-enter) var(--ease-fluid),
-    transform var(--duration-enter) var(--ease-fluid);
-  animation: preloader-fade-in var(--duration-enter) var(--ease-fluid) both;
+  transition: opacity 360ms var(--ease-fluid),
+    transform 360ms var(--ease-fluid);
+  animation: preloader-fade-in 280ms var(--ease-fluid) both;
 }
 
 .site-preloader.is-leaving {
@@ -4339,7 +4992,7 @@ html.preloader-pending body > :not(.site-preloader) {
   background: var(--bg-base);
   box-shadow: var(--neu-resting);
   text-align: center;
-  animation: preloader-panel-in var(--duration-enter) var(--ease-fluid) both;
+  animation: preloader-panel-in 320ms var(--ease-fluid) both;
 }
 
 .site-preloader__mark {
@@ -4379,7 +5032,7 @@ html.preloader-pending body > :not(.site-preloader) {
   display: none;
 }
 
-.site-preloader h1 {
+.site-preloader__title {
   margin-top: var(--space-3);
   font-family: var(--font-family-display);
   font-size: clamp(2rem, 6vw, 3.25rem);
@@ -4782,6 +5435,253 @@ html.preloader-pending body > :not(.site-preloader) {
 
   .life-collage__note strong {
     font-size: 1rem;
+  }
+}
+
+/* Hero 3D porthole (shared Travel + Life core) ----------------------------
+   One soft-3D object rendered inside a debossed neumorphic dish. The canvas
+   is decorative (aria-hidden); the figure carries the accessible label.   */
+.hero3d-visual {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.hero3d {
+  position: relative;
+  width: min(100%, 27rem);
+  aspect-ratio: 1;
+  margin: 0;
+  border-radius: 50%;
+  background:
+    radial-gradient(120% 120% at 30% 24%, #eef2f8 0%, var(--bg-base) 55%, #d8dfe9 100%);
+  box-shadow: var(--neu-pressed);
+}
+
+/* A raised outer lip so the dish reads as carved into the page. */
+.hero3d::before {
+  content: "";
+  position: absolute;
+  inset: -1.1rem;
+  border-radius: 50%;
+  box-shadow: var(--neu-resting);
+  pointer-events: none;
+}
+
+.hero3d__canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  display: block;
+}
+
+/* Orbit ticks around the dish — decorative, ties the 3D core to the page. */
+.hero3d::after {
+  content: "";
+  position: absolute;
+  inset: -2.15rem;
+  border-radius: 50%;
+  border: 2px dashed rgba(185, 194, 208, 0.55); /* --shadow-dark @ 55% */
+  pointer-events: none;
+}
+
+.hero3d__chip {
+  position: absolute;
+  top: 6%;
+  right: -4%;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-md);
+  background-color: var(--bg-base);
+  box-shadow: var(--neu-resting);
+}
+
+.hero3d__chip span {
+  color: var(--text-muted);
+  font-size: 0.65rem;
+  font-weight: var(--weight-bold);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.hero3d__chip strong {
+  color: var(--accent-primary);
+  font-family: var(--font-family-display);
+  font-size: var(--font-size-2);
+  letter-spacing: 0.02em;
+}
+
+.hero3d__fallback {
+  position: absolute;
+  inset: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+}
+
+.hero3d--fallback .hero3d__fallback {
+  display: flex;
+}
+
+.hero3d__fallback svg {
+  width: 58%;
+  height: 58%;
+  color: var(--text-muted);
+}
+
+.hero3d__fallback .fallback-accent {
+  color: var(--accent-primary);
+}
+
+/* Caption + the cross-page "orbit" link that connects the twin heroes. */
+.hero3d__caption {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  text-align: center;
+}
+
+.hero3d__caption span {
+  color: var(--text-muted);
+  font-size: 0.7rem;
+  font-weight: var(--weight-bold);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.orbit-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-pill);
+  color: var(--text-primary);
+  font-size: var(--font-size-1);
+  font-weight: var(--weight-bold);
+  letter-spacing: 0.05em;
+  text-decoration: none;
+}
+
+.orbit-link em {
+  color: var(--accent-primary);
+  font-style: normal;
+}
+
+.orbit-link::after {
+  content: "→";
+  color: var(--accent-primary);
+  transition: transform var(--duration-fast) var(--ease-standard);
+}
+
+.orbit-link:hover::after {
+  transform: translateX(4px);
+}
+
+/* Flight board (Travel) ---------------------------------------------------- */
+.flight-board {
+  display: grid;
+  gap: var(--space-1);
+  padding: var(--space-3) var(--space-4);
+}
+
+.flight-board__row {
+  display: grid;
+  grid-template-columns: 7.5rem 1fr auto;
+  align-items: baseline;
+  gap: var(--space-2);
+  padding-block: var(--space-2);
+}
+
+.flight-board__row + .flight-board__row {
+  border-top: 1px solid rgba(185, 194, 208, 0.45); /* --shadow-dark @ 45% */
+}
+
+.flight-board__code {
+  font-family: var(--font-family-display);
+  font-size: var(--font-size-3);
+  font-weight: var(--weight-bold);
+  letter-spacing: 0.08em;
+  color: var(--text-large);
+}
+
+.flight-board__route {
+  color: var(--text-muted);
+  font-size: var(--font-size-2);
+}
+
+.flight-board__status {
+  justify-self: end;
+  padding: 2px var(--space-2);
+  border-radius: var(--radius-pill);
+  box-shadow: var(--neu-pressed);
+  color: var(--text-muted);
+  font-size: 0.7rem;
+  font-weight: var(--weight-bold);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.flight-board__status--active {
+  color: var(--accent-primary);
+}
+
+@media (max-width: 1000px) {
+  .hero3d {
+    width: min(100%, 23rem);
+  }
+
+  .hero3d__chip {
+    right: 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .hero3d-visual {
+    margin-top: var(--space-4);
+  }
+
+  .hero3d {
+    width: min(88vw, 22rem);
+  }
+
+  .hero3d::after {
+    inset: -1.6rem;
+  }
+
+  .flight-board {
+    padding: var(--space-2) var(--space-3);
+  }
+
+  .flight-board__row {
+    grid-template-columns: 5.5rem 1fr;
+  }
+
+  .flight-board__status {
+    grid-column: 2;
+    justify-self: start;
+  }
+}
+
+@media (max-width: 560px) {
+  .hero3d {
+    width: min(86vw, 19rem);
+  }
+
+  .hero3d__chip {
+    top: 2%;
+    right: -2%;
+    padding: 6px var(--space-2);
+  }
+
+  .hero3d__chip strong {
+    font-size: var(--font-size-1);
   }
 }
 

@@ -25,4 +25,10 @@ jobs:
       - name: Run link checker
         uses: lycheeverse/lychee-action@v2
         with:
-          args: --no-progress --accept 200,204,206,301,302,403,429 './**/*.html' './**/*.md'
+          fail: true
+          args: >-
+            --config lychee.toml
+            --root-dir ${{ github.workspace }}
+            --no-progress
+            './**/*.html'
+            './**/*.md'

@@ -16,7 +16,7 @@
       href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="css/main.css?v=20260714-1" />
+    <link rel="stylesheet" href="css/main.css?v=20260825-2" />
     <script src="js/preloader.js?v=20260717-3"></script>
     <script src="js/neumorphic-scrollbar.js" defer></script>
     <script type="module" src="js/asset-guard.js" defer></script>
@@ -36,160 +36,64 @@
       <site-nav active-page="life"></site-nav>
     </header>
 
-    <main id="main" class="content-column">
-      <section class="story-hero life-hero" aria-labelledby="life-title">
-        <div class="story-hero__copy" data-reveal>
-          <p class="story-kicker"><span>Off the clock</span></p>
-          <h1 id="life-title">Life feels better <em>in motion.</em></h1>
-          <p class="hero__lead">
-            Away from code and classes, you will usually find me following a
-            race weekend, chasing the next point on court, or slowing down over
-            a cold coffee with friends.
-          </p>
-          <dl class="story-stats" aria-label="Life at a glance">
-            <div>
-              <dt>Home</dt>
-              <dd>Rizal</dd>
-            </div>
-            <div>
-              <dt>Game</dt>
-              <dd>VB</dd>
-            </div>
-            <div>
-              <dt>Weekend</dt>
-              <dd>Race</dd>
-            </div>
-          </dl>
+    <main id="main" class="content-column signal">
+      <section class="signal__masthead story-hero" aria-labelledby="life-title">
+        <figure class="signal__frame" data-reveal>
+          <img src="assets/images/photos/Patawow_VB.JPG" alt="Reggie with his volleyball team" width="2048" height="1536" fetchpriority="high" />
+          <figcaption>Frequency 01 / Off the clock</figcaption>
+        </figure>
+        <div class="signal__title" data-reveal data-reveal-delay="1">
+          <p>San Mateo, Rizal / weekend signal</p>
+          <h1 id="life-title">Find your <em>own pace.</em></h1>
+          <span>Sport, speed, people, pause.</span>
         </div>
-
-        <div class="story-hero__visual life-visual life-collage" data-reveal data-reveal-delay="2">
-          <figure class="life-collage__photo life-collage__photo--main card">
-            <img src="assets/images/photos/Patawow_VB.JPG" alt="Reggie with his volleyball team" width="1536" height="2048" fetchpriority="high" />
-          </figure>
-          <figure class="life-collage__photo life-collage__photo--secondary card">
-            <img src="assets/images/photos/basketball.JPG" alt="Reggie playing basketball" width="1536" height="2048" />
-          </figure>
-          <div class="life-collage__note neu-inset">
-            <span>Weekend mode</span>
-            <strong>Play. Pause.<br />Go again.</strong>
-          </div>
-          <p class="life-visual__tag">Find your pace</p>
+        <div class="signal__dial glass-panel" data-reveal data-reveal-delay="2" aria-label="Life at a glance">
+          <span>Current setting</span><strong>In motion</strong><p>Race weekends. Open courts. Cold coffee.</p>
         </div>
       </section>
 
-      <section class="race-section" aria-labelledby="race-title">
-        <div class="section-head">
-          <h2 id="race-title">Two wheels, then four</h2>
-          <p>The lean angles hooked me first. The strategy made me stay.</p>
+      <section class="signal__race race-section" aria-labelledby="race-title">
+        <div class="signal__section-title">
+          <p class="section-index">01 / Race frequency</p>
+          <h2 id="race-title">Bravery, then precision.</h2>
         </div>
-
-        <div class="race-console card" data-reveal>
-          <div class="race-console__track" aria-hidden="true">
-            <svg viewBox="0 0 540 270">
-              <path d="M78 200c-28-38-4-82 41-92 48-11 83 21 127 0 38-18 32-66 92-72 71-7 126 40 122 93-5 61-70 82-121 62-47-19-66 32-120 39-52 7-111 3-141-30Z" />
-              <circle cx="78" cy="200" r="7" />
-            </svg>
+        <div class="signal__race-card race-console glass-panel" data-reveal>
+          <div class="signal__track" aria-hidden="true">
+            <svg viewBox="0 0 540 270"><path d="M78 200c-28-38-4-82 41-92 48-11 83 21 127 0 38-18 32-66 92-72 71-7 126 40 122 93-5 61-70 82-121 62-47-19-66 32-120 39-52 7-111 3-141-30Z" /></svg>
             <span>TURN 01</span>
           </div>
-          <div class="race-console__copy">
-            <p class="timeline__meta">Sunday ritual</p>
-            <h3>Race mode: on</h3>
-            <p>
-              MotoGP is the favorite: the bravery, the last-lap pressure, the
-              impossible lean. Formula 1 follows with a different thrill -
-              strategy, precision, and speed measured in milliseconds.
-            </p>
-            <div class="race-split" aria-label="Favorite racing series">
-              <span>MotoGP</span>
-              <span>Formula 1</span>
-            </div>
+          <div>
+            <p class="timeline__meta">Sunday ritual</p><h3>Race mode: on</h3>
+            <p>MotoGP has the impossible lean and last-lap pressure. Formula 1 follows with strategy, precision, and speed measured in milliseconds.</p>
+            <div class="race-split"><span>MotoGP</span><span>Formula 1</span></div>
           </div>
         </div>
       </section>
 
-      <section class="court-section" aria-labelledby="court-title">
-        <div class="section-head">
-          <h2 id="court-title">Better when it is played</h2>
-          <p>Fast rallies, open courts, close games, and the right crew.</p>
+      <section class="signal__court court-section" aria-labelledby="court-title">
+        <div class="signal__section-title">
+          <p class="section-index">02 / Court signal</p>
+          <h2 id="court-title">Better when it is played.</h2>
         </div>
-
-        <div class="life-gallery">
-          <article class="life-shot life-shot--wide card" data-reveal>
-            <figure>
-              <img
-                src="assets/images/photos/Patawow_VB.JPG"
-                alt="Reggie standing with his volleyball teammates on an indoor court"
-                width="2048"
-                height="1536"
-                loading="lazy"
-              />
-              <figcaption><span>Volleyball / The crew</span><strong>Show up. Play hard.</strong></figcaption>
-            </figure>
-          </article>
-          <article class="life-shot card" data-reveal data-reveal-delay="1">
-            <figure>
-              <img
-                src="assets/images/photos/champs_vb.JPG"
-                alt="Reggie holding a championship trophy and medal after a volleyball match"
-                width="1536"
-                height="2048"
-                loading="lazy"
-              />
-              <figcaption><span>Volleyball</span><strong>Worth the rally</strong></figcaption>
-            </figure>
-          </article>
-          <article class="life-shot card" data-reveal data-reveal-delay="2">
-            <figure>
-              <img
-                src="assets/images/photos/basketball.JPG"
-                alt="Reggie wearing number one during a basketball game"
-                width="1365"
-                height="2048"
-                loading="lazy"
-              />
-              <figcaption><span>Basketball</span><strong>Any open court</strong></figcaption>
-            </figure>
-          </article>
+        <div class="signal__mosaic life-gallery">
+          <figure class="signal__tile signal__tile--team glass-panel" data-reveal><img src="assets/images/photos/Patawow_VB.JPG" alt="Reggie with volleyball teammates" width="2048" height="1536" loading="lazy" /><figcaption>Volleyball / the crew</figcaption></figure>
+          <figure class="signal__tile signal__tile--champ glass-panel" data-reveal data-reveal-delay="1"><img src="assets/images/photos/champs_vb.JPG" alt="Reggie with a volleyball championship trophy and medal" width="1536" height="2048" loading="lazy" /><figcaption>Worth the rally</figcaption></figure>
+          <figure class="signal__tile signal__tile--court glass-panel" data-reveal data-reveal-delay="2"><img src="assets/images/photos/basketball.JPG" alt="Reggie playing basketball" width="1365" height="2048" loading="lazy" /><figcaption>Any open court</figcaption></figure>
+          <p class="signal__mosaic-note">Show up.<br /><em>Play hard.</em></p>
         </div>
       </section>
 
-      <section class="small-wins" aria-labelledby="small-wins-title">
-        <div class="section-head">
-          <h2 id="small-wins-title">The everyday good stuff</h2>
-          <p>Simple rituals that make an ordinary day land just right.</p>
-        </div>
-
-        <div class="small-wins__grid">
-          <article class="coffee-story card" data-reveal>
-            <img
-              src="assets/images/photos/Cursor_Cafe.JPG"
-              alt="Reggie holding a coffee at Cafe Cursor Manila"
-              width="1536"
-              height="2048"
-              loading="lazy"
-            />
-            <div>
-              <p class="timeline__meta">Usual order</p>
-              <h3>White Chocolate Cold</h3>
-              <p>Starbucks or B1T1 Coffee. Cold, sweet, reliable.</p>
-            </div>
-          </article>
-
-          <div class="home-card neu-inset" data-reveal data-reveal-delay="2">
-            <div class="home-card__coordinates" aria-hidden="true">HOME BASE<br />SAN MATEO / PH</div>
-            <div>
-              <p class="timeline__meta">Home base</p>
-              <h3>San Mateo, Rizal</h3>
-              <p>Where I grew up, where I reset, and where every route begins.</p>
-            </div>
-            <span class="home-card__pulse" aria-hidden="true"></span>
-          </div>
+      <section class="signal__rituals small-wins" aria-labelledby="small-wins-title">
+        <div class="signal__section-title"><p class="section-index">03 / Reset</p><h2 id="small-wins-title">Small rituals, big reset.</h2></div>
+        <div class="signal__ritual-grid">
+          <article class="signal__coffee coffee-story glass-panel" data-reveal><img src="assets/images/photos/Cursor_Cafe.JPG" alt="Reggie holding coffee at Cafe Cursor Manila" width="1536" height="2048" loading="lazy" /><div><p class="timeline__meta">Usual order</p><h3>White Chocolate Cold</h3><p>Starbucks or B1T1 Coffee. Cold, sweet, reliable.</p></div></article>
+          <article class="signal__home home-card glass-panel" data-reveal data-reveal-delay="1"><span>HOME BASE / 14.72° N</span><h3>San Mateo, Rizal</h3><p>Where I grew up, where I reset, and where every route begins.</p><i aria-hidden="true"></i></article>
         </div>
       </section>
 
-      <section class="story-closing neu-inset" aria-label="Life philosophy" data-reveal>
-        <blockquote>Not every lap has to be the fastest to be worth remembering.</blockquote>
-        <span aria-hidden="true">WATCH / PLAY / RESET</span>
+      <section class="signal__closing story-closing glass-panel" aria-label="Life philosophy" data-reveal>
+        <blockquote>Not every lap has to be fastest to be worth remembering.</blockquote>
+        <a href="/travel">Switch frequency: Travel <span aria-hidden="true">↗</span></a>
       </section>
     </main>
 

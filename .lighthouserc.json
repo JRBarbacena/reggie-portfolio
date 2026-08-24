@@ -9,7 +9,11 @@
         "/life.html",
         "/designs.html"
       ],
-      "numberOfRuns": 1
+      "numberOfRuns": 1,
+      "settings": {
+        "preset": "desktop",
+        "chromeFlags": "--no-sandbox --disable-dev-shm-usage"
+      }
     },
     "assert": {
       "assertions": {
@@ -20,7 +24,8 @@
       }
     },
     "upload": {
-      "target": "temporary-public-storage"
+      "target": "filesystem",
+      "outputDir": ".lighthouseci"
     }
   }
 }

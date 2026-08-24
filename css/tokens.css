@@ -16,14 +16,14 @@
   --text-large: #3a4150;         /* large/heading text — >= 3:1               */
 
   /* MotoGP-derived primary accent (vivid racing red) — links, controls,
-     highlights (Req 6.1). */
-  --accent-primary: #d5001c;
+     highlights (Req 6.1). Tuned for >= 4.5:1 on --bg-base. */
+  --accent-primary: #c8001c;
   --accent-primary-strong: #a30016;
-  --accent-primary-soft: #ff3b52;
-  --accent-cool: #2563eb;
-  --accent-cool-soft: #60a5fa;
-  --accent-teal: #0f766e;
-  --accent-gold: #c27b18;
+  --accent-primary-soft: #ff3b52; /* decorative / on dark surfaces only */
+  --accent-cool: #1d4ed8;
+  --accent-cool-soft: #3b82f6; /* decorative / on dark surfaces only */
+  --accent-teal: #115e59;
+  --accent-gold: #92400e;
 
   /* Formula 1-derived secondary accent (carbon graphite) — decorative /
      supporting details only, subordinate to MotoGP red (Req 6.2). */

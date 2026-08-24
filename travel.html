@@ -16,7 +16,7 @@
       href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="css/main.css?v=20260714-1" />
+    <link rel="stylesheet" href="css/main.css?v=20260825-2" />
     <script src="js/preloader.js?v=20260717-3"></script>
     <script src="js/neumorphic-scrollbar.js" defer></script>
     <script type="module" src="js/asset-guard.js" defer></script>
@@ -36,127 +36,85 @@
       <site-nav active-page="travel"></site-nav>
     </header>
 
-    <main id="main" class="content-column">
-      <section class="story-hero travel-hero" aria-labelledby="travel-title">
-        <div class="story-hero__copy" data-reveal>
-          <p class="story-kicker"><span>Travel log</span></p>
-          <h1 id="travel-title">Collecting places, <em>not checklists.</em></h1>
-          <p class="hero__lead">
-            I am still early in the journey: one trip beyond the Philippines,
-            a lot more of home to explore, and a camera roll that grows every
-            time I take the long way around.
-          </p>
-          <dl class="story-stats" aria-label="Travel at a glance">
-            <div>
-              <dt>Places logged</dt>
-              <dd>02</dd>
-            </div>
-            <div>
-              <dt>First trip abroad</dt>
-              <dd>HKG</dd>
-            </div>
-            <div>
-              <dt>Home base</dt>
-              <dd>PH</dd>
-            </div>
-          </dl>
+    <main id="main" class="content-column atlas">
+      <section class="atlas__masthead story-hero" aria-labelledby="travel-title">
+        <p class="atlas__eyebrow">Personal atlas / Volume 01</p>
+        <div class="atlas__title-wrap" data-reveal>
+          <h1 id="travel-title">Some places stay <em>with you.</em></h1>
+          <p>Not collecting pins. Collecting the tiny details that make a trip feel like yours.</p>
         </div>
-
-        <div class="story-hero__visual travel-visual" data-reveal data-reveal-delay="2">
-          <figure class="travel-postcard card">
-            <div class="travel-postcard__image">
-              <img
-                src="assets/images/photos/Hundred_Island.JPG"
-                alt="Reggie overlooking the blue water and islands at Hundred Islands, Pangasinan"
-                width="1365"
-                height="2048"
-                fetchpriority="high"
-              />
-            </div>
-            <figcaption>
-              <span>Pangasinan, Philippines</span>
-              <strong>Hundred Islands</strong>
-            </figcaption>
-          </figure>
-
-          <div class="route-module neu-inset" aria-label="Route from the Philippines to Hong Kong">
-            <div class="route-module__labels" aria-hidden="true">
-              <span>MNL</span>
-              <span>HKG</span>
-            </div>
-            <svg class="route-map" viewBox="0 0 420 92" role="img" aria-label="A stylized route line from Manila to Hong Kong">
-              <path class="route-map__guide" d="M28 70 C126 4 286 6 392 60" />
-              <path class="route-map__line" d="M28 70 C126 4 286 6 392 60" />
-              <circle class="route-map__point" cx="28" cy="70" r="6" />
-              <circle class="route-map__point route-map__point--end" cx="392" cy="60" r="6" />
-            </svg>
-            <p><strong>First international chapter</strong><span>Philippines to Hong Kong</span></p>
-          </div>
-        </div>
+        <figure class="atlas__map-window glass-panel" data-reveal data-reveal-delay="1">
+          <img src="assets/images/photos/Hundred_Island.JPG" alt="Reggie looking over Hundred Islands in Pangasinan" width="1365" height="2048" fetchpriority="high" />
+          <figcaption><span>16.19° N / 120.03° E</span><strong>Hundred Islands</strong></figcaption>
+          <span class="atlas__stamp" aria-hidden="true">PH / 01</span>
+        </figure>
+        <dl class="atlas__metrics story-stats" aria-label="Travel at a glance" data-reveal data-reveal-delay="2">
+          <div><dt>Places logged</dt><dd>02</dd></div>
+          <div><dt>First abroad</dt><dd>HKG</dd></div>
+          <div><dt>Route status</dt><dd>Open</dd></div>
+        </dl>
       </section>
 
-      <section class="travel-log" aria-labelledby="travel-log-title">
-        <div class="section-head">
-          <h2 id="travel-log-title">Stamped so far</h2>
-          <p>Two places, two very different kinds of energy.</p>
+      <section class="atlas__chapter travel-entry" aria-labelledby="travel-log-title">
+        <div class="atlas__chapter-head">
+          <p class="section-index">Chapter 01 / Blue hour</p>
+          <h2 id="travel-log-title">A day made of open water.</h2>
         </div>
-
-        <div class="travel-entry card" data-reveal>
-          <figure class="travel-entry__media">
-            <img
-              src="assets/images/photos/Hundred_Island.JPG"
-              alt="Reggie at a viewpoint in Hundred Islands"
-              width="1365"
-              height="2048"
-              loading="lazy"
-            />
+        <div class="atlas__chapter-grid">
+          <article class="atlas__note glass-panel" data-reveal>
+            <span class="atlas__note-number">01</span>
+            <h3>Hundred Islands</h3>
+            <p>The kind of day that resets everything: island views, clear water, and enough open sky to make the week feel far away.</p>
+            <ul class="detail-pills" aria-label="Hundred Islands highlights">
+              <li>Island views</li><li>Sea air</li><li>Core memory</li>
+            </ul>
+          </article>
+          <figure class="atlas__portrait glass-panel" data-reveal data-reveal-delay="1">
+            <img src="assets/images/photos/Hundred_Island.JPG" alt="Reggie at a Hundred Islands viewpoint" width="1365" height="2048" loading="lazy" />
             <figcaption>Blue water. Bright sky. No rush.</figcaption>
           </figure>
-          <div class="travel-entry__copy">
-            <p class="timeline__meta">Pangasinan / Philippines</p>
-            <h3>Hundred Islands</h3>
-            <p>
-              The kind of day that resets everything: island views, clear
-              water, and enough open sky to make the week feel far away.
-            </p>
-            <ul class="detail-pills" aria-label="Hundred Islands highlights">
-              <li>Island views</li>
-              <li>Sea air</li>
-              <li>Core memory</li>
-            </ul>
-          </div>
+          <p class="atlas__pullquote" data-reveal data-reveal-delay="2">“Leave room in the plan for the view.”</p>
         </div>
+      </section>
 
-        <div class="travel-stamps">
-          <article class="passport-card card lift" data-reveal data-reveal-delay="1">
-            <div class="passport-card__topline">
-              <p class="timeline__meta">Beyond home</p>
-            </div>
-            <div class="passport-card__code" aria-hidden="true">HKG</div>
+      <section class="atlas__dispatches travel-stamps" aria-labelledby="dispatches-title">
+        <div class="atlas__chapter-head">
+          <p class="section-index">Chapter 02 / Beyond home</p>
+          <h2 id="dispatches-title">One stamped. One still unwritten.</h2>
+        </div>
+        <div class="atlas__dispatch-grid">
+          <article class="atlas-ticket glass-panel" data-reveal>
+            <p>First international chapter</p>
+            <strong>HKG</strong>
             <h3>Hong Kong</h3>
-            <p>
-              My first trip outside the Philippines: bright lights, busy
-              streets, and food that still comes back to mind.
-            </p>
-            <span class="passport-card__stamp" aria-hidden="true">FIRST ABROAD</span>
+            <span>22.32° N / 114.17° E</span>
+            <p>Bright lights, busy streets, and food that still comes back to mind.</p>
           </article>
-
-          <article class="next-stop card" data-reveal data-reveal-delay="2">
-            <span class="next-stop__pin" aria-hidden="true"></span>
-            <p class="timeline__meta">The route continues</p>
-            <h3>Next stop: open</h3>
-            <p>
-              No fixed map yet. Just a promise to keep adding real places,
-              honest notes, and better stories as they happen.
-            </p>
-            <div class="next-stop__track" aria-hidden="true"><span></span></div>
+          <article class="atlas-ticket atlas-ticket--future glass-panel" data-reveal data-reveal-delay="1">
+            <p>Next coordinate</p>
+            <strong>?</strong>
+            <h3>Route open</h3>
+            <span>Awaiting a reason to go</span>
+            <p>No fixed map yet. Better stories happen when there is space to change direction.</p>
           </article>
         </div>
       </section>
 
-      <section class="story-closing neu-inset" aria-label="Travel philosophy" data-reveal>
+      <section class="atlas__ledger travel-board glass-panel" aria-labelledby="travel-board-title" data-reveal>
+        <div>
+          <p class="section-index">Route ledger</p>
+          <h2 id="travel-board-title">Where the line goes next.</h2>
+        </div>
+        <ol>
+          <li><span>01</span><strong>MNL → HKG</strong><em>Stamped</em></li>
+          <li><span>02</span><strong>PH / Hundred Islands</strong><em>Remembered</em></li>
+          <li><span>03</span><strong>Next departure</strong><em>Unmarked</em></li>
+        </ol>
+      </section>
+
+      <section class="atlas__closing story-closing glass-panel" aria-label="Travel philosophy" data-reveal>
         <blockquote>Go far enough to come home with a different story.</blockquote>
-        <span aria-hidden="true">RIDE / ROAM / RETURN</span>
+        <a class="atlas__next" href="/life">Next volume: Life <span aria-hidden="true">↗</span></a>
       </section>
     </main>
 
