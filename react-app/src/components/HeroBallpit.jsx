@@ -44,11 +44,14 @@ export default function HeroBallpit({ active = true }) {
       setCompact(compactQuery.matches);
       setCapable(active && !motionQuery.matches && !connection?.saveData && supportsWebGL());
     };
-    update();
+    setCompact(compactQuery.matches);
+    setCapable(false);
+    const activationTimer = window.setTimeout(update, active ? 700 : 0);
     motionQuery.addEventListener("change", update);
     compactQuery.addEventListener("change", update);
     connection?.addEventListener?.("change", update);
     return () => {
+      window.clearTimeout(activationTimer);
       motionQuery.removeEventListener("change", update);
       compactQuery.removeEventListener("change", update);
       connection?.removeEventListener?.("change", update);

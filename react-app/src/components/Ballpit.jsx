@@ -41,6 +41,7 @@ const DEFAULTS = {
   friction: 0.9975,
   wallBounce: 0.55,
   maxVelocity: 0.1,
+  maxFrameRate: 30,
   maxX: 5,
   maxY: 5,
   maxZ: 2,
@@ -267,6 +268,7 @@ function createBallpit(canvas, options = {}) {
   let disposed = false;
   let intersecting = true;
   let scrollFrameId = 0;
+  let lastFrameTime = 0;
 
   const resize = () => {
     const width = Math.max(1, canvas.parentElement?.clientWidth ?? canvas.clientWidth);
@@ -280,9 +282,12 @@ function createBallpit(canvas, options = {}) {
     spheres.config.maxY = worldHeight / 2;
   };
 
-  const renderFrame = () => {
+  const renderFrame = (timestamp) => {
     if (!running || disposed) return;
     frameId = requestAnimationFrame(renderFrame);
+    const frameInterval = 1000 / Math.max(1, spheres.config.maxFrameRate);
+    if (lastFrameTime && timestamp - lastFrameTime < frameInterval) return;
+    lastFrameTime = timestamp - ((timestamp - lastFrameTime) % frameInterval);
     timer.update();
     spheres.update({ delta: Math.min(timer.getDelta(), 1 / 30), elapsed: timer.getElapsed() });
     renderer.render(scene, camera);
@@ -293,7 +298,8 @@ function createBallpit(canvas, options = {}) {
     canvas.dataset.animationState = "running";
     spheres.physics.maintainMotion();
     timer.reset();
-    renderFrame();
+    lastFrameTime = 0;
+    frameId = requestAnimationFrame(renderFrame);
   };
   const stop = () => {
     running = false;

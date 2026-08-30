@@ -1,7 +1,7 @@
 import { expect, test } from "@playwright/test";
 
 async function dismissEntryGate(page) {
-  await page.locator("main h1").waitFor();
+  await page.locator("main h1").waitFor({ state: "attached" });
   const enter = page.getByRole("button", { name: "Enter portfolio" });
   if (await enter.isVisible().catch(() => false)) {
     await enter.click();
