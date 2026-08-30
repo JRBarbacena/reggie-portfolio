@@ -1,0 +1,52 @@
+{
+  "version": 1,
+  "maxRedirects": 2,
+  "products": [
+    {
+      "path": "/",
+      "alias": "/index.html",
+      "h1": "Beyond comfort lies greatness."
+    },
+    {
+      "path": "/tech",
+      "alias": "/tech.html",
+      "h1": "Turning ideas into thoughtful digital experiences."
+    },
+    {
+      "path": "/travel",
+      "alias": "/travel.html",
+      "h1": "Drifting around the world"
+    },
+    {
+      "path": "/life",
+      "alias": "/life.html",
+      "h1": "Life feels better in motion."
+    }
+  ],
+  "utilities": [
+    {
+      "id": "not-found",
+      "path": "/404",
+      "alias": "/404.html",
+      "h1": "Page not found."
+    },
+    {
+      "id": "offline",
+      "path": "/offline",
+      "alias": "/offline.html",
+      "h1": "This page is not available offline."
+    }
+  ],
+  "assets": [
+    {
+      "path": "/assets/images/brand/favicon-32.png",
+      "contentType": "image/png",
+      "bytes": 1468,
+      "sha256": "d00e0b60861f72b04cc6fcd4458fb59444d6866e17d65709ea983883df338b76"
+    }
+  ],
+  "unknown": {
+    "path": "/definitely-missing",
+    "h1": "Page not found."
+  }
+}

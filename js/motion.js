@@ -48,11 +48,12 @@ function initReveal() {
       for (const entry of entries) {
         if (entry.isIntersecting) {
           entry.target.classList.add("is-revealed");
-          entry.target.addEventListener(
-            "transitionend",
-            () => entry.target.classList.add("reveal-complete"),
-            { once: true }
-          );
+          const complete = (event) => {
+            if (event.target !== entry.target || event.propertyName !== "transform") return;
+            entry.target.classList.add("reveal-complete");
+            entry.target.removeEventListener("transitionend", complete);
+          };
+          entry.target.addEventListener("transitionend", complete);
           obs.unobserve(entry.target);
         }
       }

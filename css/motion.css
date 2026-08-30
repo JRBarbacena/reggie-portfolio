@@ -10,7 +10,9 @@
    no-blur treatment keep cards flowing into place instead of popping in. */
 [data-reveal] {
   --reveal-y: 0.75rem;
-  --reveal-base-transform: none;
+  /* Keep the base transform composable. `none translate3d(...)` is invalid
+     CSS and previously reduced the reveal to an opacity-only fade. */
+  --reveal-base-transform: translateZ(0);
   opacity: 0;
   transform: var(--reveal-base-transform) translate3d(0, var(--reveal-y), 0);
   transition:
@@ -96,7 +98,18 @@ html:not(.js) [data-reveal],
   }
 
   .lift:hover,
-  .animate-rise {
+  .animate-rise,
+  .home .photo-window:hover,
+  .home .hero-chip:hover .hero-chip__icon,
+  .home .hero-chip:focus-visible .hero-chip__icon,
+  .home .site-nav__link:hover,
+  .home .site-nav__overflow-toggle:hover {
     transform: none;
+  }
+
+  .portfolio-entered .hero--home :is(.hero__center, .photo-window, .hero-chip) {
+    animation: none;
+    opacity: 1;
+    translate: none;
   }
 }

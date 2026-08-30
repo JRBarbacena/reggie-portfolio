@@ -4,6 +4,7 @@
 function initHeroChips() {
   const chips = Array.from(document.querySelectorAll(".hero-chip"));
   if (chips.length === 0) return;
+  let activeChip = null;
 
   const closeAll = (except) => {
     chips.forEach((chip) => {
@@ -12,15 +13,25 @@ function initHeroChips() {
         chip.classList.remove("is-open");
       }
     });
+    if (!except) activeChip = null;
   };
 
   chips.forEach((chip) => {
+    chip.addEventListener("pointerenter", () => {
+      chip.classList.add("is-hovering");
+    });
+
+    chip.addEventListener("pointerleave", () => {
+      chip.classList.remove("is-hovering");
+    });
+
     chip.addEventListener("click", (event) => {
       event.stopPropagation();
       const open = chip.getAttribute("aria-expanded") === "true";
       closeAll(chip);
       chip.setAttribute("aria-expanded", String(!open));
       chip.classList.toggle("is-open", !open);
+      activeChip = open ? null : chip;
     });
   });
 
@@ -29,7 +40,11 @@ function initHeroChips() {
 
   // Close on Escape.
   document.addEventListener("keydown", (event) => {
-    if (event.key === "Escape") closeAll(null);
+    if (event.key !== "Escape" || !activeChip) return;
+    const trigger = activeChip;
+    closeAll(null);
+    trigger.classList.remove("is-hovering");
+    trigger.focus();
   });
 }
 

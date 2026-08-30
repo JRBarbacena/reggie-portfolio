@@ -19,40 +19,17 @@ describe("<site-nav> rendering", () => {
     expect(ids).toEqual(PAGES.map((p) => p.id).sort());
   });
 
-  it("renders primary pages as top-level links and Designs in the overflow menu", () => {
+  it("renders every product as a top-level link without an overflow control", () => {
     mountNav("home");
-    const overflowMenu = document.querySelector("#site-nav-overflow");
-    const overflowIds = Array.from(
-      overflowMenu.querySelectorAll("a.site-nav__link")
-    ).map((a) => a.dataset.pageId);
-    expect(overflowIds).toEqual(["designs"]);
+    expect(document.querySelector(".site-nav__overflow")).toBeNull();
+    expect(document.querySelectorAll(".site-nav__list a.site-nav__link")).toHaveLength(4);
   });
 
-  it("marks the active primary link and not the overflow control (Req 3.7)", () => {
+  it("marks the active primary link", () => {
     mountNav("tech");
     const active = document.querySelectorAll('[aria-current="page"]');
     expect(active).toHaveLength(1);
     expect(active[0].dataset.pageId).toBe("tech");
-    const overflowToggle = document.querySelector(".site-nav__overflow-toggle");
-    expect(overflowToggle.classList.contains("is-active")).toBe(false);
-  });
-
-  it("marks BOTH the overflow control and the Designs link active (Req 3.8)", () => {
-    mountNav("designs");
-    const overflowToggle = document.querySelector(".site-nav__overflow-toggle");
-    expect(overflowToggle.classList.contains("is-active")).toBe(true);
-    const activeLink = document.querySelector('a[aria-current="page"]');
-    expect(activeLink.dataset.pageId).toBe("designs");
-  });
-
-  it("toggles the overflow menu open/closed via the control", () => {
-    mountNav("home");
-    const overflow = document.querySelector(".site-nav__overflow");
-    const toggle = document.querySelector(".site-nav__overflow-toggle");
-    expect(overflow.getAttribute("data-open")).toBe("false");
-    toggle.click();
-    expect(overflow.getAttribute("data-open")).toBe("true");
-    expect(toggle.getAttribute("aria-expanded")).toBe("true");
   });
 
   it("renders identical structure regardless of active page (Req 3.9)", () => {
@@ -60,10 +37,10 @@ describe("<site-nav> rendering", () => {
     const orderHome = Array.from(
       document.querySelectorAll("a.site-nav__link")
     ).map((a) => a.dataset.pageId);
-    mountNav("designs");
-    const orderDesigns = Array.from(
+    mountNav("life");
+    const orderLife = Array.from(
       document.querySelectorAll("a.site-nav__link")
     ).map((a) => a.dataset.pageId);
-    expect(orderHome).toEqual(orderDesigns);
+    expect(orderHome).toEqual(orderLife);
   });
 });

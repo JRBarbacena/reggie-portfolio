@@ -1,0 +1,53 @@
+{
+  "$schema": "./site-manifest.schema.v1.json",
+  "schemaVersion": 1,
+  "cache": { "namespace": "reggie-portfolio" },
+  "hosting": {
+    "buildCommand": "npm run build:react",
+    "cleanUrls": true,
+    "framework": "vite",
+    "outputDirectory": "dist-react",
+    "rewrites": [{ "source": "/(.*)", "destination": "/" }],
+    "trailingSlash": false,
+    "headers": [
+      {
+        "source": "/(.*)",
+        "headers": [
+          { "key": "Cache-Control", "value": "public, max-age=0, must-revalidate" },
+          { "key": "Content-Security-Policy", "value": "default-src 'self'; img-src 'self' data: blob: https://*.supabase.co; style-src 'self' 'unsafe-inline'; script-src 'self'; worker-src 'self'; connect-src 'self' https://*.supabase.co wss://*.supabase.co; object-src 'none'; base-uri 'self'; frame-ancestors 'none'; form-action 'self'; upgrade-insecure-requests" },
+          { "key": "X-Content-Type-Options", "value": "nosniff" },
+          { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" },
+          { "key": "Permissions-Policy", "value": "camera=(), microphone=(), geolocation=()" }
+        ]
+      },
+      { "source": "/(.*)\\.(css|js)", "headers": [{ "key": "Cache-Control", "value": "public, max-age=0, must-revalidate" }] },
+      { "source": "/(.*)\\.(svg|jpg|JPG|png)", "headers": [{ "key": "Cache-Control", "value": "public, max-age=86400, stale-while-revalidate=604800" }] }
+    ]
+  },
+  "pages": [
+    { "id": "home", "label": "Home", "route": "/", "document": "index.html", "tier": "primary", "order": 0, "h1": "Beyond comfort lies greatness." },
+    { "id": "tech", "label": "Tech", "route": "/tech", "document": "tech.html", "tier": "primary", "order": 1, "h1": "Turning ideas into thoughtful digital experiences." },
+    { "id": "travel", "label": "Travel", "route": "/travel", "document": "travel.html", "tier": "primary", "order": 2, "h1": "Drifting around the world" },
+    { "id": "life", "label": "Life", "route": "/life", "document": "life.html", "tier": "primary", "order": 3, "h1": "Life feels better in motion." }
+  ],
+  "utilities": [
+    { "id": "not-found", "route": "/404", "document": "404.html", "cacheRole": "none", "h1": "Page not found." },
+    { "id": "offline", "route": "/offline", "document": "offline.html", "cacheRole": "shell", "h1": "This page is not available offline." }
+  ],
+  "assets": [
+    { "path": "css/main.css", "kind": "style", "availability": "required", "mutability": "mutable", "cacheRole": "shell" },
+    { "path": "js/site-nav.js", "kind": "module", "availability": "required", "mutability": "mutable", "cacheRole": "shell" },
+    { "path": "js/site-footer.js", "kind": "module", "availability": "required", "mutability": "mutable", "cacheRole": "shell" },
+    { "path": "js/asset-guard.js", "kind": "module", "availability": "required", "mutability": "mutable", "cacheRole": "shell" },
+    { "path": "js/site-cache.js", "kind": "script", "availability": "required", "mutability": "mutable", "cacheRole": "shell" },
+    { "path": "js/motion.js", "kind": "module", "availability": "optional", "mutability": "mutable", "cacheRole": "shell" },
+    { "path": "js/hero.js", "kind": "module", "availability": "optional", "mutability": "mutable", "cacheRole": "shell" },
+    { "path": "js/preloader.js", "kind": "module", "availability": "optional", "mutability": "mutable", "cacheRole": "shell" },
+    { "path": "js/neumorphic-scrollbar.js", "kind": "script", "availability": "optional", "mutability": "mutable", "cacheRole": "shell" },
+    { "path": "js/terminal.js", "kind": "module", "availability": "optional", "mutability": "mutable", "cacheRole": "shell" },
+    { "path": "js/tech-albums.js", "kind": "module", "availability": "optional", "mutability": "mutable", "cacheRole": "shell" },
+    { "path": "assets/images/brand/rb-monogram.png", "kind": "image", "availability": "optional", "mutability": "mutable", "cacheRole": "shell" },
+    { "path": "assets/images/brand/favicon-32.png", "kind": "image", "availability": "optional", "mutability": "mutable", "cacheRole": "shell", "routeProbe": true },
+    { "path": "assets/images/brand/apple-touch-icon.png", "kind": "image", "availability": "optional", "mutability": "mutable", "cacheRole": "shell" }
+  ]
+}

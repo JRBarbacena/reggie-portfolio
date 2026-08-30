@@ -1,65 +1,73 @@
-const CACHE_NAME = "reggie-portfolio-v20260717-3";
+import {
+  CACHE_PREFIX, SHELL_CACHE, RUNTIME_CACHE, REQUIRED_SHELL, OPTIONAL_SHELL,
+  PRODUCT_ROUTES, normalizeRoute, isCacheable
+} from "./js/cache-policy.js";
 
-const APP_SHELL = [
-  "/",
-  "/index.html",
-  "/tech",
-  "/travel",
-  "/life",
-  "/designs",
-  "/css/main.css?v=20260714-1",
-  "/js/site-cache.js",
-  "/js/site-nav.js",
-  "/js/site-footer.js",
-  "/js/pages.js",
-  "/js/nav-model.js",
-  "/js/motion.js",
-  "/js/hero.js",
-  "/assets/images/brand/rb-monogram.png",
-];
+const MAX_RUNTIME_ENTRIES = 40;
+
+async function fetchRequired(cache, path) {
+  const response = await fetch(path, { cache: "no-store" });
+  if (!response.ok) throw new Error(`Required app-shell response failed: ${path}`);
+  await cache.put(normalizeRoute(path), response);
+}
+
+async function trim(cacheName, maxEntries) {
+  const cache = await caches.open(cacheName);
+  const keys = await cache.keys();
+  await Promise.all(keys.slice(0, Math.max(0, keys.length - maxEntries)).map((key) => cache.delete(key)));
+}
 
 self.addEventListener("install", (event) => {
-  // A missing optional route must not prevent caching the rest of the app.
-  event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) =>
-      Promise.all(APP_SHELL.map((asset) => cache.add(asset).catch(() => undefined)))
-    )
-  );
-  self.skipWaiting();
+  event.waitUntil((async () => {
+    const cache = await caches.open(SHELL_CACHE);
+    await Promise.all(REQUIRED_SHELL.map((path) => fetchRequired(cache, path)));
+    await Promise.allSettled(OPTIONAL_SHELL.map((path) => fetchRequired(cache, path)));
+  })());
+});
+
+self.addEventListener("message", (event) => {
+  if (event.data?.type === "PORTFOLIO_ACTIVATE") self.skipWaiting();
 });
 
 self.addEventListener("activate", (event) => {
-  event.waitUntil(
-    caches.keys().then((keys) =>
-      Promise.all(keys.filter((key) => key !== CACHE_NAME).map((key) => caches.delete(key)))
-    )
-  );
-  self.clients.claim();
+  event.waitUntil((async () => {
+    const owned = (await caches.keys()).filter((key) => key.startsWith(CACHE_PREFIX));
+    const obsolete = owned.filter((key) => key !== SHELL_CACHE && key !== RUNTIME_CACHE);
+    await Promise.all(obsolete.map((key) => caches.delete(key)));
+    await self.clients.claim();
+  })());
 });
 
 self.addEventListener("fetch", (event) => {
-  const { request } = event;
-  if (request.method !== "GET" || new URL(request.url).origin !== self.location.origin) return;
-
-  if (request.mode === "navigate") {
-    event.respondWith(
-      fetch(request).then((response) => {
-        const copy = response.clone();
-        caches.open(CACHE_NAME).then((cache) => cache.put(request, copy));
-        return response;
-      }).catch(() => caches.match(request).then((response) => response || caches.match("/index.html")))
-    );
-    return;
-  }
-
-  event.respondWith(
-    caches.match(request).then((cached) =>
-      cached || fetch(request).then((response) => {
-        if (!response.ok) return response;
-        const copy = response.clone();
-        caches.open(CACHE_NAME).then((cache) => cache.put(request, copy));
-        return response;
-      })
-    )
-  );
+  const request = event.request;
+  const url = new URL(request.url);
+  if (request.method !== "GET" || url.origin !== self.location.origin) return;
+  event.respondWith(request.mode === "navigate" ? navigate(request) : asset(request));
 });
+
+async function navigate(request) {
+  const route = normalizeRoute(request.url, self.location.origin);
+  try {
+    const response = await fetch(request);
+    if (isCacheable(request, response, self.location.origin) && PRODUCT_ROUTES.has(route)) {
+      const cache = await caches.open(SHELL_CACHE);
+      await cache.put(route, response.clone());
+    }
+    return response;
+  } catch {
+    const cache = await caches.open(SHELL_CACHE);
+    return (PRODUCT_ROUTES.has(route) && await cache.match(route)) || await cache.match("/offline.html");
+  }
+}
+
+async function asset(request) {
+  const cached = await caches.match(request);
+  if (cached) return cached;
+  const response = await fetch(request);
+  if (isCacheable(request, response, self.location.origin)) {
+    const cache = await caches.open(RUNTIME_CACHE);
+    await cache.put(request, response.clone());
+    await trim(RUNTIME_CACHE, MAX_RUNTIME_ENTRIES);
+  }
+  return response;
+}
