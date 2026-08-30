@@ -4499,8 +4499,8 @@ body.tech-page {
 }
 
 @keyframes preloader-panel-in {
-  from { opacity: 0; transform: translateY(var(--reveal-offset)); }
-  to { opacity: 1; transform: translateY(0); }
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 /* Native page navigation gets a restrained cross-page fade with no loading
