@@ -2,69 +2,84 @@
 
 ## Delivery model
 
-This is a **static** portfolio. Vercel serves HTML, CSS, JavaScript, and media
-from the repository root. There is no server-side app, database, or production
-build step.
+The production portfolio is a client-rendered React 19 single-page application
+built by Vite. React Router owns Home, Tech, Travel, Life, Admin, and 404 views.
+Vercel serves the static `dist-react` output and rewrites deep links to the React
+shell after applying permanent legacy-HTML redirects.
 
-[`vercel.json`](../vercel.json) enables `cleanUrls: true`, so `/tech` resolves to
-`tech.html` (and `/` to `index.html`). Navigation and the page registry use these
-clean paths. Cache headers keep CSS/JS revalidating and pin long-lived caching on
-images.
-
-## Layers
-
-```mermaid
-flowchart LR
-  pages[HTML_pages] --> cssEntry[css/main.css]
-  cssEntry --> tokens[css/tokens.css]
-  cssEntry --> base[css/base.css]
-  cssEntry --> neu[css/neumorphism.css]
-  cssEntry --> comps[css/components.css]
-  cssEntry --> motionCss[css/motion.css]
-  pages --> registry[js/pages.js]
-  registry --> navModel[js/nav-model.js]
-  navModel --> siteNav[js/site-nav.js]
-  pages --> pageMods[page_modules]
+```text
+react-app/index.html
+  -> react-app/src/main.jsx
+     -> BrowserRouter
+        -> AppShell
+           -> shared navigation, footer, motion, scrollbar
+           -> lazy Home / Tech / Travel / Life / Admin routes
+  -> shared css/ design system
+  -> Supabase publishable client
+  -> production service worker and manifest
 ```
 
-| Layer | Location | Role |
-|-------|----------|------|
-| Pages | `*.html` | Content shells; set `active-page` on `<site-nav>` |
-| Design system | `css/tokens.css` | Colors, type, space, shadow, motion SSoT |
-| CSS entry | `css/main.css` | `@import` order for all layers |
-| Nav | `js/pages.js`, `nav-model.js`, `site-nav.js` | Registry → pure model → `<site-nav>` |
-| Shared UI | `site-footer.js`, `preloader.js`, `neumorphic-scrollbar.js`, `asset-guard.js` | Cross-page behavior |
-| Page modules | `hero.js`, `hero-chips.js`, `terminal.js`, `tech-albums.js`, … | Page-specific enhancement |
-| Media | `assets/images/` | Photos, certificates, brand marks |
-| Quality | `tests/unit/`, `scripts/qa-*.mjs` | Unit/property tests + static QA |
+The old root HTML and browser-JavaScript implementation remains in source control
+as rollback/reference material, but it is not the Vercel production output.
 
-## Page registry and routing
+## Data and authorization
 
-[`js/pages.js`](../js/pages.js) is the single source of truth for nav order and
-hrefs (`/`, `/tech`, `/travel`, `/life`, `/designs`). Array order is both display
-order and the intended content build order.
+The browser uses only `VITE_SUPABASE_URL` and
+`VITE_SUPABASE_PUBLISHABLE_KEY`. Public pages query published destination content.
+The Admin route uses passwordless authentication and verifies membership through
+the `is_album_admin` database function. Row-level security and private storage
+policies—not the discoverability of `/admin`—enforce access.
 
-- `tier: "primary"` → top-level link  
-- `tier: "overflow"` → “More” menu  
+Admin operations support private drafts, publication, destination/category rules,
+cover replacement, supporting-photo addition/removal, editing, and confirmed
+deletion. Storage media is exposed to authorized/public views with time-limited
+signed URLs.
 
-Each HTML page sets `active-page` to the matching `id`. Adding a page requires
-updating the registry, a new HTML file, tests, LHCI URLs, and lychee fallbacks —
-see [ADD_A_PAGE.md](ADD_A_PAGE.md).
+## Styling and motion
 
-## Deployment flow
+The visual system combines bright-white glass and neumorphic surfaces with a red
+accent. Shared CSS tokens control spacing, typography, elevation, duration, and
+easing. `data-reveal` content is observed by `AppShell`; reduced-motion users see
+final states immediately.
 
-1. Push to GitHub (`main` or a PR).
-2. Vercel deploys the static root (no build command).
-3. GitHub Actions run QA, Lighthouse, link check, and npm audit (see [CI.md](CI.md)).
+Home lazy-loads the Three.js Ballpit. It pauses outside the viewport, omits the
+cursor-following sphere, and falls back to a static treatment for reduced motion
+or Save-Data. The first-session/reload Home preloader is portaled outside the
+inert application root and is skipped during internal navigation.
 
-## CI map
+## PWA behavior
 
-| Workflow | Gate |
-|----------|------|
-| Portfolio QA | `npm run qa` (static + responsive + Vitest) |
-| Lighthouse Audit | Accessibility **error** ≥ 0.9; other categories warn |
-| Link Check | Lychee over HTML/Markdown with clean-URL fallbacks |
-| Dependency Security Audit | `npm audit --audit-level=high` |
+Vite copies the public PWA files from `assets` into `dist-react`. The service
+worker caches the React shell and discovered built chunks, uses network-first
+navigation, keeps public pages available offline, and deliberately serves the
+physical offline document for `/admin` while disconnected. Runtime media caching
+is same-origin and bounded.
 
-`@lhci/cli` is **not** a package dependency (its transitive tree fails
-`npm audit --audit-level=high`). CI pins it with `npx @lhci/cli@0.15.1`.
+## Production configuration
+
+`config/site-manifest.json` is the checked source of truth for product routes,
+legacy aliases, headers, React build/output settings, and SPA rewrites.
+`scripts/generate-site.mjs` validates it and generates `vercel.json` plus retained
+route/cache fixtures. The CSP permits Supabase HTTPS/WebSocket connections and
+signed images while denying frames, plugins, camera, microphone, and geolocation.
+
+## Verification architecture
+
+`npm run verify` validates generated files and encoding, runs unit tests, builds
+React, and executes the production HTTP contract twice. The route contract checks
+security headers, clean routes, aliases, Admin, the physical offline document,
+assets, and SPA fallback.
+
+`npm run test:e2e:smoke` runs Chromium interaction checks through a repository
+runner that owns the preview-server lifecycle. `npm run qa:react` adds Axe,
+mobile/desktop overflow, PWA/offline, preloader, Ballpit, and performance-signal
+acceptance. Scheduled Lighthouse, link, and dependency workflows provide slower
+release evidence.
+
+## Deployment and rollback
+
+Vercel Git integration should build `main` and pull requests using the committed
+configuration. Required public environment variables must be configured in each
+Vercel environment. Roll back through Vercel deployment history or a normal Git
+revert; never place privileged Supabase credentials in the frontend to repair a
+deployment.

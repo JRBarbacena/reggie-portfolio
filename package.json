@@ -2,22 +2,59 @@
   "name": "reggie-portfolio",
   "version": "1.0.0",
   "private": true,
-  "description": "Static MotoGP-inspired neumorphic portfolio site (vanilla HTML/CSS/JS).",
+  "description": "React developer portfolio with a Supabase-managed private content dashboard.",
   "type": "module",
   "scripts": {
+    "build": "npm run build:react",
+    "vercel-build": "npm run build:react",
     "test": "vitest --run",
     "test:unit": "vitest --run",
-    "test:e2e": "playwright test",
+    "browsers:install": "playwright install chromium firefox webkit",
+    "test:e2e": "npm run build:react && node scripts/run-playwright.mjs",
+    "test:e2e:smoke": "npm run build:react && node scripts/run-playwright.mjs --config=playwright.smoke.config.js tests/e2e/smoke.spec.js tests/e2e/interactions.spec.js tests/e2e/preloader.spec.js",
+    "test:e2e:engines": "npm run browsers:install && npm run test:e2e -- tests/e2e/smoke.spec.js",
+    "test:e2e:chromium": "npm run build:react && node scripts/run-playwright.mjs --project=chromium-engine",
+    "preview": "vite preview --config react.vite.config.js",
+    "dev:react": "vite --config react.vite.config.js",
+    "build:react": "vite build --config react.vite.config.js",
+    "generate": "node scripts/generate-site.mjs",
+    "generate:check": "node scripts/generate-site.mjs --check",
+    "test:routes": "node scripts/test-routes.mjs",
+    "qa:origins": "node scripts/qa-external-origins.mjs",
+    "qa:encoding": "node scripts/qa-encoding.mjs",
+    "qa:readiness": "node scripts/content-readiness.mjs",
     "qa:static": "node scripts/qa-static.mjs",
     "qa:responsive": "node scripts/qa-responsive.mjs",
-    "qa": "npm run qa:static && npm run qa:responsive && npm test",
-    "lhci": "npx --yes @lhci/cli@0.15.1 autorun",
-    "a11y:local": "node scripts/run-a11y-lighthouse.mjs",
-    "serve": "npx --yes serve@14 . -l 5173"
+    "qa:react": "npm run build:react && node scripts/run-react-server-script.mjs scripts/qa-react-acceptance.mjs",
+    "qa:visual": "npm run build:react && node scripts/run-react-server-script.mjs scripts/capture-react-review.mjs",
+    "lighthouse": "node scripts/lighthouse.mjs",
+    "verify": "npm run generate:check && npm run qa:encoding && npm run test:unit && npm run build:react && npm run test:routes",
+    "qa": "npm run verify"
   },
   "devDependencies": {
-    "fast-check": "^4.9.0",
-    "jsdom": "^26.1.0",
-    "vitest": "^3.2.7"
+    "@axe-core/playwright": "4.10.2",
+    "@playwright/test": "1.61.1",
+    "@vitejs/plugin-react": "^6.1.1",
+    "ajv": "8.20.0",
+    "fast-check": "3.23.2",
+    "jsdom": "24.1.3",
+    "lighthouse": "13.4.1",
+    "playwright": "1.61.1",
+    "playwright-core": "1.61.1",
+    "vite": "^8.2.2",
+    "vitest": "4.1.10"
+  },
+  "dependencies": {
+    "@phosphor-icons/react": "^2.1.10",
+    "@supabase/supabase-js": "^2.112.4",
+    "lenis": "^1.3.26",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
+    "react-router-dom": "^7.18.2",
+    "simple-icons": "^16.29.0",
+    "three": "0.185.1"
+  },
+  "overrides": {
+    "fast-uri": "3.1.6"
   }
 }

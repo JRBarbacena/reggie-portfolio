@@ -1,56 +1,88 @@
 # Reggie — Portfolio
 
-Static personal portfolio (vanilla HTML, CSS, and JavaScript). No build step for
-the site itself — Vercel serves the repo root. Dev tooling is only for tests and
-CI quality gates.
+A React/Vite developer portfolio with four public stories—Home, Tech, Travel,
+and Life—and a private Supabase-backed content dashboard. The interface combines
+bright-white glassmorphism and neumorphism with a restrained red identity accent.
 
-## Docs
+## Product routes
 
-| Doc | Purpose |
-|-----|---------|
-| [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | Layers, routing, deploy, CI map |
-| [docs/ADD_A_PAGE.md](docs/ADD_A_PAGE.md) | Checklist for adding a page |
-| [docs/DESIGN_TOKENS.md](docs/DESIGN_TOKENS.md) | Colors, type, space, motion tokens |
-| [docs/CI.md](docs/CI.md) | Workflows, local reproduction, failures |
+| Route | Purpose |
+|---|---|
+| `/` | Home introduction and content lanes |
+| `/tech` | Engineering, tools, certificates, and published Tech albums |
+| `/travel` | International and Local travel journals |
+| `/life` | Sport, coffee, rides, and published Life albums |
+| `/admin` | Authenticated content dashboard |
 
-## Pages
-
-Home · Tech · Travel · Life · Designs. Primary pages are top-level nav links;
-**Designs** (and future overflow pages) live under the “More” menu.
-
-Clean URLs (`/tech`, `/travel`, …) are enabled by Vercel `cleanUrls`. On disk the
-files remain `tech.html`, `travel.html`, etc.
-
-## Structure
-
-```
-/
-├── index.html, tech.html, travel.html, life.html, designs.html, 404.html
-├── css/          tokens → base → neumorphism → components → motion (via main.css)
-├── js/           pages registry, nav, footer, page modules, a11y helpers
-├── assets/       images (photos, certificates, brand)
-├── tests/unit/   Vitest + fast-check
-├── scripts/      static/responsive QA + local a11y helper
-├── docs/         architecture and rebuild guides
-└── .github/      CI workflows + Dependabot
-```
+Legacy `/index.html`, `/tech.html`, `/travel.html`, and `/life.html` addresses
+redirect permanently to their clean routes. Unknown paths render the React 404
+view. `/offline.html` remains a physical PWA fallback document.
 
 ## Local development
 
 ```bash
-npm install
-npm run serve          # static preview on :5173 (cleanUrls via serve.json)
-npm test               # unit + property tests
-npm run qa             # static + responsive QA + tests
-npm run lhci           # Lighthouse CI (npx-pinned; not in package-lock)
+npm ci
+npm run dev:react
 ```
 
-Link checking uses [lychee](https://lychee.cli.rs/) with [`lychee.toml`](lychee.toml).
-See [docs/CI.md](docs/CI.md) for the exact commands CI runs.
+Open `http://127.0.0.1:5173`.
 
-## Design notes
+Build and preview the production application:
 
-- Design tokens live only in `css/tokens.css`.
-- Navigation is driven by `js/pages.js` → `nav-model.js` → `<site-nav>`.
-- Motion is CSS-first; `js/motion.js` only toggles reveal classes.
-- Accent colors used as text/links meet WCAG AA (≥ 4.5:1) on `--bg-base`.
+```bash
+npm run build:react
+npm run preview
+```
+
+The preview defaults to `http://127.0.0.1:4173`.
+
+## Supabase configuration
+
+Create `react-app/.env.local` without committing it:
+
+```dotenv
+VITE_SUPABASE_URL=https://your-project.supabase.co
+VITE_SUPABASE_PUBLISHABLE_KEY=your-publishable-key
+```
+
+Use the publishable key—not a service-role or secret key. Database, storage,
+authentication, admin allow-list, and row-level security setup is documented in
+[docs/SUPABASE_SETUP.md](docs/SUPABASE_SETUP.md).
+
+## Verification
+
+```bash
+npm run verify
+npm run test:e2e:smoke
+npm run qa:react
+npm audit --audit-level=high
+```
+
+- `verify` checks generated deployment configuration, UTF-8, unit tests, the
+  React production build, security headers, redirects, and SPA route fallback.
+- `test:e2e:smoke` checks routes, navigation, preloader rules, motion,
+  reduced-motion behavior, responsive typography, focus, and album states.
+- `qa:react` runs mobile/desktop accessibility, overflow, PWA/offline,
+  performance-signal, Admin, and retired-route acceptance checks.
+- `qa:visual` writes reproducible review captures under
+  `artifacts/visual-acceptance`.
+
+## Deployment
+
+Vercel builds with `npm run build:react` and serves `dist-react`. React Router
+deep links are handled by the generated SPA rewrite in `vercel.json`; CSP allows
+only the application, required Supabase HTTPS/WebSocket endpoints, and local
+media sources.
+
+Provider setup, environment variables, preview acceptance, production promotion,
+and rollback are documented in [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md).
+
+## Editing rules
+
+- Public content and composition live under `react-app/src`.
+- Shared design tokens and component styles remain under `css` while the React
+  migration uses them.
+- Edit `config/site-manifest.json`, then run `npm run generate`; do not hand-edit
+  generated route/configuration artifacts.
+- Never commit Supabase secret/service-role keys or `.env.local`.
+- Do not invent employment, client, metric, project, or credential content.

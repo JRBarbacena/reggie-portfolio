@@ -1,21 +1,60 @@
-// site-nav.js — shared <site-nav> Web Component. Renders identical navigation
-// on every page from the single Page Registry + pure nav model. Only the
-// `active-page` attribute differs per page. (Req 3.1–3.9, 8.2, 8.3)
+// Shared navigation Web Component. Native anchors remain the navigation
+// baseline; JavaScript manages only disclosure state, focus, and presentation.
 
 import { PAGES } from "./pages.js";
 import { buildNavModel, resolveActiveState } from "./nav-model.js";
 
 const MOBILE_QUERY = "(max-width: 768px)";
+const PAGE_EXIT_MS = 150;
+
+function isPlainPrimaryClick(event) {
+  return event.button === 0
+    && !event.defaultPrevented
+    && !event.metaKey
+    && !event.ctrlKey
+    && !event.shiftKey
+    && !event.altKey;
+}
+
+function isDifferentInternalPage(link, locationApi = window.location) {
+  if (!link || link.hasAttribute("download")) return false;
+  if (link.target && link.target.toLowerCase() !== "_self") return false;
+
+  let destination;
+  try {
+    destination = new URL(link.href, locationApi.href);
+  } catch {
+    return false;
+  }
+
+  if (destination.origin !== locationApi.origin) return false;
+  return `${destination.pathname}${destination.search}` !==
+    `${locationApi.pathname}${locationApi.search}`;
+}
 
 class SiteNav extends HTMLElement {
   connectedCallback() {
+    this._media = typeof window.matchMedia === "function"
+      ? window.matchMedia(MOBILE_QUERY)
+      : { matches: false, addEventListener() {}, removeEventListener() {} };
     this.render();
     this.bindEvents();
     this.bindScrollState();
+    this.syncPresentation();
+    this._pageShowHandler = () => this.clearPageExit();
+    window.addEventListener("pageshow", this._pageShowHandler);
   }
 
   disconnectedCallback() {
     if (this._scrollHandler) window.removeEventListener("scroll", this._scrollHandler);
+    if (this._documentClickHandler) document.removeEventListener("click", this._documentClickHandler);
+    if (this._documentKeyHandler) document.removeEventListener("keydown", this._documentKeyHandler);
+    if (this._pageShowHandler) window.removeEventListener("pageshow", this._pageShowHandler);
+    this._media?.removeEventListener?.("change", this._mediaHandler);
+  }
+
+  get activePage() {
+    return this.getAttribute("active-page");
   }
 
   bindScrollState() {
@@ -27,26 +66,13 @@ class SiteNav extends HTMLElement {
     window.addEventListener("scroll", updateState, { passive: true });
   }
 
-  get activePage() {
-    return this.getAttribute("active-page");
-  }
-
   render() {
-    const { primary, overflow } = buildNavModel(PAGES);
+    const { primary } = buildNavModel(PAGES);
     const active = resolveActiveState(PAGES, this.activePage);
-
-    const primaryLinks = primary
-      .map((link) => this.linkHtml(link, active))
-      .join("");
-
-    const overflowLinks = overflow
-      .map((link) => this.linkHtml(link, active))
-      .join("");
-
-    const overflowActive = active.overflowControlActive ? " is-active" : "";
+    const primaryLinks = primary.map((link) => this.linkHtml(link, active)).join("");
 
     this.innerHTML = `
-      <nav class="site-nav" aria-label="Primary" data-menu-open="false">
+      <nav class="site-nav" aria-label="Primary navigation" data-menu-open="false">
         <a class="site-nav__brand" href="/" aria-label="Home — Reggie">
           <img src="/assets/images/brand/rb-monogram.png" alt="" width="48" height="48" />
         </a>
@@ -61,38 +87,6 @@ class SiteNav extends HTMLElement {
 
         <div class="site-nav__menu" id="site-nav-menu">
           <ul class="site-nav__list">${primaryLinks}</ul>
-
-          <div class="site-nav__overflow" data-open="false">
-            <button
-              class="site-nav__overflow-toggle${overflowActive}"
-              type="button"
-              aria-haspopup="true"
-              aria-expanded="false"
-              aria-controls="site-nav-overflow"
-              aria-label="More pages"
-            >
-              <span class="site-nav__overflow-label">More</span>
-              <svg
-                class="site-nav__overflow-caret"
-                width="12"
-                height="12"
-                viewBox="0 0 12 12"
-                aria-hidden="true"
-              >
-                <path
-                  d="M2.5 4.5 6 8l3.5-3.5"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="1.7"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                />
-              </svg>
-            </button>
-            <ul class="site-nav__overflow-menu" id="site-nav-overflow">
-              ${overflowLinks}
-            </ul>
-          </div>
         </div>
       </nav>
     `;
@@ -101,108 +95,87 @@ class SiteNav extends HTMLElement {
   linkHtml(link, active) {
     const isActive =
       link.id === active.activePrimaryId || link.id === active.activeOverflowId;
-    const cls = isActive ? "site-nav__link is-active" : "site-nav__link";
+    const className = isActive ? "site-nav__link is-active" : "site-nav__link";
     const current = isActive ? ' aria-current="page"' : "";
-    return `<li><a class="${cls}"${current} href="${link.href}" data-page-id="${link.id}">${link.label}</a></li>`;
+    return `<li><a class="${className}"${current} href="${link.href}" data-page-id="${link.id}">${link.label}</a></li>`;
   }
 
   bindEvents() {
     const nav = this.querySelector(".site-nav");
     const mobileToggle = this.querySelector(".site-nav__mobile-toggle");
-    const overflow = this.querySelector(".site-nav__overflow");
-    const overflowToggle = this.querySelector(".site-nav__overflow-toggle");
+    const menu = this.querySelector(".site-nav__menu");
 
-    // Mobile menu open/close
-    mobileToggle.addEventListener("click", () => {
-      const open = nav.getAttribute("data-menu-open") === "true";
-      nav.setAttribute("data-menu-open", String(!open));
-      mobileToggle.setAttribute("aria-expanded", String(!open));
-    });
-
-    // Overflow ("...") menu open/close
-    const setOverflow = (open) => {
-      overflow.setAttribute("data-open", String(open));
-      overflowToggle.setAttribute("aria-expanded", String(open));
+    const setMobileMenu = (open, { returnFocus = false } = {}) => {
+      nav.setAttribute("data-menu-open", String(open));
+      mobileToggle.setAttribute("aria-expanded", String(open));
+      menu.toggleAttribute("inert", this._media.matches && !open);
+      if (returnFocus) mobileToggle.focus();
     };
-    overflowToggle.addEventListener("click", (e) => {
-      e.stopPropagation();
-      setOverflow(overflow.getAttribute("data-open") !== "true");
+
+    this.setMobileMenu = setMobileMenu;
+
+    mobileToggle.addEventListener("click", () => {
+      setMobileMenu(nav.getAttribute("data-menu-open") !== "true");
     });
 
-    // Close overflow on outside click / Escape
-    document.addEventListener("click", (e) => {
-      if (!overflow.contains(e.target)) setOverflow(false);
-    });
-    this.addEventListener("keydown", (e) => {
-      if (e.key === "Escape") {
-        setOverflow(false);
-        overflowToggle.focus();
+    this._documentClickHandler = (event) => {
+      if (this.contains(event.target)) return;
+      if (this._media.matches) setMobileMenu(false);
+    };
+
+    this._documentKeyHandler = (event) => {
+      if (event.key !== "Escape") return;
+      if (nav.getAttribute("data-menu-open") === "true") {
+        setMobileMenu(false, { returnFocus: true });
       }
-    });
+    };
 
-    // Intercept link activation to verify the target exists (Req 3.6).
-    this.addEventListener("click", (e) => {
-      const link = e.target.closest("a.site-nav__link");
+    document.addEventListener("click", this._documentClickHandler);
+    document.addEventListener("keydown", this._documentKeyHandler);
+
+    this.addEventListener("click", (event) => {
+      const link = event.target.closest("a[href]");
       if (!link) return;
-      // Let same-page links behave normally.
-      this.handleNavigate(e, link);
+      if (this._media.matches) setMobileMenu(false);
+      if (!isPlainPrimaryClick(event) || !isDifferentInternalPage(link)) return;
+
+      event.preventDefault();
+      this.startPageExit(link);
     });
+
+    this._mediaHandler = () => this.syncPresentation();
+    this._media.addEventListener?.("change", this._mediaHandler);
   }
 
-  async handleNavigate(event, link) {
-    const href = link.getAttribute("href");
-    // Progressive enhancement: if fetch is unavailable, allow default nav.
-    if (typeof fetch !== "function") return;
+  syncPresentation() {
+    const nav = this.querySelector(".site-nav");
+    const menu = this.querySelector(".site-nav__menu");
+    const mobileToggle = this.querySelector(".site-nav__mobile-toggle");
+    if (!nav || !menu || !mobileToggle) return;
 
-    event.preventDefault();
-    const fallbackHref =
-      href === "/"
-        ? "/index.html"
-        : href.startsWith("/") && !href.includes(".")
-          ? `${href}.html`
-          : href;
-    try {
-      const res = await fetch(href, { method: "HEAD" });
-      if (res.ok) {
-        window.location.href = href;
-        return;
-      }
-
-      if (fallbackHref !== href) {
-        const fallbackRes = await fetch(fallbackHref, { method: "HEAD" });
-        if (fallbackRes.ok) {
-          window.location.href = fallbackHref;
-          return;
-        }
-      }
-    } catch {
-      if (fallbackHref !== href) {
-        try {
-          const fallbackRes = await fetch(fallbackHref, { method: "HEAD" });
-          if (fallbackRes.ok) {
-            window.location.href = fallbackHref;
-            return;
-          }
-        } catch {
-          // Continue to the unavailable notice below.
-        }
-      }
+    if (this._media.matches) {
+      menu.toggleAttribute("inert", nav.getAttribute("data-menu-open") !== "true");
+      return;
     }
 
-    this.showUnavailable(link);
+    nav.setAttribute("data-menu-open", "false");
+    mobileToggle.setAttribute("aria-expanded", "false");
+    menu.removeAttribute("inert");
   }
 
-  showUnavailable(link) {
-    let note = this.querySelector(".site-nav__notice");
-    if (!note) {
-      note = document.createElement("p");
-      note.className = "site-nav__notice text-meta";
-      note.setAttribute("role", "status");
-      this.querySelector(".site-nav").appendChild(note);
-    }
-    note.textContent = `“${link.textContent.trim()}” is currently unavailable.`;
-    clearTimeout(this._noticeTimer);
-    this._noticeTimer = setTimeout(() => note.remove(), 4000);
+  startPageExit(link) {
+    if (document.documentElement.classList.contains("is-page-leaving")) return;
+    const destination = new URL(link.href, window.location.href);
+    document.documentElement.classList.add("is-page-leaving");
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    window.setTimeout(
+      () => window.location.assign(destination.href),
+      reducedMotion ? 0 : PAGE_EXIT_MS,
+    );
+  }
+
+  clearPageExit() {
+    document.documentElement.classList.remove("is-page-leaving");
   }
 }
 
@@ -210,4 +183,4 @@ if (!customElements.get("site-nav")) {
   customElements.define("site-nav", SiteNav);
 }
 
-export { SiteNav };
+export { SiteNav, isDifferentInternalPage, isPlainPrimaryClick };

@@ -1,0 +1,63 @@
+{
+  "schemaId": "urn:reggie-portfolio:content-readiness:v1",
+  "schemaVersion": 1,
+  "mode": "production",
+  "pages": [
+    {
+      "id": "home",
+      "document": "index.html",
+      "releaseState": "release-ready",
+      "sections": [
+        { "id": "home-hero", "kind": "content", "selector": ".home-section--hero", "previousState": "approved", "state": "approved", "render": true },
+        { "id": "home-lanes", "kind": "content", "selector": ".home-section--lanes", "previousState": "approved", "state": "approved", "render": true }
+      ],
+      "assets": [
+        { "id": "home-hundred-islands", "selector": ".pos-photo-1 img", "source": "assets/images/photos/Hundred_Island.JPG", "previousState": "approved", "state": "approved", "decorative": false, "alt": "Reggie at Hundred Islands", "width": 320, "height": 240 },
+        { "id": "home-cursor-cafe", "selector": ".pos-photo-2 img", "source": "assets/images/photos/Cursor_Cafe.JPG", "previousState": "approved", "state": "approved", "decorative": false, "alt": "Reggie at Café Cursor Manila", "width": 320, "height": 240 },
+        { "id": "home-volleyball-team", "selector": ".pos-photo-3 img", "source": "assets/images/photos/Patawow_VB.JPG", "previousState": "approved", "state": "approved", "decorative": false, "alt": "Reggie with his volleyball team", "width": 320, "height": 240 },
+        { "id": "home-volleyball-championship", "selector": ".pos-photo-4 img", "source": "assets/images/photos/champs_vb.JPG", "previousState": "approved", "state": "approved", "decorative": false, "alt": "Reggie with a volleyball championship trophy", "width": 320, "height": 240 },
+        { "id": "home-aws-build-night", "selector": ".pos-photo-5 img", "source": "assets/images/photos/BuildNights_AWS.JPG", "previousState": "approved", "state": "approved", "decorative": false, "alt": "AWS Build Nights event", "width": 320, "height": 240 },
+        { "id": "home-basketball", "selector": ".pos-photo-6 img", "source": "assets/images/photos/basketball.JPG", "previousState": "approved", "state": "approved", "decorative": false, "alt": "Reggie playing basketball", "width": 320, "height": 240 },
+        { "id": "home-tech-lane", "selector": "a[href='/tech'] img", "source": "assets/images/photos/KiroVerse.JPG", "previousState": "approved", "state": "approved", "decorative": false, "alt": "Reggie and his peers at an AWS event", "width": 640, "height": 480 },
+        { "id": "home-travel-lane", "selector": "a[href='/travel'] img", "source": "assets/images/photos/Hundred_Island.JPG", "previousState": "approved", "state": "approved", "decorative": false, "alt": "Reggie at Hundred Islands", "width": 640, "height": 480 },
+        { "id": "home-life-lane", "selector": "a[href='/life'] img", "source": "assets/images/photos/Patawow_VB.JPG", "previousState": "approved", "state": "approved", "decorative": false, "alt": "Reggie and his volleyball team", "width": 640, "height": 480 }
+      ],
+      "links": [
+        { "id": "home-tech-route", "selector": "a[href='/tech']", "target": "/tech", "previousState": "approved", "state": "approved" },
+        { "id": "home-travel-route", "selector": "a[href='/travel']", "target": "/travel", "previousState": "approved", "state": "approved" },
+        { "id": "home-life-route", "selector": "a[href='/life']", "target": "/life", "previousState": "approved", "state": "approved" }
+      ]
+    },
+
+    {
+      "id": "tech",
+      "document": "tech.html",
+      "releaseState": "release-ready",
+      "sections": [
+        { "id": "tech-introduction", "kind": "content", "selector": ".tech-hero", "previousState": "approved", "state": "approved", "render": true },
+        { "id": "tech-education", "kind": "education", "selector": ".tech-path", "previousState": "approved", "state": "approved", "render": true },
+        { "id": "tech-career-history", "kind": "career-history", "selector": "[data-tech-type='career-history']", "previousState": "omitted", "state": "omitted", "render": false },
+        { "id": "tech-job-information", "kind": "job-information", "selector": "[data-tech-type='job-information']", "previousState": "omitted", "state": "omitted", "render": false },
+        { "id": "tech-toolbox", "kind": "content", "selector": ".tech-toolbox", "previousState": "approved", "state": "approved", "render": true },
+        { "id": "tech-certificates", "kind": "content", "selector": ".tech-certificates", "previousState": "approved", "state": "approved", "render": true },
+        { "id": "tech-community", "kind": "content", "selector": ".tech-community", "previousState": "approved", "state": "approved", "render": true },
+        { "id": "tech-philosophy", "kind": "content", "selector": ".story-closing", "previousState": "approved", "state": "approved", "render": true }
+      ],
+      "assets": [
+        { "id": "tech-cert-python", "selector": "img[src$='cert-python.png']", "source": "assets/images/certificates/cert-python.png", "previousState": "approved", "state": "approved", "decorative": false, "alt": "Information Technology Specialist certification in Python awarded to John Reggie Manuel Barbacena", "width": 1584, "height": 1224 },
+        { "id": "tech-cert-matlab", "selector": "img[src$='cert-matlab.png']", "source": "assets/images/certificates/cert-matlab.png", "previousState": "approved", "state": "approved", "decorative": false, "alt": "LinkedIn Learning MATLAB course completion certificate awarded to John Reggie Barbacena", "width": 1584, "height": 1224 },
+        { "id": "tech-cert-project-management", "selector": "img[src$='cert-barbacena.png']", "source": "assets/images/certificates/cert-barbacena.png", "previousState": "approved", "state": "approved", "decorative": false, "alt": "PMI Project Management Ready credential awarded to John Reggie Manuel Barbacena", "width": 1584, "height": 1224 },
+        { "id": "tech-cert-agile", "selector": "img[src$='cert-agile.png']", "source": "assets/images/certificates/cert-agile.png", "previousState": "approved", "state": "approved", "decorative": false, "alt": "LinkedIn Learning Agile Software Development course completion certificate awarded to John Reggie Barbacena", "width": 1584, "height": 1224 },
+        { "id": "tech-album-aws", "selector": "img[src$='KiroVerse.JPG']", "source": "assets/images/photos/KiroVerse.JPG", "previousState": "approved", "state": "approved", "decorative": false, "alt": "Reggie with friends in front of an AWS wall sign", "width": 2048, "height": 1536 },
+        { "id": "tech-album-build-night", "selector": "img[src$='BuildNights_AWS.JPG']", "source": "assets/images/photos/BuildNights_AWS.JPG", "previousState": "approved", "state": "approved", "decorative": false, "alt": "A packed room during an AWS Build Night", "width": 1536, "height": 2048 },
+        { "id": "tech-album-cursor", "selector": "img[src$='Cursor_Cafe.JPG']", "source": "assets/images/photos/Cursor_Cafe.JPG", "previousState": "approved", "state": "approved", "decorative": false, "alt": "Reggie at Cafe Cursor Manila holding a coffee", "width": 1536, "height": 2048 }
+      ],
+      "links": [
+        { "id": "tech-open-python", "selector": "a[href$='cert-python.png']", "target": "assets/images/certificates/cert-python.png", "previousState": "approved", "state": "approved" },
+        { "id": "tech-open-matlab", "selector": "a[href$='cert-matlab.png']", "target": "assets/images/certificates/cert-matlab.png", "previousState": "approved", "state": "approved" },
+        { "id": "tech-open-project-management", "selector": "a[href$='cert-barbacena.png']", "target": "assets/images/certificates/cert-barbacena.png", "previousState": "approved", "state": "approved" },
+        { "id": "tech-open-agile", "selector": "a[href$='cert-agile.png']", "target": "assets/images/certificates/cert-agile.png", "previousState": "approved", "state": "approved" }
+      ]
+    }
+  ]
+}

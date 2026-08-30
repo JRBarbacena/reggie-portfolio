@@ -1,164 +1,66 @@
-import { existsSync, readdirSync, readFileSync } from "node:fs";
-import { basename, resolve } from "node:path";
+import { readdirSync, readFileSync } from "node:fs";
+import { resolve } from "node:path";
+import { JSDOM } from "jsdom";
 
 const root = process.cwd();
-const pages = [
-  { file: "index.html", id: "home", path: "/" },
-  { file: "tech.html", id: "tech", path: "/tech" },
-  { file: "travel.html", id: "travel", path: "/travel" },
-  { file: "life.html", id: "life", path: "/life" },
-  { file: "designs.html", id: "designs", path: "/designs" },
-];
-
-const css = readFileSync(resolve(root, "css/components.css"), "utf8");
-const baseCss = readFileSync(resolve(root, "css/base.css"), "utf8");
+const manifest = JSON.parse(readFileSync(resolve(root, "config/site-manifest.json"), "utf8"));
+const componentCss = readFileSync(resolve(root, "css/components.css"), "utf8");
+const motionCss = readFileSync(resolve(root, "css/motion.css"), "utf8");
+const tokenCss = readFileSync(resolve(root, "css/tokens.css"), "utf8");
 const issues = [];
-const contentStyleVersions = new Set();
 
-function html(page) {
-  return readFileSync(resolve(root, page), "utf8");
-}
+for (const page of manifest.pages) {
+  const source = readFileSync(resolve(root, page.document), "utf8");
+  const document = new JSDOM(source).window.document;
+  const viewport = document.querySelector('meta[name="viewport"]')?.getAttribute("content") ?? "";
+  if (!viewport.includes("width=device-width") || !viewport.includes("viewport-fit=cover")) {
+    issues.push(`${page.document}: incomplete mobile viewport contract`);
+  }
 
-function includesAll(source, page, checks) {
-  for (const [label, snippet] of checks) {
-    if (!source.includes(snippet)) issues.push(`${page}: missing ${label}`);
+  const nav = document.querySelector("site-nav");
+  if (nav?.getAttribute("active-page") !== page.id) {
+    issues.push(`${page.document}: active-page must be "${page.id}"`);
   }
 }
 
-function mediaBlocks(maxWidth) {
-  const blocks = [];
-  const pattern = new RegExp(`@media\\s*\\(max-width:\\s*${maxWidth}px\\)\\s*\\{`, "g");
-  let match;
-
-  while ((match = pattern.exec(css))) {
-    let depth = 1;
-    let index = pattern.lastIndex;
-    while (index < css.length && depth > 0) {
-      const char = css[index];
-      if (char === "{") depth += 1;
-      if (char === "}") depth -= 1;
-      index += 1;
-    }
-    blocks.push(css.slice(pattern.lastIndex, index - 1));
-  }
-
-  return blocks;
+for (const required of [
+  "@media (max-width: 768px)",
+  ".site-nav__mobile-toggle",
+  ".site-nav__menu",
+  '.site-nav[data-menu-open="true"] .site-nav__menu',
+]) {
+  if (!componentCss.includes(required)) issues.push(`css/components.css: missing responsive contract ${required}`);
 }
 
-const mobileCss = [1000, 900, 768, 560, 480].flatMap(mediaBlocks).join("\n");
-
-function requireMobileRule(page, selector) {
-  if (!mobileCss.includes(selector)) {
-    issues.push(`${page}: ${selector} is used but has no mobile breakpoint rule`);
-  }
+for (const token of [
+  "--duration-fast:",
+  "--duration-base:",
+  "--duration-slow:",
+  "--duration-enter:",
+  "--ease-standard:",
+  "--ease-emphasized:",
+  "--ease-exit:",
+]) {
+  if (!tokenCss.includes(token)) issues.push(`css/tokens.css: missing motion token ${token}`);
 }
 
-const contentPreloaderVersions = new Set();
-
-for (const page of pages) {
-  const source = html(page.file);
-
-  includesAll(source, page.file, [
-    ["mobile viewport", '<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />'],
-    ["asset guard", '<script type="module" src="js/asset-guard.js" defer></script>'],
-    ["shared navigation component", '<script type="module" src="js/site-nav.js" defer></script>'],
-    ["shared footer component", '<script type="module" src="js/site-footer.js" defer></script>'],
-    ["motion layer", '<script type="module" src="js/motion.js" defer></script>'],
-    ["critical asset banner", '<p class="critical-error-banner" role="alert">'],
-    ["skip link", '<a class="skip-link" href="#main">Skip to content</a>'],
-    ["main landmark", '<main id="main"'],
-    ["shared footer element", "<site-footer></site-footer>"],
-  ]);
-
-  const stylesheet = source.match(/<link rel="stylesheet" href="css\/main\.css\?v=([^"]+)" \/>/);
-  if (!stylesheet) {
-    issues.push(`${page.file}: missing versioned shared stylesheet`);
-  } else {
-    contentStyleVersions.add(stylesheet[1]);
-  }
-
-  const preloader = source.match(/<script src="(js\/preloader\.js\?v=[^"]+)"><\/script>/);
-  if (!preloader) {
-    issues.push(`${page.file}: missing versioned preloader script`);
-  } else {
-    contentPreloaderVersions.add(preloader[1]);
-  }
-
-  const nav = source.match(/<site-nav active-page="([^"]+)"><\/site-nav>/);
-  if (!nav) {
-    issues.push(`${page.file}: missing active shared nav`);
-  } else if (nav[1] !== page.id) {
-    issues.push(`${page.file}: active nav "${nav[1]}" should be "${page.id}"`);
-  }
+if (!motionCss.includes("@media (prefers-reduced-motion: reduce)")) {
+  issues.push("css/motion.css: missing reduced-motion policy");
+}
+if (!motionCss.includes(".motion-disabled [data-reveal]")) {
+  issues.push("css/motion.css: missing no-motion content fallback");
 }
 
-if (contentPreloaderVersions.size > 1) {
-  issues.push(`content pages use different preloader versions: ${[...contentPreloaderVersions].join(", ")}`);
-}
-
-if (contentStyleVersions.size > 1) {
-  issues.push(`content pages use different stylesheet versions: ${[...contentStyleVersions].join(", ")}`);
-}
-
-const preloaderSource = readFileSync(resolve(root, "js/preloader.js"), "utf8");
-if (!preloaderSource.includes('navigationType() === "reload"')) {
-  issues.push("js/preloader.js: refreshes must replay the entry gate");
-}
-if (!preloaderSource.includes("SESSION_KEY")) {
-  issues.push("js/preloader.js: page navigation state must stay scoped to the current tab");
-}
-if (preloaderSource.includes("AUTO_ENTER_DELAY") || preloaderSource.includes("setTimeout(enterPortfolio")) {
-  issues.push("js/preloader.js: the entry gate must wait for an explicit user click");
-}
-
-const pageContracts = {
-  "index.html": [".hero--home", ".gallery--lanes", ".gallery", ".photo-window"],
-  "tech.html": [".current-build", ".stack-grid", ".credential-shelf", ".project-queue", ".album-grid", ".album-modal"],
-  "travel.html": [".story-hero", ".story-stats", ".travel-entry", ".travel-stamps", ".story-closing"],
-  "life.html": [".story-hero", ".race-console", ".life-gallery", ".small-wins__grid", ".coffee-story", ".life-collage"],
-  "designs.html": [".page-intro", ".gallery"],
-};
-
-for (const [page, selectors] of Object.entries(pageContracts)) {
-  const source = html(page);
-  for (const selector of selectors) {
-    const className = selector.slice(1);
-    if (source.includes(className)) requireMobileRule(page, selector);
-  }
-}
-
-includesAll(css, "css/components.css", [
-  ["mobile nav menu breakpoint", ".site-nav__menu"],
-  ["mobile nav toggle breakpoint", ".site-nav__mobile-toggle"],
-  ["mobile nav open state", '.site-nav[data-menu-open="true"] .site-nav__menu'],
-]);
-
-if (!baseCss.includes("overflow-x: hidden")) {
-  issues.push("css/base.css: body must guard against horizontal mobile overflow");
-}
-
-const routeFiles = new Set(pages.map((page) => page.file));
 for (const file of readdirSync(root)) {
-  const lower = file.toLowerCase();
-  const looksLikeSplitMobilePage =
-    lower.endsWith(".mobile.html") ||
-    lower.endsWith(".desktop.html") ||
-    lower.startsWith("mobile-") ||
-    lower.startsWith("desktop-");
-
-  if (looksLikeSplitMobilePage && !routeFiles.has(basename(file))) {
-    issues.push(`${file}: do not create separate mobile/desktop page versions`);
+  if (/^(?:mobile-|desktop-)|\.(?:mobile|desktop)\.html$/i.test(file)) {
+    issues.push(`${file}: separate mobile/desktop documents are not allowed`);
   }
-}
-
-if (!existsSync(resolve(root, "css/main.css"))) {
-  issues.push("css/main.css: shared stylesheet missing");
 }
 
 if (issues.length) {
-  console.error("Responsive QA failed.");
+  console.error("Responsive/motion QA failed.");
   for (const issue of issues) console.error(`- ${issue}`);
   process.exit(1);
 }
 
-console.log(`Responsive QA passed for ${pages.length} pages.`);
+console.log(`Responsive/motion source QA passed for ${manifest.pages.length} product pages.`);

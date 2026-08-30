@@ -10,14 +10,8 @@
       name="description"
       content="Personal portfolio of Reggie — tech, travel, life, and design, with a MotoGP-inspired neumorphic design."
     />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&display=swap"
-      rel="stylesheet"
-    />
-    <link rel="stylesheet" href="css/main.css?v=20260825-2" />
-    <script src="js/preloader.js?v=20260717-3"></script>
+    <link rel="stylesheet" href="css/main.css" />
+    <script type="module" src="js/preloader.js" data-entry-status></script>
     <script src="js/neumorphic-scrollbar.js" defer></script>
     <script type="module" src="js/asset-guard.js" defer></script>
     <script src="js/site-cache.js" defer></script>
@@ -26,7 +20,7 @@
     <script type="module" src="js/hero.js" defer></script>
     <script type="module" src="js/motion.js" defer></script>
   </head>
-  <body class="home">
+  <body class="home" data-release-state="release-ready">
     <p class="critical-error-banner" role="alert">
       Some content couldn't be loaded. Please refresh the page.
     </p>
@@ -40,116 +34,105 @@
         </header>
 
         <div class="hero__center">
-          <h1 class="hero__motto animate-rise" id="hero-title">
+          <h1 class="hero__motto" id="hero-title">
             Beyond comfort lies <span class="accent">greatness</span>.
           </h1>
         </div>
 
-        <!-- Scattered collage: photo placeholders + labeled icon chips.
-             Photos are PLACEHOLDERS — swap each src for a real photo when
-             ready. Clicking an icon chip reveals a detail. -->
-        <div class="collage" aria-label="A few things about me">
-          <figure class="photo-window pos-photo-1" data-reveal>
+        <div class="collage" role="group" aria-label="Photos and details about Reggie">
+          <figure class="photo-window pos-photo-1">
             <span class="photo-window__bar" aria-hidden="true">
               <i></i><i></i><i></i><span class="photo-window__name">Hundred_Island.JPG</span>
             </span>
-            <img class="photo-window__img" src="assets/images/photos/Hundred_Island.JPG" alt="Reggie at Hundred Islands" width="320" height="240" />
+            <img class="photo-window__img" src="assets/images/photos/Hundred_Island.JPG" alt="Reggie at Hundred Islands" width="320" height="240" decoding="async" fetchpriority="high" />
           </figure>
-          <figure class="photo-window pos-photo-2" data-reveal>
+          <figure class="photo-window pos-photo-2">
             <span class="photo-window__bar" aria-hidden="true">
               <i></i><i></i><i></i><span class="photo-window__name">Cursor_Cafe.JPG</span>
             </span>
-            <img class="photo-window__img" src="assets/images/photos/Cursor_Cafe.JPG" alt="Reggie at Café Cursor Manila" width="320" height="240" />
+            <img class="photo-window__img" src="assets/images/photos/Cursor_Cafe.JPG" alt="Reggie at Café Cursor Manila" width="320" height="240" loading="lazy" decoding="async" />
           </figure>
-          <figure class="photo-window pos-photo-3" data-reveal>
+          <figure class="photo-window pos-photo-3">
             <span class="photo-window__bar" aria-hidden="true">
               <i></i><i></i><i></i><span class="photo-window__name">Patawow_VB.JPG</span>
             </span>
-            <img class="photo-window__img" src="assets/images/photos/Patawow_VB.JPG" alt="Reggie with his volleyball team" width="320" height="240" />
+            <img class="photo-window__img" src="assets/images/photos/Patawow_VB.JPG" alt="Reggie with his volleyball team" width="320" height="240" loading="lazy" decoding="async" />
           </figure>
-          <figure class="photo-window pos-photo-4" data-reveal>
+          <figure class="photo-window pos-photo-4">
             <span class="photo-window__bar" aria-hidden="true">
               <i></i><i></i><i></i><span class="photo-window__name">champs_vb.JPG</span>
             </span>
-            <img class="photo-window__img" src="assets/images/photos/champs_vb.JPG" alt="Reggie with a volleyball championship trophy" width="320" height="240" />
+            <img class="photo-window__img" src="assets/images/photos/champs_vb.JPG" alt="Reggie with a volleyball championship trophy" width="320" height="240" loading="lazy" decoding="async" />
           </figure>
-          <figure class="photo-window pos-photo-5" data-reveal>
+          <figure class="photo-window pos-photo-5">
             <span class="photo-window__bar" aria-hidden="true">
               <i></i><i></i><i></i><span class="photo-window__name">BuildNights_AWS.JPG</span>
             </span>
-            <img class="photo-window__img" src="assets/images/photos/BuildNights_AWS.JPG" alt="AWS Build Nights event" width="320" height="240" />
+            <img class="photo-window__img" src="assets/images/photos/BuildNights_AWS.JPG" alt="AWS Build Nights event" width="320" height="240" loading="lazy" decoding="async" />
           </figure>
-          <figure class="photo-window pos-photo-6" data-reveal>
+          <figure class="photo-window pos-photo-6">
             <span class="photo-window__bar" aria-hidden="true">
               <i></i><i></i><i></i><span class="photo-window__name">basketball.JPG</span>
             </span>
-            <img class="photo-window__img" src="assets/images/photos/basketball.JPG" alt="Reggie playing basketball" width="320" height="240" />
+            <img class="photo-window__img" src="assets/images/photos/basketball.JPG" alt="Reggie playing basketball" width="320" height="240" loading="lazy" decoding="async" />
           </figure>
 
-          <!-- Labeled icon chips (these replace the reference "folders") -->
+          <!-- Owner-provided details disclosed by labeled controls. -->
           <button class="hero-chip pos-chip-1" type="button" aria-expanded="false" aria-controls="chip-skills">
-            <span class="hero-chip__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><defs><linearGradient id="chip-core" x1="4" y1="4" x2="20" y2="20"><stop stop-color="#60a5fa"/><stop offset="1" stop-color="#2563eb"/></linearGradient><filter id="relief-core"><feDropShadow dx="-1" dy="-1" stdDeviation=".7" flood-color="#fff" flood-opacity=".95"/><feDropShadow dx="1.2" dy="1.2" stdDeviation=".7" flood-color="#90a0b5" flood-opacity=".85"/></filter></defs><g stroke="url(#chip-core)" filter="url(#relief-core)"><rect x="5" y="5" width="14" height="14" rx="3" /><path d="m10 9-3 3 3 3m4-6 3 3-3 3M9 2.5V5m6-2.5V5M9 19v2.5m6-2.5v2.5M2.5 9H5m-2.5 6H5M19 9h2.5M19 15h2.5" /></g></svg></span>
-            <span class="hero-chip__label">core_skills</span>
-            <span class="visually-hidden">Core skills</span>
+            <span class="hero-chip__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M4 6.5h16v10H4zM2.5 18.5h19M9 18.5l1-2h4l1 2" /><path d="M7 9.5h7M7 12.5h4" /></svg></span>
+            <span class="hero-chip__label">laptop</span>
+            <span class="visually-hidden">Laptop</span>
             <span class="hero-chip__detail" id="chip-skills" role="status">
-              <strong>Core skills</strong>System design, AI &amp; UI/UX
+              <strong>Laptop</strong>Acer Nitro 5 | Macbook M4
             </span>
           </button>
           <button class="hero-chip pos-chip-2" type="button" aria-expanded="false" aria-controls="chip-sports">
-            <span class="hero-chip__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><defs><linearGradient id="chip-sport" x1="4" y1="4" x2="20" y2="20"><stop stop-color="#4ecba2"/><stop offset="1" stop-color="#0f766e"/></linearGradient><filter id="relief-sport"><feDropShadow dx="-1" dy="-1" stdDeviation=".7" flood-color="#fff" flood-opacity=".95"/><feDropShadow dx="1.2" dy="1.2" stdDeviation=".7" flood-color="#90a0b5" flood-opacity=".85"/></filter></defs><g stroke="url(#chip-sport)" filter="url(#relief-sport)"><circle cx="13" cy="12" r="7.5" /><path d="M8.2 6.2c3.2 2.4 5 5.4 5.2 9.2m4.5-8.6c-3.5 1.8-6 4.4-7.4 8m-4.8-4.3c4.1-.2 7.7 1.2 10.7 4.2M2 8h3M1.5 12H4" /></g></svg></span>
-            <span class="hero-chip__label">sports</span>
-            <span class="visually-hidden">Sports</span>
+            <span class="hero-chip__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8.5" /><path d="M6.2 5.8c3.2 2.3 5.1 5.6 5.3 9.8m6.1-9.3c-3.2 1.9-5.6 4.7-6.8 8.1M4 11.4c4-.2 7.5 1.2 10.4 4.3m-1.2-12c1.3 3.8 3.5 6.6 6.9 8.4" /></svg></span>
+            <span class="hero-chip__label">volleyball</span>
+            <span class="visually-hidden">Volleyball</span>
             <span class="hero-chip__detail" id="chip-sports" role="status">
-              <strong>Sports</strong>Volleyball &amp; basketball
+              <strong>Volleyball</strong>Opposite Hitter
             </span>
           </button>
           <button class="hero-chip pos-chip-3" type="button" aria-expanded="false" aria-controls="chip-coffee">
-            <span class="hero-chip__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><defs><linearGradient id="chip-coffee" x1="4" y1="4" x2="20" y2="20"><stop stop-color="#f6c94c"/><stop offset="1" stop-color="#c27b18"/></linearGradient><filter id="relief-coffee"><feDropShadow dx="-1" dy="-1" stdDeviation=".7" flood-color="#fff" flood-opacity=".95"/><feDropShadow dx="1.2" dy="1.2" stdDeviation=".7" flood-color="#90a0b5" flood-opacity=".85"/></filter></defs><g stroke="url(#chip-coffee)" filter="url(#relief-coffee)"><path d="M7 7h10l-1 14H8L7 7Z" /><path d="M6 4h12l-1 3H7L6 4Zm3.5 8h5M10 1.5c-1 1 .8 1.5 0 2.5m4-2.5c-1 1 .8 1.5 0 2.5" /></g></svg></span>
+            <span class="hero-chip__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M5 9h11v7.5a3.5 3.5 0 0 1-3.5 3.5h-4A3.5 3.5 0 0 1 5 16.5V9Z" /><path d="M16 11h1.5a2.5 2.5 0 0 1 0 5H16M7 4.5c-1 1 .8 1.5 0 2.5m4-2.5c-1 1 .8 1.5 0 2.5m4-2.5c-1 1 .8 1.5 0 2.5" /></svg></span>
             <span class="hero-chip__label">coffee</span>
             <span class="visually-hidden">Favorite drink</span>
             <span class="hero-chip__detail" id="chip-coffee" role="status">
-              <strong>Favorite drink</strong>White Chocolate Cold — Starbucks or B1T1
+              <strong>Coffee</strong>White Chocolate Mocha
             </span>
           </button>
-          <button class="hero-chip pos-chip-4" type="button" aria-expanded="false" aria-controls="chip-zodiac">
-            <span class="hero-chip__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><defs><linearGradient id="chip-zodiac" x1="4" y1="4" x2="20" y2="20"><stop stop-color="#60a5fa"/><stop offset="1" stop-color="#2563eb"/></linearGradient><filter id="relief-zodiac"><feDropShadow dx="-1" dy="-1" stdDeviation=".7" flood-color="#fff" flood-opacity=".95"/><feDropShadow dx="1.2" dy="1.2" stdDeviation=".7" flood-color="#90a0b5" flood-opacity=".85"/></filter></defs><g stroke="url(#chip-zodiac)" filter="url(#relief-zodiac)"><path d="M3 10c2.2 0 2.2-2 4.4-2s2.2 2 4.4 2 2.2-2 4.4-2 2.2 2 4.4 2M3 16c2.2 0 2.2-2 4.4-2s2.2 2 4.4 2 2.2-2 4.4-2 2.2 2 4.4 2" /><circle cx="5" cy="4" r="1" /><circle cx="12" cy="5" r="1" /><circle cx="19" cy="3" r="1" /><path d="m6 4 5 1m2 0 5-2" /></g></svg></span>
-            <span class="hero-chip__label">zodiac_sign</span>
-            <span class="visually-hidden">Zodiac sign</span>
-            <span class="hero-chip__detail" id="chip-zodiac" role="status">
-              <strong>Zodiac</strong>Aquarius
+          <button class="hero-chip pos-chip-4" type="button" aria-expanded="false" aria-controls="chip-agents">
+            <span class="hero-chip__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><circle cx="9" cy="8" r="3" /><path d="M3.5 19c.6-3.3 2.6-5 5.5-5s4.9 1.7 5.5 5M15 5h5v5h-5zM17.5 10v3m-2 0h4M17.5 18.5a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1" /></svg></span>
+            <span class="hero-chip__label">agents</span>
+            <span class="visually-hidden">Agents</span>
+            <span class="hero-chip__detail" id="chip-agents" role="status">
+              <strong>Agents</strong>Claude Code | Cursor | Codex | Kiro
             </span>
           </button>
           <button class="hero-chip pos-chip-5" type="button" aria-expanded="false" aria-controls="chip-status">
-            <span class="hero-chip__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><defs><linearGradient id="chip-status" x1="4" y1="4" x2="20" y2="20"><stop stop-color="#4ecba2"/><stop offset="1" stop-color="#0f766e"/></linearGradient><filter id="relief-status"><feDropShadow dx="-1" dy="-1" stdDeviation=".7" flood-color="#fff" flood-opacity=".95"/><feDropShadow dx="1.2" dy="1.2" stdDeviation=".7" flood-color="#90a0b5" flood-opacity=".85"/></filter></defs><g stroke="url(#chip-status)" filter="url(#relief-status)"><rect x="4" y="5" width="16" height="11" rx="2" /><path d="M8 20h8m-4-4v4M7.5 9.5 12 7l4.5 2.5L12 12l-4.5-2.5Zm1.5 1.8v2c1.5 1.2 4.5 1.2 6 0v-2" /></g></svg></span>
-            <span class="hero-chip__label">current_status</span>
-            <span class="visually-hidden">Current status</span>
+            <span class="hero-chip__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><circle cx="6.5" cy="17" r="2.5" /><circle cx="17.5" cy="17" r="2.5" /><path d="M9 17h5l-2.5-5H8l-2 3M11.5 12H16l1.5 2.5M14 9h3m-1.5 0v3M9.5 10.5 11 8h2.5" /></svg></span>
+            <span class="hero-chip__label">motorcycle</span>
+            <span class="visually-hidden">Motorcycle</span>
             <span class="hero-chip__detail" id="chip-status" role="status">
-              <strong>Currently</strong>Computer Science student
-            </span>
-          </button>
-          <button class="hero-chip pos-chip-6" type="button" aria-expanded="false" aria-controls="chip-role">
-            <span class="hero-chip__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><defs><linearGradient id="chip-ui" x1="4" y1="4" x2="20" y2="20"><stop stop-color="#f6c94c"/><stop offset="1" stop-color="#c27b18"/></linearGradient><filter id="relief-ui"><feDropShadow dx="-1" dy="-1" stdDeviation=".7" flood-color="#fff" flood-opacity=".95"/><feDropShadow dx="1.2" dy="1.2" stdDeviation=".7" flood-color="#90a0b5" flood-opacity=".85"/></filter></defs><g stroke="url(#chip-ui)" filter="url(#relief-ui)"><rect x="3.5" y="4" width="17" height="16" rx="3" /><circle cx="9" cy="10" r="2" /><path d="M9 12v4m-2 0h4M14 8h4m-4 4h4m-4 4h2M6 4V2m12 2V2" /></g></svg></span>
-            <span class="hero-chip__label">ui_ux</span>
-            <span class="visually-hidden">Role</span>
-            <span class="hero-chip__detail" id="chip-role" role="status">
-              <strong>Role</strong>UI/UX developer
+              <strong>Motorcycle</strong>Nmax | Vespa Classic
             </span>
           </button>
         </div>
       </section>
 
       <section class="home-section home-section--lanes content-column" aria-labelledby="explore-title">
-        <div class="section-head section-head--center">
+        <div class="section-head section-head--center" data-reveal>
           <h2 id="explore-title">Pick a lane</h2>
           <p>Three routes through what I do and who I am.</p>
         </div>
 
-        <ul class="gallery gallery--lanes">
+        <ul class="gallery gallery--lanes" data-reveal>
           <li class="gallery__item card lift" data-reveal data-reveal-delay="1">
             <a class="lane-card__link" href="/tech">
               <figure class="lane-card__media">
                 <figcaption class="lane-card__filename">KiroVerse.JPG</figcaption>
-                <img src="assets/images/photos/KiroVerse.JPG" alt="Reggie and his peers at an AWS event" width="640" height="480" />
+                <img src="assets/images/photos/KiroVerse.JPG" alt="Reggie and his peers at an AWS event" width="640" height="480" loading="lazy" decoding="async" />
               </figure>
               <div class="lane-card__body">
                 <h3>Tech</h3>
@@ -161,7 +144,7 @@
             <a class="lane-card__link" href="/travel">
               <figure class="lane-card__media">
                 <figcaption class="lane-card__filename">Hundred_Island.JPG</figcaption>
-                <img src="assets/images/photos/Hundred_Island.JPG" alt="Reggie at Hundred Islands" width="640" height="480" />
+                <img src="assets/images/photos/Hundred_Island.JPG" alt="Reggie at Hundred Islands" width="640" height="480" loading="lazy" decoding="async" />
               </figure>
               <div class="lane-card__body">
                 <h3>Travel</h3>
@@ -173,7 +156,7 @@
             <a class="lane-card__link" href="/life">
               <figure class="lane-card__media">
                 <figcaption class="lane-card__filename">Patawow_VB.JPG</figcaption>
-                <img src="assets/images/photos/Patawow_VB.JPG" alt="Reggie and his volleyball team" width="640" height="480" />
+                <img src="assets/images/photos/Patawow_VB.JPG" alt="Reggie and his volleyball team" width="640" height="480" loading="lazy" decoding="async" />
               </figure>
               <div class="lane-card__body">
                 <h3>Life</h3>

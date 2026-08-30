@@ -1,50 +1,34 @@
-/* ==========================================================================
-   Design System — Single Source of Truth (tokens.css)
-   Every color, type, spacing, shadow, and motion value is defined exactly
-   once here and consumed everywhere via var(). Changing a value here changes
-   it site-wide. (Requirements 7.1, 7.2, 7.4)
-   ========================================================================== */
+/* Content-first hybrid design system: shared colors, spacing, surfaces, and motion. */
 
 :root {
-  /* --- Colors -------------------------------------------------------------
-     Light neumorphic surface so paired light/dark shadows read clearly and
-     body text keeps a >= 4.5:1 contrast ratio (Req 4.1, 10.4, 10.5). */
-  --bg-base: #e4e9f0;            /* single shared neumorphic background tone */
-  --bg-raised: #e4e9f0;          /* cards share the base tone (neumorphism)   */
-  --text-primary: #2b303a;       /* body text — ~9.8:1 on --bg-base           */
-  --text-muted: #55606f;         /* secondary text — ~5.2:1 on --bg-base      */
-  --text-large: #3a4150;         /* large/heading text — >= 3:1               */
+  /* Bright white keeps photography and writing visually dominant. */
+  --bg-base: #ffffff;
+  --bg-raised: #ffffff;
+  --text-primary: #303540;
+  --text-muted: #626a76;
+  --text-large: #20252e;
 
-  /* MotoGP-derived primary accent (vivid racing red) — links, controls,
-     highlights (Req 6.1). Tuned for >= 4.5:1 on --bg-base. */
-  --accent-primary: #c8001c;
+  /* Red remains an identity accent without carrying a motorsport concept. */
+  --accent-primary: #d5001c;
   --accent-primary-strong: #a30016;
-  --accent-primary-soft: #ff3b52; /* decorative / on dark surfaces only */
-  --accent-cool: #1d4ed8;
-  --accent-cool-soft: #3b82f6; /* decorative / on dark surfaces only */
-  --accent-teal: #115e59;
-  --accent-gold: #92400e;
-
-  /* Formula 1-derived secondary accent (carbon graphite) — decorative /
-     supporting details only, subordinate to MotoGP red (Req 6.2). */
+  --accent-primary-soft: #ff5267;
+  --accent-cool: #566170;
+  --accent-cool-soft: #aeb5bf;
+  --accent-teal: #6f7782;
+  --accent-gold: #ad8558;
   --accent-secondary: #15151e;
-  --accent-secondary-soft: #3a3a48;
+  --accent-secondary-soft: #555b66;
+  --focus-ring: #9f1830;
 
-  /* Focus indicator — >= 3:1 against adjacent background (Req 10.6). */
-  --focus-ring: #0b5cff;
-
-  /* --- Typography (<= 6 distinct sizes total, Req 5.2) -------------------- */
   --font-family-base: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
     Helvetica, Arial, sans-serif;
-  /* Display font for the hero motto — soft, geometric, pairs with the
-     neumorphic surfaces. Falls back to the base stack if it fails to load. */
-  --font-family-display: "Poppins", var(--font-family-base);
-  --font-size-1: 0.8125rem;   /* 13px — captions / meta   */
-  --font-size-2: 1rem;        /* 16px — body              */
-  --font-size-3: 1.25rem;     /* 20px — lead / subhead    */
-  --font-size-4: 1.75rem;     /* 28px — section titles    */
-  --font-size-5: 2.75rem;     /* 44px — page headings     */
-  --font-size-6: clamp(3rem, 8vw, 5.5rem); /* hero headline */
+  --font-family-display: var(--font-family-base);
+  --font-size-1: 0.8125rem;
+  --font-size-2: 1rem;
+  --font-size-3: 1.25rem;
+  --font-size-4: 1.75rem;
+  --font-size-5: 2.75rem;
+  --font-size-6: clamp(3rem, 8vw, 5.5rem);
 
   --line-height-tight: 1.1;
   --line-height-base: 1.6;
@@ -52,47 +36,54 @@
   --weight-medium: 500;
   --weight-bold: 700;
 
-  /* --- Spacing (single scale; min block gap >= 16px, Req 5.3) ------------ */
-  --space-1: 0.5rem;   /* 8px  */
-  --space-2: 1rem;     /* 16px */
-  --space-3: 1.5rem;   /* 24px */
-  --space-4: 2rem;     /* 32px */
-  --space-5: 3rem;     /* 48px */
-  --space-6: 4rem;     /* 64px */
-  --space-7: 6rem;     /* 96px */
-  --content-max-width: 1280px; /* centered content column (Req 5.4) */
+  --space-1: 0.5rem;
+  --space-2: 1rem;
+  --space-3: 1.5rem;
+  --space-4: 2rem;
+  --space-5: 3rem;
+  --space-6: 4rem;
+  --space-7: 6rem;
+  --content-max-width: 1280px;
 
-  /* --- Radii -------------------------------------------------------------- */
   --radius-sm: 10px;
   --radius-md: 18px;
   --radius-lg: 28px;
   --radius-pill: 999px;
 
-  /* --- Neumorphic shadows (Req 4.1, 4.3–4.5) ----------------------------- */
-  --shadow-light: #ffffff;
-  --shadow-dark: #b9c2d0;
-  --surface-tint: #dce5f2;
-  --neu-resting: 6px 6px 14px var(--shadow-dark),
-    -6px -6px 14px var(--shadow-light);
-  --neu-hover: 9px 9px 20px var(--shadow-dark),
-    -9px -9px 20px var(--shadow-light);
-  --neu-pressed: inset 5px 5px 12px var(--shadow-dark),
-    inset -5px -5px 12px var(--shadow-light);
-  --transition-shadow: 300ms; /* upper bound for shadow-state changes */
+  /* Glass for large surfaces; soft neumorphism for tactile controls. */
+  --shadow-light: rgb(255 255 255 / 92%);
+  --shadow-dark: rgb(137 145 158 / 22%);
+  --surface-tint: #f2f4f7;
+  --glass-surface: rgb(255 255 255 / 56%);
+  --glass-surface-strong: rgb(255 255 255 / 80%);
+  --glass-border: rgb(255 255 255 / 82%);
+  --glass-shadow: 0 18px 48px rgb(66 72 83 / 12%);
+  --glass-blur: 20px;
+  --neu-resting: 7px 7px 17px var(--shadow-dark),
+    -6px -6px 15px var(--shadow-light);
+  --neu-hover: 10px 10px 24px rgb(137 145 158 / 28%),
+    -8px -8px 20px rgb(255 255 255 / 86%);
+  --neu-pressed: inset 4px 4px 10px rgb(137 145 158 / 20%),
+    inset -4px -4px 10px rgb(255 255 255 / 72%);
+  --transition-shadow: 300ms;
 
-  /* --- Motion (single source of truth; CSS-only, Req: design motion) ------
-     Micro-interactions stay quick while content entrances use a softer pace. */
-  --duration-fast: 150ms;  /* micro state changes (hover lift, focus) */
-  --duration-base: 250ms;  /* reveals, menu open/close                */
-  --duration-slow: 300ms;  /* upper bound; == --transition-shadow     */
-  --duration-enter: 780ms; /* shared content entrance, intentionally unhurried */
+  --duration-fast: 150ms;
+  --duration-base: 250ms;
+  --duration-slow: 300ms;
+  --duration-enter: 780ms;
+  --duration-feedback: 900ms;
+  --duration-progress: 1200ms;
+  --duration-pulse: 2000ms;
+  --duration-pulse-slow: 2400ms;
+  --duration-route: 4000ms;
+  --duration-marquee: 24000ms;
+  --duration-marquee-reverse: 28000ms;
   --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
   --ease-emphasized: cubic-bezier(0.2, 0, 0, 1);
   --ease-fluid: cubic-bezier(0.22, 0.8, 0.24, 1);
   --ease-exit: cubic-bezier(0.4, 0, 1, 1);
-  --reveal-offset: 12px;   /* translateY distance for entrance reveals */
+  --reveal-offset: 12px;
 
-  /* --- Layering ----------------------------------------------------------- */
   --z-nav: 100;
   --z-overlay: 200;
 }

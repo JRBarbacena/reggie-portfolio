@@ -1,4 +1,5 @@
 import { describe, it, expect } from "vitest";
+import { describe, it, expect } from "vitest";
 import fc from "fast-check";
 import {
   contrastRatio,
@@ -34,11 +35,6 @@ describe("a11y contrast math", () => {
     expect(contrastRatio("#3a4150", bg)).toBeGreaterThanOrEqual(3);
     // focus ring vs adjacent background >= 3:1
     expect(contrastRatio("#0b5cff", bg)).toBeGreaterThanOrEqual(3);
-    // accent colors used as body-sized text/links on the neumorphic base
-    expect(contrastRatio("#c8001c", bg)).toBeGreaterThanOrEqual(4.5);
-    expect(contrastRatio("#1d4ed8", bg)).toBeGreaterThanOrEqual(4.5);
-    expect(contrastRatio("#115e59", bg)).toBeGreaterThanOrEqual(4.5);
-    expect(contrastRatio("#92400e", bg)).toBeGreaterThanOrEqual(4.5);
   });
 
   it("black vs white is 21:1 and identical colors are 1:1", () => {

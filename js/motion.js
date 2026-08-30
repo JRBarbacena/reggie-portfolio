@@ -36,41 +36,32 @@ function initReveal() {
   const targets = Array.from(document.querySelectorAll("[data-reveal]"));
   if (targets.length === 0) return;
 
-  function beginReveals() {
-    // Under reduced motion, or without IntersectionObserver support, show
-    // everything immediately in its final state — never hide content.
-    if (REDUCED_MOTION || typeof IntersectionObserver === "undefined") {
-      revealAll(targets);
-      return;
-    }
+  // Under reduced motion, or without IntersectionObserver support, show
+  // everything immediately in its final state — never hide content.
+  if (REDUCED_MOTION || typeof IntersectionObserver === "undefined") {
+    revealAll(targets);
+    return;
+  }
 
-    const observer = new IntersectionObserver(
-      (entries, obs) => {
-        for (const entry of entries) {
-          if (entry.isIntersecting) {
-            entry.target.classList.add("is-revealed");
-            entry.target.addEventListener(
-              "transitionend",
-              () => entry.target.classList.add("reveal-complete"),
-              { once: true }
-            );
-            obs.unobserve(entry.target);
-          }
+  const observer = new IntersectionObserver(
+    (entries, obs) => {
+      for (const entry of entries) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("is-revealed");
+          const complete = (event) => {
+            if (event.target !== entry.target || event.propertyName !== "transform") return;
+            entry.target.classList.add("reveal-complete");
+            entry.target.removeEventListener("transitionend", complete);
+          };
+          entry.target.addEventListener("transitionend", complete);
+          obs.unobserve(entry.target);
         }
-      },
-      { rootMargin: "0px 0px -18% 0px", threshold: 0.12 }
-    );
+      }
+    },
+    { rootMargin: "0px 0px -18% 0px", threshold: 0.12 }
+  );
 
-    targets.forEach((el) => observer.observe(el));
-  }
-
-  // The entry gate hides the page. Do not run below-the-fold reveals behind
-  // it, otherwise visitors never see those transitions after clicking Enter.
-  if (document.documentElement.classList.contains("preloader-pending")) {
-    document.addEventListener("portfolio:entered", beginReveals, { once: true });
-  } else {
-    beginReveals();
-  }
+  targets.forEach((el) => observer.observe(el));
 }
 
 if (document.readyState === "loading") {

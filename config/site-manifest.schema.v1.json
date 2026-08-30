@@ -1,0 +1,85 @@
+{
+  "$id": "urn:reggie-portfolio:site-manifest:v1",
+  "title": "Reggie Portfolio site manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["$schema", "schemaVersion", "cache", "hosting", "pages", "utilities", "assets"],
+  "properties": {
+    "$schema": { "const": "./site-manifest.schema.v1.json" },
+    "schemaVersion": { "const": 1 },
+    "cache": {
+      "type": "object", "additionalProperties": false, "required": ["namespace"],
+      "properties": { "namespace": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$" } }
+    },
+    "hosting": {
+      "type": "object", "additionalProperties": false,
+      "required": ["buildCommand", "cleanUrls", "framework", "outputDirectory", "rewrites", "trailingSlash", "headers"],
+      "properties": {
+        "buildCommand": { "const": "npm run build:react" },
+        "cleanUrls": { "const": true }, "trailingSlash": { "const": false },
+        "framework": { "const": "vite" },
+        "outputDirectory": { "const": "dist-react" },
+        "rewrites": { "type": "array", "minItems": 1, "maxItems": 1, "items": { "$ref": "#/$defs/rewriteRule" } },
+        "headers": { "type": "array", "items": { "$ref": "#/$defs/headerRule" } }
+      }
+    },
+    "pages": { "type": "array", "minItems": 4, "maxItems": 4, "items": { "$ref": "#/$defs/page" } },
+    "utilities": { "type": "array", "minItems": 2, "items": { "$ref": "#/$defs/utility" } },
+    "assets": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/asset" } }
+  },
+  "$defs": {
+    "route": { "type": "string", "pattern": "^/(?:[a-z0-9-]+)?$" },
+    "file": { "type": "string", "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))[A-Za-z0-9_.@/-]+$" },
+    "page": {
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "label", "route", "document", "tier", "order", "h1"],
+      "properties": {
+        "id": { "enum": ["home", "tech", "travel", "life"] },
+        "label": { "type": "string", "minLength": 1 }, "route": { "$ref": "#/$defs/route" },
+        "document": { "$ref": "#/$defs/file" }, "tier": { "const": "primary" },
+        "order": { "type": "integer", "minimum": 0, "maximum": 3 }, "h1": { "type": "string", "minLength": 1 }
+      }
+    }
+    ,"utility": {
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "route", "document", "cacheRole", "h1"],
+      "properties": {
+        "id": { "enum": ["not-found", "offline"] }, "route": { "$ref": "#/$defs/route" },
+        "document": { "$ref": "#/$defs/file" }, "cacheRole": { "enum": ["shell", "none"] },
+        "h1": { "type": "string", "minLength": 1 }
+      }
+    },
+    "asset": {
+      "type": "object", "additionalProperties": false,
+      "required": ["path", "kind", "availability", "mutability", "cacheRole"],
+      "properties": {
+        "path": { "$ref": "#/$defs/file" },
+        "kind": { "enum": ["style", "module", "script", "image", "font", "document"] },
+        "availability": { "enum": ["required", "optional"] },
+        "mutability": { "enum": ["mutable", "content-addressed"] },
+        "cacheRole": { "enum": ["shell", "runtime", "none"] },
+        "routeProbe": { "type": "boolean" }
+      }
+    },
+    "rewriteRule": {
+      "type": "object", "additionalProperties": false, "required": ["source", "destination"],
+      "properties": {
+        "source": { "const": "/(.*)" },
+        "destination": { "const": "/" }
+      }
+    },
+    "headerRule": {
+      "type": "object", "additionalProperties": false, "required": ["source", "headers"],
+      "properties": {
+        "source": { "type": "string", "minLength": 1 },
+        "headers": {
+          "type": "array", "minItems": 1,
+          "items": {
+            "type": "object", "additionalProperties": false, "required": ["key", "value"],
+            "properties": { "key": { "type": "string", "minLength": 1 }, "value": { "type": "string", "minLength": 1 } }
+          }
+        }
+      }
+    }
+  }
+}
