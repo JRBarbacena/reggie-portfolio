@@ -85,7 +85,7 @@ export default function HomePage() {
 
   return <><main id="main" tabIndex="-1">
     <section className="hero hero--home home-section home-section--hero" aria-labelledby="hero-title">
-      <HeroBallpit />
+      <HeroBallpit active={!entryVisible} />
       <header className="site-header site-header--home"><SiteNavigation /></header>
       <div className="hero__center"><h1 className="hero__motto" id="hero-title">Beyond comfort lies <span className="accent">greatness</span>.</h1></div>
       <div className="collage" role="group" aria-label="Photos and details about Reggie">
