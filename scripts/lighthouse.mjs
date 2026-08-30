@@ -7,6 +7,7 @@ import { createPreviewServer } from "./preview-server.mjs";
 const ROUTES = ["/", "/tech", "/travel", "/life"];
 const RUNS = 3;
 const OUTPUT_DIR = path.resolve(".lighthouseci");
+const CHROME_PROFILE_DIR = path.join(OUTPUT_DIR, "chrome-profile");
 const CATEGORY_POLICY = {
   performance: { minimum: 0.7, severity: "warn" },
   accessibility: { minimum: 0.9, severity: "error" },
@@ -34,8 +35,10 @@ let chrome;
 try {
   await rm(OUTPUT_DIR, { recursive: true, force: true });
   await mkdir(OUTPUT_DIR, { recursive: true });
+  await mkdir(CHROME_PROFILE_DIR, { recursive: true });
   chrome = await chromeLauncher.launch({
     chromeFlags: ["--headless", "--no-sandbox", "--disable-gpu"],
+    userDataDir: CHROME_PROFILE_DIR,
   });
 
   const summary = { runs: RUNS, routes: {}, policy: CATEGORY_POLICY };
@@ -70,6 +73,10 @@ try {
     );
     for (const [category, { minimum, severity }] of Object.entries(CATEGORY_POLICY)) {
       const score = summary.routes[route][category].median;
+      if (!Number.isFinite(score)) {
+        failures.push(`${route} ${category} did not return a numeric Lighthouse score`);
+        continue;
+      }
       if (score >= minimum) continue;
       const message = `${route} ${category} median ${score.toFixed(2)} is below ${minimum.toFixed(2)}`;
       if (severity === "error") failures.push(message);
@@ -85,7 +92,16 @@ try {
   if (failures.length) throw new Error(`Lighthouse policy failed:\n- ${failures.join("\n- ")}`);
   console.log(`Lighthouse passed ${ROUTES.length} routes across ${RUNS} runs; reports: ${OUTPUT_DIR}`);
 } finally {
-  await chrome?.kill();
+  try {
+    await chrome?.kill();
+  } catch (error) {
+    console.warn(`Lighthouse Chrome cleanup warning: ${error.message}`);
+  }
+  try {
+    await rm(CHROME_PROFILE_DIR, { recursive: true, force: true, maxRetries: 10 });
+  } catch (error) {
+    console.warn(`Lighthouse profile cleanup warning: ${error.message}`);
+  }
   await new Promise((resolve, reject) => {
     server.close((error) => (error ? reject(error) : resolve()));
   });
