@@ -32,7 +32,7 @@ class BallpitBoundary extends Component {
   }
 }
 
-export default function HeroBallpit({ active = true }) {
+export default function HeroBallpit() {
   const [capable, setCapable] = useState(false);
   const [compact, setCompact] = useState(window.innerWidth < 720);
 
@@ -42,21 +42,18 @@ export default function HeroBallpit({ active = true }) {
     const connection = navigator.connection;
     const update = () => {
       setCompact(compactQuery.matches);
-      setCapable(active && !motionQuery.matches && !connection?.saveData && supportsWebGL());
+      setCapable(!motionQuery.matches && !connection?.saveData && supportsWebGL());
     };
-    setCompact(compactQuery.matches);
-    setCapable(false);
-    const activationTimer = window.setTimeout(update, active ? 700 : 0);
+    update();
     motionQuery.addEventListener("change", update);
     compactQuery.addEventListener("change", update);
     connection?.addEventListener?.("change", update);
     return () => {
-      window.clearTimeout(activationTimer);
       motionQuery.removeEventListener("change", update);
       compactQuery.removeEventListener("change", update);
       connection?.removeEventListener?.("change", update);
     };
-  }, [active]);
+  }, []);
 
   return (
     <div
