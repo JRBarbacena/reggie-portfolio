@@ -56,6 +56,7 @@ function PhotoWindow({ photo, priority }) {
 export default function HomePage() {
   const [openChip, setOpenChip] = useState(null);
   const [entryVisible, setEntryVisible] = useState(shouldShowHomeEntry);
+  const [entryLeaving, setEntryLeaving] = useState(false);
 
   useEffect(() => {
     const closeOnEscape = (event) => { if (event.key === "Escape") setOpenChip(null); };
@@ -77,12 +78,14 @@ export default function HomePage() {
   }, [entryVisible]);
 
   const enterPortfolio = () => {
-    setEntryVisible(false);
+    if (entryLeaving) return;
+    setEntryLeaving(true);
+    window.setTimeout(() => setEntryVisible(false), 300);
   };
 
   return <><main id="main" tabIndex="-1">
     <section className="hero hero--home home-section home-section--hero" aria-labelledby="hero-title">
-      <HeroBallpit active={!entryVisible} />
+      <HeroBallpit />
       <header className="site-header site-header--home"><SiteNavigation /></header>
       <div className="hero__center"><h1 className="hero__motto" id="hero-title">Beyond comfort lies <span className="accent">greatness</span>.</h1></div>
       <div className="collage" role="group" aria-label="Photos and details about Reggie">
@@ -97,5 +100,5 @@ export default function HomePage() {
       <div className="section-head section-head--center" data-reveal><h2 id="explore-title">Pick a lane</h2><p>Three routes through what I do and who I am.</p></div>
       <ul className="gallery gallery--lanes" data-reveal>{lanes.map(([path, title, image, alt, description], index) => <li className="gallery__item card lift" data-reveal data-reveal-delay={index + 1} key={path}><Link className="lane-card__link" to={path}><figure className="lane-card__media"><figcaption className="lane-card__filename"><span className="lane-card__controls" aria-hidden="true"><i /><i /><i /></span><span className="lane-card__filename-text">{image}</span></figcaption><img src={`/images/photos/${image}`} alt={alt} width="640" height="480" loading="lazy" decoding="async" /></figure><div className="lane-card__body"><h3>{title}</h3><p>{description}</p></div></Link></li>)}</ul>
     </section>
-  </main>{entryVisible && createPortal(<div className="site-preloader" role="dialog" aria-modal="true" aria-labelledby="preloader-title"><div className="site-preloader__panel"><div className="site-preloader__mark" aria-hidden="true"><BrandMark /></div><p className="site-preloader__title" id="preloader-title">Welcome</p><button className="site-preloader__enter" type="button" autoFocus onClick={enterPortfolio}>Enter portfolio</button></div></div>, document.body)}</>;
+  </main>{entryVisible && createPortal(<div className={`site-preloader${entryLeaving ? " is-leaving" : ""}`} role="dialog" aria-modal="true" aria-labelledby="preloader-title"><div className="site-preloader__panel"><div className="site-preloader__mark" aria-hidden="true"><BrandMark /></div><p className="site-preloader__title" id="preloader-title">Welcome</p><button className="site-preloader__enter" type="button" autoFocus disabled={entryLeaving} onClick={enterPortfolio}>Enter portfolio</button></div></div>, document.body)}</>;
 }
