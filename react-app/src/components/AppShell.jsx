@@ -15,25 +15,31 @@ export default function AppShell({ children }) {
   const headerRef = useRef(null);
 
   useEffect(() => {
-    document.body.classList.remove(...routeBodyClasses);
+    document.body.classList.remove(...routeBodyClasses, "page-scroll-started");
     document.documentElement.classList.remove("is-page-leaving");
     if (isHome) document.body.classList.add("home");
     else if (pathname === "/tech") document.body.classList.add("story-page", "tech-page");
     else if (pathname === "/travel") document.body.classList.add("story-page", "travel-page");
     else if (pathname === "/life") document.body.classList.add("story-page", "life-page");
     window.scrollTo({ top: 0, behavior: "instant" });
-    return () => document.body.classList.remove(...routeBodyClasses);
+    return () => document.body.classList.remove(...routeBodyClasses, "page-scroll-started");
   }, [isHome, pathname]);
 
   useEffect(() => {
     const header = headerRef.current;
     if (!header || isHome) return undefined;
-    const syncHeader = () => header.classList.toggle("is-scrolled", window.scrollY > 12);
+    const syncHeader = () => {
+      const hasStartedScrolling = window.scrollY > 12;
+      const shouldSkipDeferredSections = window.matchMedia("(prefers-reduced-motion: reduce)").matches || navigator.connection?.saveData;
+      header.classList.toggle("is-scrolled", hasStartedScrolling);
+      document.body.classList.toggle("page-scroll-started", hasStartedScrolling || shouldSkipDeferredSections);
+    };
     syncHeader();
     window.addEventListener("scroll", syncHeader, { passive: true });
     return () => {
       window.removeEventListener("scroll", syncHeader);
       header.classList.remove("is-scrolled");
+      document.body.classList.remove("page-scroll-started");
     };
   }, [isHome, pathname]);
 

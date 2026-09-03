@@ -46,6 +46,7 @@ const DEFAULTS = {
   maxZ: 2,
   controlSphere0: false,
   followCursor: false,
+  showCursorBall: false,
 };
 
 const tempPosition = new Vector3();
@@ -113,7 +114,7 @@ class BallPhysics {
 
   update(frame) {
     const { config, positionData, velocityData, sizeData } = this;
-    const startIndex = config.controlSphere0 ? 1 : 0;
+    const startIndex = 1;
 
     if (config.controlSphere0) {
       tempPosition.fromArray(positionData, 0).lerp(this.center, 0.1).toArray(positionData, 0);
@@ -236,7 +237,7 @@ class BallInstances extends InstancedMesh {
     this.physics.update(frame);
     for (let index = 0; index < this.count; index += 1) {
       instanceObject.position.fromArray(this.physics.positionData, index * 3);
-      instanceObject.scale.setScalar(index === 0 && !this.config.followCursor ? 0 : this.physics.sizeData[index]);
+      instanceObject.scale.setScalar(index === 0 && !this.config.showCursorBall ? 0 : this.physics.sizeData[index]);
       instanceObject.updateMatrix();
       this.setMatrixAt(index, instanceObject.matrix);
       if (index === 0) this.light.position.copy(instanceObject.position);
