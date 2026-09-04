@@ -129,6 +129,43 @@ function ContentList({ destination, items, busy, onEdit, onPublish, onDelete }) 
   );
 }
 
+function inquiryDate(value) {
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? "Unknown date" : date.toLocaleString(undefined, { year: "numeric", month: "short", day: "numeric", hour: "numeric", minute: "2-digit" });
+}
+
+function InboxList({ inquiries, inboxState, busy, onStatusChange }) {
+  return <section className="admin-inbox" aria-labelledby="inbox-title">
+    <div className="admin-content-list__heading"><div><p className="react-eyebrow">Private messages</p><h2 id="inbox-title">Contact inbox</h2></div><span>{inboxState === "ready" ? `${inquiries.length} total` : "Server-managed"}</span></div>
+    {inboxState === "loading" && <p className="react-muted">Loading private messages…</p>}
+    {inboxState === "unavailable" && <div className="album-empty" role="status"><strong>The contact inbox has not been set up yet.</strong><span>Run `20260904_005_chatbot_inbox.sql` in Supabase, then refresh this page.</span></div>}
+    {inboxState === "ready" && inquiries.length === 0 && <div className="album-empty" role="status"><strong>No messages yet.</strong><span>New chatbot contact requests will appear here.</span></div>}
+    {inboxState === "ready" && inquiries.length > 0 && <div className="admin-inbox__items">
+      {inquiries.map((inquiry) => <article className="admin-inbox-card" key={inquiry.id}>
+        <header><div><span className={`admin-status admin-status--${inquiry.status}`}>{inquiry.status}</span><strong>{inquiry.name}</strong><a href={`mailto:${inquiry.email}`}>{inquiry.email}</a></div><time dateTime={inquiry.created_at}>{inquiryDate(inquiry.created_at)}</time></header>
+        <p className="admin-inbox-card__topic">{inquiry.topic}</p>
+        <p className="admin-inbox-card__message">{inquiry.message}</p>
+        {Array.isArray(inquiry.transcript) && inquiry.transcript.length > 0 && <details className="admin-inbox-card__transcript"><summary>Conversation context ({inquiry.transcript.length})</summary><ol>{inquiry.transcript.map((entry, index) => <li key={`${inquiry.id}-${index}`}><strong>{entry.role === "assistant" ? "Assistant" : "Visitor"}:</strong> {entry.content}</li>)}</ol></details>}
+        <label className="admin-inbox-card__status">Status<select value={inquiry.status} disabled={busy} onChange={(event) => onStatusChange(inquiry, event.target.value)}><option value="new">New</option><option value="read">Read</option><option value="replied">Replied</option><option value="archived">Archived</option></select></label>
+      </article>)}
+    </div>}
+  </section>;
+}
+
+function LiveChats({ chats, chatState, busy, onReply, onEnd }) {
+  return <section className="admin-live-chats" aria-labelledby="live-chats-title">
+    <div className="admin-content-list__heading"><div><p className="react-eyebrow">Temporary conversations</p><h2 id="live-chats-title">Live chats</h2></div><span>{chatState === "ready" ? `${chats.length} active` : "One-hour retention"}</span></div>
+    {chatState === "loading" && <p className="react-muted">Loading active chats…</p>}
+    {chatState === "unavailable" && <div className="album-empty" role="status"><strong>Temporary chat has not been set up yet.</strong><span>Run `20260904_006_ephemeral_live_chat.sql` in Supabase, then refresh.</span></div>}
+    {chatState === "ready" && chats.length === 0 && <div className="album-empty" role="status"><strong>No active chats.</strong><span>New visitor conversations appear here during their one-hour window.</span></div>}
+    {chatState === "ready" && chats.map((chat) => <article className="admin-live-chat" key={chat.id}>
+      <header><div><span className="admin-status admin-status--public">Active</span><strong>{chat.visitor_name}</strong></div><div><time dateTime={chat.last_activity_at}>{inquiryDate(chat.last_activity_at)}</time><small>Expires {inquiryDate(chat.expires_at)}</small></div></header>
+      <div className="admin-live-chat__messages">{(chat.chat_messages ?? []).map((entry) => <p className={`is-${entry.sender}`} key={entry.id}><strong>{entry.sender === "admin" ? "You" : chat.visitor_name}</strong><span>{entry.body}</span></p>)}</div>
+      <form className="admin-live-chat__reply" onSubmit={(event) => onReply(chat, event)}><label className="sr-only" htmlFor={`reply-${chat.id}`}>Reply to {chat.visitor_name}</label><input id={`reply-${chat.id}`} name="message" required maxLength="1200" placeholder="Reply to this temporary chat…" /><button disabled={busy}>Reply</button><button type="button" className="react-admin__delete" disabled={busy} onClick={() => onEnd(chat)}>End &amp; erase</button></form>
+    </article>)}
+  </section>;
+}
+
 export default function AdminPage() {
   const [session, setSession] = useState(null);
   const [isAdmin, setIsAdmin] = useState(false);
@@ -138,6 +175,10 @@ export default function AdminPage() {
   const [albums, setAlbums] = useState([]);
   const [editing, setEditing] = useState(null);
   const [view, setView] = useState("overview");
+  const [inquiries, setInquiries] = useState([]);
+  const [inboxState, setInboxState] = useState("loading");
+  const [chats, setChats] = useState([]);
+  const [chatState, setChatState] = useState("loading");
 
   const refreshSession = async () => {
     if (!supabase) return;
@@ -173,6 +214,34 @@ export default function AdminPage() {
     setAlbums(withPreviews);
   };
 
+  const loadInquiries = async () => {
+    setInboxState("loading");
+    const { data, error } = await requireSupabase().from("contact_inquiries")
+      .select("id,created_at,status,name,email,topic,message,transcript")
+      .order("created_at", { ascending: false });
+    if (error) {
+      // The media dashboard remains usable until the optional inbox migration
+      // has been installed in Supabase.
+      setInboxState("unavailable");
+      return;
+    }
+    setInquiries(data ?? []);
+    setInboxState("ready");
+  };
+
+  const loadChats = async () => {
+    setChatState("loading");
+    const { data, error } = await requireSupabase().from("chat_sessions")
+      .select("id,visitor_name,status,last_activity_at,expires_at,chat_messages(id,sender,body,created_at)")
+      .eq("status", "open")
+      .gt("expires_at", new Date().toISOString())
+      .order("last_activity_at", { ascending: false })
+      .order("created_at", { referencedTable: "chat_messages", ascending: true });
+    if (error) { setChatState("unavailable"); return; }
+    setChats(data ?? []);
+    setChatState("ready");
+  };
+
   useEffect(() => {
     refreshSession();
     if (!supabase) return undefined;
@@ -180,7 +249,30 @@ export default function AdminPage() {
     return () => subscription.unsubscribe();
   }, []);
 
-  useEffect(() => { if (isAdmin) loadAlbums().catch((error) => setMessage(error.message)); }, [isAdmin]);
+  useEffect(() => {
+    if (!isAdmin) {
+      setInquiries([]);
+      return;
+    }
+    loadAlbums().catch((error) => setMessage(error.message));
+    loadInquiries();
+    loadChats();
+  }, [isAdmin]);
+
+  useEffect(() => {
+    if (!isAdmin || !supabase || chatState === "unavailable") return undefined;
+    const heartbeat = () => supabase.from("chat_presence").update({ status: "online", last_seen_at: new Date().toISOString() }).eq("id", true).then(() => {});
+    heartbeat();
+    const heartbeatTimer = window.setInterval(heartbeat, 30_000);
+    const channel = supabase.channel("portfolio-admin-live-chats")
+      .on("postgres_changes", { event: "*", schema: "public", table: "chat_sessions" }, loadChats)
+      .on("postgres_changes", { event: "*", schema: "public", table: "chat_messages" }, loadChats)
+      .subscribe();
+    return () => {
+      window.clearInterval(heartbeatTimer);
+      supabase.removeChannel(channel);
+    };
+  }, [isAdmin]);
 
   const sendMagicLink = async (event) => {
     event.preventDefault(); setBusy(true); setMessage("");
@@ -290,11 +382,47 @@ export default function AdminPage() {
     } catch (error) { setMessage(error.message); } finally { setBusy(false); }
   };
 
+  const updateInquiryStatus = async (inquiry, status) => {
+    if (!["new", "read", "replied", "archived"].includes(status) || status === inquiry.status) return;
+    setBusy(true); setMessage("");
+    try {
+      const { error } = await requireSupabase().from("contact_inquiries").update({ status }).eq("id", inquiry.id);
+      if (error) throw error;
+      setInquiries((current) => current.map((entry) => entry.id === inquiry.id ? { ...entry, status } : entry));
+      setMessage(`Message marked ${status}.`);
+    } catch (error) { setMessage(error.message); } finally { setBusy(false); }
+  };
+
+  const replyToChat = async (chat, event) => {
+    event.preventDefault();
+    const form = event.currentTarget;
+    const body = String(new FormData(form).get("message") ?? "").trim();
+    if (!body) return;
+    setBusy(true); setMessage("");
+    try {
+      const { error } = await requireSupabase().from("chat_messages").insert({ session_id: chat.id, sender: "admin", body });
+      if (error) throw error;
+      form.reset(); await loadChats();
+    } catch (error) { setMessage(error.message); } finally { setBusy(false); }
+  };
+
+  const endChat = async (chat) => {
+    if (!window.confirm(`End this chat with ${chat.visitor_name} and erase all messages?`)) return;
+    setBusy(true); setMessage("");
+    try {
+      const { error } = await requireSupabase().from("chat_sessions").delete().eq("id", chat.id);
+      if (error) throw error;
+      await loadChats(); setMessage("Temporary chat ended and erased.");
+    } catch (error) { setMessage(error.message); } finally { setBusy(false); }
+  };
+
   const openWorkspace = (destination) => { setView(destination); setEditing(null); setMessage(""); };
   const editItem = (item) => { setView(item.destination); setEditing(item); window.setTimeout(() => document.querySelector(".react-admin__edit-form")?.scrollIntoView({ behavior: "smooth", block: "start" }), 0); };
   const techItems = albums.filter((item) => item.destination === "tech");
   const travelItems = albums.filter((item) => item.destination === "travel");
   const lifeItems = albums.filter((item) => item.destination === "life");
+  const newInquiryCount = inquiries.filter((inquiry) => inquiry.status === "new").length;
+  const activeChatCount = chats.length;
 
   if (!supabase) return <main id="main" className="react-admin"><h1>Admin setup required</h1><p>Add the Supabase values to <code>react-app/.env.local</code>.</p></main>;
 
@@ -310,13 +438,14 @@ export default function AdminPage() {
     <header className="admin-dashboard__header"><div><p className="react-eyebrow">Private portfolio workspace</p><h1 id="admin-title">Content dashboard</h1><p className="react-muted">Signed in as {session.user.email}</p></div><button type="button" className="react-admin__secondary" onClick={() => supabase.auth.signOut()}>Sign out</button></header>
 
     <nav className="admin-dashboard__nav" aria-label="Admin sections">
-      {[["overview", "Overview"], ["tech", "Tech albums"], ["travel", "Travel journals"], ["life", "Life albums"]].map(([key, label]) => <button type="button" className={view === key ? "is-active" : ""} aria-current={view === key ? "page" : undefined} onClick={() => openWorkspace(key)} key={key}>{label}</button>)}
+      {[["overview", "Overview"], ["tech", "Tech albums"], ["travel", "Travel journals"], ["life", "Life albums"], ["chats", activeChatCount ? `Chats (${activeChatCount})` : "Chats"], ["inbox", newInquiryCount ? `Inbox (${newInquiryCount})` : "Inbox"]].map(([key, label]) => <button type="button" className={view === key ? "is-active" : ""} aria-current={view === key ? "page" : undefined} onClick={() => openWorkspace(key)} key={key}>{label}</button>)}
     </nav>
 
     {message && <p className="react-admin__message admin-dashboard__notice" role="status">{message}</p>}
 
     {view === "overview" && <section className="admin-dashboard__overview" aria-labelledby="overview-title">
       <div className="admin-content-list__heading"><div><p className="react-eyebrow">At a glance</p><h2 id="overview-title">Portfolio content</h2></div></div>
+      <p className="react-muted">{inboxState === "ready" ? `${newInquiryCount} new contact message${newInquiryCount === 1 ? "" : "s"} are waiting in the private inbox.` : "The private contact inbox becomes available after its Supabase migration is installed."}</p>
       <div className="admin-dashboard__stats"><article><strong>{albums.length}</strong><span>Total entries</span></article><article><strong>{publishedCount}</strong><span>Published</span></article><article><strong>{techItems.length}</strong><span>Tech albums</span></article><article><strong>{travelItems.length}</strong><span>Travel journals</span></article><article><strong>{lifeItems.length}</strong><span>Life albums</span></article></div>
       <div className="admin-dashboard__destinations"><button type="button" onClick={() => openWorkspace("tech")}><span>Media collection</span><strong>Manage Tech albums</strong><small>Event and project galleries · up to {MAX_TECH_PHOTOS} photos</small></button><button type="button" onClick={() => openWorkspace("travel")}><span>Written stories</span><strong>Manage Travel journals</strong><small>Article body, cover, category · up to {MAX_TRAVEL_PHOTOS} story images</small></button><button type="button" onClick={() => openWorkspace("life")}><span>Personal moments</span><strong>Manage Life albums</strong><small>Games, rides, coffee, and everyday galleries · up to {MAX_LIFE_PHOTOS} photos</small></button></div>
     </section>}
@@ -338,5 +467,8 @@ export default function AdminPage() {
       <ContentList destination="life" items={lifeItems} busy={busy} onEdit={editItem} onPublish={togglePublished} onDelete={deleteContent} />
       {editing?.destination === "life" && <ContentForm destination="life" item={editing} busy={busy} onSubmit={saveContent} onCancel={() => setEditing(null)} onRemovePhoto={removePhoto} />}
     </section>}
+
+    {view === "inbox" && <InboxList inquiries={inquiries} inboxState={inboxState} busy={busy} onStatusChange={updateInquiryStatus} />}
+    {view === "chats" && <LiveChats chats={chats} chatState={chatState} busy={busy} onReply={replyToChat} onEnd={endChat} />}
   </section></main>;
 }

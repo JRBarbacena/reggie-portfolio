@@ -15,13 +15,25 @@ dashboard values.
 
 ## Environment variables
 
-Configure both variables for Development, Preview, and Production:
+Configure these browser-safe values for Development, Preview, and Production:
 
 - `VITE_SUPABASE_URL`
 - `VITE_SUPABASE_PUBLISHABLE_KEY`
 
-Never add the Supabase service-role key. After changing a Vite environment
-variable, redeploy because values are embedded during the frontend build.
+Zenith needs these **server-only Vercel variables** for temporary human chat
+and the private contact inbox:
+
+- `SUPABASE_URL`
+- `SUPABASE_SERVICE_ROLE_KEY` (or `SUPABASE_SECRET_KEY` for projects using the newer key name)
+
+Never prefix a secret with `VITE_`, add it to `react-app/.env.local`, or expose
+it in a client-side component. The browser uses only the two publishable
+variables; Vercel Functions use the server-only values. After changing a Vite
+environment variable, redeploy because values are embedded during the frontend
+build.
+
+Follow [CHATBOT_SETUP.md](CHATBOT_SETUP.md) for the ordered Supabase migration,
+Vercel secret, Responses API, and end-to-end verification steps.
 
 In Supabase Authentication URL Configuration, add the production domain and
 Vercel preview callback patterns required for `/admin` passwordless links.
@@ -31,7 +43,8 @@ Vercel preview callback patterns required for `/admin` passwordless links.
 1. Run `npm run verify`, `npm run test:e2e:smoke`, `npm run qa:react`, and
    `npm audit --audit-level=high`.
 2. Push a branch and inspect its Vercel preview on desktop and mobile.
-3. Confirm public Supabase content, the `/admin` sign-in callback, and PWA install.
+3. Confirm public Supabase content, the `/admin` sign-in callback, PWA install,
+   chatbot fallback behavior, and one secure contact submission.
 4. Merge to `main` only after required checks pass.
 5. Verify `/`, `/tech`, `/travel`, `/life`, `/admin`, one legacy `.html` alias,
    and a direct deep-link reload on production.
