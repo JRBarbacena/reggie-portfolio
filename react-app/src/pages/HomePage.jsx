@@ -1,15 +1,17 @@
 import { useCallback, useEffect, useLayoutEffect, useState } from "react";
-import { Link } from "react-router-dom";
 import { CoffeeIcon, LaptopIcon, MotorcycleIcon, UserGearIcon, VolleyballIcon } from "@phosphor-icons/react";
 import SiteNavigation from "../components/SiteNavigation.jsx";
 import HeroBallpit from "../components/HeroBallpit.jsx";
 import HomeEntryPreloader from "../components/HomeEntryPreloader.jsx";
 import HomeHeroIntro from "../components/HomeHeroIntro.jsx";
+import HomeLaneCarousel from "../components/HomeLaneCarousel.jsx";
 import { initialBrowserPathname } from "../runtime-session.js";
 
 const ENTRY_STATUS_KEY = "reggie-portfolio-home-entry-seen";
+let homeEntryMountedThisDocument = false;
 
 function shouldShowHomeEntry() {
+  if (homeEntryMountedThisDocument) return false;
   if (window.matchMedia("(prefers-reduced-motion: reduce)").matches || navigator.connection?.saveData) return false;
   if (initialBrowserPathname !== "/") return false;
   const navigationType = performance.getEntriesByType("navigation")[0]?.type ?? "navigate";
@@ -38,9 +40,9 @@ const chips = [
 ];
 
 const lanes = [
-  ["/tech", "Tech", "KiroVerse.JPG", "Reggie and his peers at an AWS event", "My growth in software engineering, UI/UX, and the communities helping me build better work."],
-  ["/travel", "Travel", "Hundred_Island.JPG", "Reggie at Hundred Islands", "Places I have explored, from memorable Philippine escapes to the trips still ahead."],
-  ["/life", "Life", "Patawow_VB.JPG", "Reggie and his volleyball team", "Sport, race weekends, coffee runs, and the moments that keep life moving off the clock."],
+  { path: "/tech", title: "Tech", image: "KiroVerse.JPG", alt: "Reggie and his peers at an AWS event", description: "Software engineering, UI/UX, and the communities helping me build better work." },
+  { path: "/travel", title: "Travel", image: "Hundred_Island.JPG", alt: "Reggie at Hundred Islands", description: "Memorable Philippine escapes, travel journals, and the journeys still ahead." },
+  { path: "/life", title: "Life", image: "Patawow_VB.JPG", alt: "Reggie and his volleyball team", description: "Sport, coffee runs, rides, and the moments that keep life moving off the clock." },
 ];
 
 function ChipIcon({ id }) {
@@ -61,6 +63,7 @@ export default function HomePage() {
   const finishEntry = useCallback(() => setEntryVisible(false), []);
 
   useLayoutEffect(() => {
+    homeEntryMountedThisDocument = true;
     document.documentElement.classList.remove("home-entry-pending");
   }, []);
 
@@ -96,8 +99,8 @@ export default function HomePage() {
       </div>
     </section>
     <section className="home-section home-section--lanes content-column" aria-labelledby="explore-title">
-      <div className="section-head section-head--center" data-reveal><h2 id="explore-title">Pick a lane</h2><p>Three routes through what I do and who I am.</p></div>
-      <ul className="gallery gallery--lanes" data-reveal>{lanes.map(([path, title, image, alt, description], index) => <li className="gallery__item card lift" data-reveal data-reveal-delay={index + 1} key={path}><Link className="lane-card__link" to={path}><figure className="lane-card__media"><figcaption className="lane-card__filename"><span className="lane-card__controls" aria-hidden="true"><i /><i /><i /></span><span className="lane-card__filename-text">{image}</span></figcaption><img src={`/images/photos/${image}`} alt={alt} width="640" height="480" loading="lazy" decoding="async" /></figure><div className="lane-card__body"><h3>{title}</h3><p>{description}</p></div></Link></li>)}</ul>
+      <div className="section-head section-head--center" data-reveal><h2 id="explore-title">Where should we go next?</h2><p>Explore the code I build, the places I wander, and the moments that shape life in between.</p></div>
+      <div data-reveal><HomeLaneCarousel lanes={lanes} /></div>
     </section>
   </main>{entryVisible && <HomeEntryPreloader onReveal={revealHero} onComplete={finishEntry} />}</>;
 }

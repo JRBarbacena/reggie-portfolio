@@ -100,7 +100,11 @@ export default function DriftWall({
   }, [depth, roll, tilt, turn]);
 
   useEffect(() => {
+    let isVisible = true;
+    let isRunning = false;
+
     const animate = (timestamp) => {
+      if (!isRunning) return;
       if (lastTsRef.current === null) lastTsRef.current = timestamp;
       const delta = Math.min(0.05, Math.max(0, timestamp - lastTsRef.current) / 1000);
       lastTsRef.current = timestamp;
@@ -119,8 +123,8 @@ export default function DriftWall({
         if (!track || !meta) continue;
 
         if (!reduced) {
-          const paused = wallHoveredRef.current && pauseOnHover;
-          const target = paused || hoveredColRef.current === columnIndex ? 0 : baseVelocities[columnIndex];
+          const paused = pauseOnHover && (wallHoveredRef.current || hoveredColRef.current === columnIndex);
+          const target = paused ? 0 : baseVelocities[columnIndex];
           const easing = 1 - Math.exp(-delta / (target === 0 ? 0.16 : 0.28));
           velocitiesRef.current[columnIndex] += (target - velocitiesRef.current[columnIndex]) * easing;
           const rawOffset = (offsetsRef.current[columnIndex] ?? 0) + velocitiesRef.current[columnIndex] * delta;
@@ -133,17 +137,40 @@ export default function DriftWall({
       rafRef.current = requestAnimationFrame(animate);
     };
 
-    rafRef.current = requestAnimationFrame(animate);
-    return () => {
+    const start = () => {
+      if (isRunning || !isVisible || document.hidden) return;
+      isRunning = true;
+      lastTsRef.current = null;
+      rafRef.current = requestAnimationFrame(animate);
+    };
+    const stop = () => {
+      isRunning = false;
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
       rafRef.current = null;
       lastTsRef.current = null;
+    };
+    const syncAnimation = () => {
+      if (isVisible && !document.hidden) start();
+      else stop();
+    };
+    const observer = new IntersectionObserver(([entry]) => {
+      isVisible = entry.isIntersecting;
+      syncAnimation();
+    }, { rootMargin: "120px 0px", threshold: 0 });
+
+    if (containerRef.current) observer.observe(containerRef.current);
+    document.addEventListener("visibilitychange", syncAnimation);
+    start();
+    return () => {
+      stop();
+      observer.disconnect();
+      document.removeEventListener("visibilitychange", syncAnimation);
     };
   }, [applyPlaneTransform, baseVelocities, columnMeta, parallax, pauseOnHover, reduced]);
 
   const activate = useCallback((id, columnIndex) => {
     hoveredColRef.current = columnIndex;
-    setActiveId(id);
+    setActiveId((current) => current === id ? current : id);
   }, []);
 
   const release = useCallback(() => {

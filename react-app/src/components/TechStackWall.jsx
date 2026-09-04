@@ -81,7 +81,7 @@ export default function TechStackWall() {
         dim={0.7}
         radius={16}
         roll={1.5}
-        pauseOnHover
+        pauseOnHover={false}
       />
     </div>
   );

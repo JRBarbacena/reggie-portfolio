@@ -29,6 +29,7 @@ export default function ClickSpark({
     const ease = easingFunctions[easing] ?? easingFunctions["ease-out"];
     const sparks = [];
     let animationFrame = 0;
+    let resizeFrame = 0;
     let enabled = !reducedMotion.matches;
 
     const setActiveState = (active) => {
@@ -36,11 +37,15 @@ export default function ClickSpark({
     };
 
     const resizeCanvas = () => {
+      resizeFrame = 0;
       const pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
       canvas.width = Math.round(window.innerWidth * pixelRatio);
       canvas.height = Math.round(window.innerHeight * pixelRatio);
       context.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
       context.lineCap = "round";
+    };
+    const scheduleResize = () => {
+      if (!resizeFrame) resizeFrame = requestAnimationFrame(resizeCanvas);
     };
 
     const stopAnimation = () => {
@@ -114,15 +119,16 @@ export default function ClickSpark({
     canvas.dataset.enabled = String(enabled);
     setActiveState(false);
     resizeCanvas();
-    window.addEventListener("resize", resizeCanvas, { passive: true });
+    window.addEventListener("resize", scheduleResize, { passive: true });
     window.addEventListener("pointerdown", handlePointerDown, { passive: true });
     reducedMotion.addEventListener("change", handleMotionPreference);
 
     return () => {
       stopAnimation();
-      window.removeEventListener("resize", resizeCanvas);
+      window.removeEventListener("resize", scheduleResize);
       window.removeEventListener("pointerdown", handlePointerDown);
       reducedMotion.removeEventListener("change", handleMotionPreference);
+      if (resizeFrame) cancelAnimationFrame(resizeFrame);
     };
   }, [duration, easing, extraScale, sparkColor, sparkCount, sparkRadius, sparkSize]);
 

@@ -13,17 +13,6 @@
   mask-image: linear-gradient(to bottom, #000 0, #000 88%, transparent 100%);
 }
 
-.hero-ballpit::after {
-  position: absolute;
-  inset: 20% 22%;
-  z-index: 2;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgb(255 255 255 / 72%), rgb(255 255 255 / 22%) 44%, transparent 72%);
-  content: "";
-  pointer-events: none;
-  filter: blur(12px);
-}
-
 .hero-ballpit__canvas {
   --ballpit-opacity: 0.78;
   position: absolute;
@@ -178,16 +167,9 @@ body.home .hero--home .site-header--home {
     opacity: var(--ballpit-opacity);
   }
 
-  .hero-ballpit::after {
-    inset: 25% 10%;
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .hero-ballpit::after {
-    filter: blur(18px);
-  }
-
   .hero--home .hero-chip__icon,
   .hero--home .hero-chip__detail {
     transition-duration: 0.01ms;

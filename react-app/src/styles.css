@@ -1396,53 +1396,51 @@ body.life-page:not(.page-scroll-started) :is(.life-rhythm, .court-section, .smal
   transform: translate3d(0, 0.75rem, 0);
 }
 
-/* A dark wooden shelf keeps the unused certificate slots intentionally open. */
+/* A light neutral shelf keeps the certificate grid calm and readable. */
 .tech-page .credential-shelf {
-  --shelf-row-height: clamp(13rem, 22vw, 18rem);
-  --shelf-row-gap: clamp(1.6rem, 3vw, 2.5rem);
+  --shelf-row-height: clamp(10rem, 18vw, 13.5rem);
+  --shelf-row-gap: clamp(1rem, 2vw, 1.6rem);
   position: relative;
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   grid-auto-rows: var(--shelf-row-height);
   align-items: end;
-  gap: var(--shelf-row-gap) var(--space-3);
+  gap: var(--shelf-row-gap) var(--space-2);
   overflow: hidden;
-  padding: var(--space-4) var(--space-4) calc(var(--space-4) + 1.05rem);
-  border: 1px solid rgb(255 228 190 / 12%);
+  padding: var(--space-2) var(--space-2) calc(var(--space-2) + 0.85rem);
+  border: 1px solid rgb(255 255 255 / 68%);
   border-radius: var(--radius-lg);
   background:
-    linear-gradient(105deg, rgb(255 220 171 / 5%) 0 1px, transparent 1px 22%),
-    linear-gradient(90deg, rgb(0 0 0 / 16%), transparent 34%, rgb(255 214 156 / 5%) 58%, rgb(0 0 0 / 18%)),
-    linear-gradient(145deg, #4a2b1a, #24140c 72%);
+    linear-gradient(145deg, rgb(250 252 253 / 84%), rgb(216 224 231 / 78%));
   box-shadow:
-    inset 0 1px 0 rgb(255 231 197 / 12%),
-    inset 0 -1.5rem 2.8rem rgb(9 4 2 / 26%),
-    14px 16px 30px rgb(44 28 17 / 20%),
-    -8px -8px 18px rgb(255 255 255 / 42%);
+    inset 0 1px 0 rgb(255 255 255 / 82%),
+    inset 0 -1.25rem 2.2rem rgb(97 111 124 / 10%),
+    14px 16px 30px rgb(54 67 80 / 15%),
+    -8px -8px 18px rgb(255 255 255 / 72%);
   isolation: isolate;
 }
 
 .tech-page .credential-shelf::before,
 .tech-page .credential-shelf::after {
   position: absolute;
-  right: var(--space-3);
-  left: var(--space-3);
+  right: var(--space-2);
+  left: var(--space-2);
   z-index: 0;
-  height: 0.85rem;
+  height: 0.7rem;
   opacity: 1;
-  border: 1px solid rgb(255 221 175 / 13%);
+  border: 1px solid rgb(255 255 255 / 54%);
   border-radius: var(--radius-pill);
-  background: linear-gradient(180deg, #724324, #2a160b 62%, #170b05);
-  box-shadow: 0 0.65rem 0.8rem rgb(7 3 1 / 45%), inset 0 1px 0 rgb(255 224 183 / 15%);
+  background: linear-gradient(180deg, #c7d0d9, #aeb9c4 58%, #98a5b2);
+  box-shadow: 0 0.65rem 0.8rem rgb(63 77 91 / 22%), inset 0 1px 0 rgb(255 255 255 / 66%);
   content: "";
 }
 
 .tech-page .credential-shelf::before {
-  top: calc(var(--space-4) + var(--shelf-row-height) + 0.7rem);
+  top: calc(var(--space-2) + var(--shelf-row-height) + 0.45rem);
 }
 
 .tech-page .credential-shelf::after {
-  bottom: var(--space-3);
+  bottom: var(--space-2);
 }
 
 .tech-page .credential-book {
@@ -1456,11 +1454,87 @@ body.life-page:not(.page-scroll-started) :is(.life-rhythm, .court-section, .smal
   cursor: zoom-in;
   font: inherit;
   text-align: left;
+  margin-bottom: 0.55rem;
+  transition: transform var(--duration-fast) var(--ease-fluid), filter var(--duration-fast) var(--ease-fluid);
 }
 
 .tech-page .credential-book figure {
-  border: 1px solid rgb(255 240 222 / 56%);
-  box-shadow: 0 0.8rem 1.35rem rgb(8 3 1 / 34%);
+  position: relative;
+  aspect-ratio: 4 / 3;
+  margin: 0;
+  overflow: hidden;
+  border: 1px solid rgb(255 255 255 / 72%);
+  border-radius: var(--radius-md);
+  box-shadow: 0 0.8rem 1.35rem rgb(54 67 80 / 20%);
+  transition: box-shadow var(--duration-fast) var(--ease-fluid), transform var(--duration-fast) var(--ease-fluid);
+}
+
+.tech-page .credential-book figure::after {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 52%;
+  background: linear-gradient(180deg, transparent, rgb(7 10 14 / 90%));
+  content: "";
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--duration-fast) var(--ease-fluid);
+}
+
+.tech-page .credential-book img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform var(--duration-slow) var(--ease-fluid), filter var(--duration-slow) var(--ease-fluid);
+}
+
+.tech-page .credential-book:hover,
+.tech-page .credential-book:focus-visible {
+  transform: translate3d(0, -0.35rem, 0);
+}
+
+.tech-page .credential-book:hover figure,
+.tech-page .credential-book:focus-visible figure {
+  box-shadow: 0 1.1rem 1.8rem rgb(54 67 80 / 26%);
+}
+
+.tech-page .credential-book:hover figure::after,
+.tech-page .credential-book:focus-visible figure::after {
+  opacity: 1;
+}
+
+.tech-page .credential-book:hover img,
+.tech-page .credential-book:focus-visible img {
+  filter: saturate(1.05) contrast(1.03);
+  transform: scale(1.035);
+}
+
+.tech-page .credential-book figcaption {
+  position: absolute;
+  right: var(--space-2);
+  bottom: var(--space-2);
+  left: var(--space-2);
+  z-index: 1;
+  padding: 0;
+  color: #fff;
+  opacity: 0;
+  pointer-events: none;
+  transform: translate3d(0, 0.4rem, 0);
+  transition: opacity var(--duration-fast) var(--ease-fluid), transform var(--duration-fast) var(--ease-fluid);
+}
+
+.tech-page .credential-book figcaption strong {
+  color: inherit;
+  font-size: clamp(0.9rem, 1.35vw, 1.2rem);
+  line-height: 1.1;
+}
+
+.tech-page .credential-book:hover figcaption,
+.tech-page .credential-book:focus-visible figcaption {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
 }
 
 .tech-page .credential-book:focus-visible {
@@ -1468,56 +1542,132 @@ body.life-page:not(.page-scroll-started) :is(.life-rhythm, .court-section, .smal
   outline-offset: 0.35rem;
 }
 
-.certificate-modal {
-  width: min(calc(100vw - 2 * var(--space-3)), 62rem);
+.tech-page .credential-shelf--1-rows::before {
+  display: none;
+}
+
+.album-modal.certificate-modal {
+  width: min(calc(100vw - 2 * var(--space-3)), calc((100dvh - 10rem) * 4 / 3), 40rem);
+  max-width: none;
+  max-height: calc(100dvh - 2 * var(--space-2));
+  margin: auto;
+  padding: 0;
+  overflow: visible;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+.album-modal.certificate-modal[open] {
+  animation: certificate-modal-enter var(--duration-enter) var(--ease-fluid) both;
+}
+
+.album-modal.certificate-modal::backdrop {
+  background:
+    radial-gradient(ellipse at 50% 112%, rgb(213 0 28 / 42%) 0%, rgb(125 0 20 / 19%) 28%, transparent 58%),
+    radial-gradient(circle at 12% 14%, rgb(255 255 255 / 7%) 0%, transparent 24%),
+    linear-gradient(155deg, rgb(2 3 6 / 95%), rgb(12 13 18 / 92%) 58%, rgb(3 4 7 / 96%));
+  backdrop-filter: blur(0.7rem) saturate(82%);
+  -webkit-backdrop-filter: blur(0.7rem) saturate(82%);
+  animation: certificate-backdrop-enter var(--duration-enter) var(--ease-fluid) both;
+}
+
+.certificate-modal__surface {
+  overflow: hidden;
+  border: 1px solid rgb(255 255 255 / 9%);
+  border-radius: clamp(1.2rem, 2vw, 1.7rem);
+  background: #0a0c10;
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 6%),
+    0 2rem 5rem rgb(0 0 0 / 46%);
+}
+
+.certificate-modal__body {
+  padding: clamp(0.9rem, 2vw, var(--space-2)) clamp(var(--space-2), 3vw, var(--space-3)) clamp(var(--space-2), 3vw, var(--space-3));
+  color: rgb(240 243 247 / 82%);
+}
+
+.album-modal.certificate-modal[open] .certificate-modal__body {
+  animation: certificate-details-enter 520ms var(--ease-fluid) 150ms both;
+  will-change: opacity, transform;
+}
+
+.certificate-modal__body h2 {
+  margin: 0;
+  color: #fff;
+  font-size: clamp(1.2rem, 2.4vw, 1.75rem);
+}
+
+.certificate-modal__body p {
+  max-width: 58ch;
+  margin: var(--space-1) 0 0;
+  color: rgb(240 243 247 / 78%);
+  line-height: var(--line-height-base);
 }
 
 .certificate-modal__preview {
-  display: grid;
-  min-height: min(62vh, 42rem);
-  margin: var(--space-3) 0 0;
-  place-items: center;
+  position: relative;
+  aspect-ratio: 4 / 3;
+  margin: 0;
   overflow: hidden;
-  border: 1px solid rgb(21 21 30 / 10%);
-  border-radius: var(--radius-md);
-  background: linear-gradient(145deg, rgb(78 44 24 / 13%), rgb(255 255 255 / 45%));
+  background: #161a20;
 }
 
 .certificate-modal__preview img {
   display: block;
   width: 100%;
-  max-height: min(62vh, 42rem);
+  height: 100%;
+  min-height: 0;
   object-fit: contain;
 }
 
-.certificate-modal__footer {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-3);
-  margin-top: var(--space-3);
-  color: var(--text-muted);
-  font-size: 0.82rem;
-  font-weight: var(--weight-bold);
+.certificate-modal__close {
+  position: absolute;
+  top: -3.35rem;
+  right: 0.15rem;
+  color: #fff;
+  background: rgb(91 102 116 / 88%);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 24%), 0 0.65rem 1.4rem rgb(0 0 0 / 30%);
 }
 
-.certificate-modal__footer .btn {
-  flex: none;
+@keyframes certificate-modal-enter {
+  from { opacity: 0; transform: translate3d(0, 1rem, 0) scale(0.975); }
+  to { opacity: 1; transform: translate3d(0, 0, 0) scale(1); }
+}
+
+@keyframes certificate-details-enter {
+  from { opacity: 0; transform: translate3d(0, -1.2rem, 0); }
+  to { opacity: 1; transform: translate3d(0, 0, 0); }
+}
+
+@keyframes certificate-backdrop-enter {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 @media (max-width: 768px) {
   .tech-page .credential-shelf {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    --shelf-row-height: clamp(11rem, 47vw, 15rem);
-    --shelf-row-gap: var(--space-4);
+    --shelf-row-height: clamp(8rem, 38vw, 11rem);
+    --shelf-row-gap: var(--space-3);
   }
 
   .tech-page .credential-shelf::before {
-    top: calc(var(--space-4) + var(--shelf-row-height) + 0.55rem);
+    top: calc(var(--space-2) + var(--shelf-row-height) + 0.4rem);
   }
 
-  .certificate-modal__footer {
-    align-items: flex-start;
-    flex-direction: column;
+  .album-modal.certificate-modal {
+    width: min(calc(100vw - 2 * var(--space-2)), calc((100dvh - 8rem) * 4 / 3), 40rem);
+    max-height: calc(100dvh - 2 * var(--space-2));
   }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tech-page .credential-book,
+  .tech-page .credential-book figure { transition: none; }
+  .album-modal.certificate-modal[open],
+  .album-modal.certificate-modal::backdrop,
+  .album-modal.certificate-modal[open] .certificate-modal__body { animation: none; }
 }
