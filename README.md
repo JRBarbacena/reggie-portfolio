@@ -1,4 +1,4 @@
-# Reggie — Portfolio
+# Reggie — Portfolio 
 
 A React/Vite developer portfolio with four public stories—Home, Tech, Travel,
 and Life—and a private Supabase-backed content dashboard. The interface combines
@@ -86,3 +86,9 @@ and rollback are documented in [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md).
   generated route/configuration artifacts.
 - Never commit Supabase secret/service-role keys or `.env.local`.
 - Do not invent employment, client, metric, project, or credential content.
+
+
+
+<!-- To run the system do this portfolio locally -->
+<!-- run:  cd C:\Users\Andrew\Desktop\reggie-portfolio -->
+<!-- npm run dev:react -->

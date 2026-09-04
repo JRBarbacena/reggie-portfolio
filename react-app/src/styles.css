@@ -4,6 +4,10 @@
   font-family: Inter, ui-sans-serif, system-ui, sans-serif;
 }
 
+html.home-entry-pending #root {
+  visibility: hidden;
+}
+
 * { box-sizing: border-box; }
 
 body { margin: 0; }
@@ -697,17 +701,35 @@ body { margin: 0; }
 }
 
 body.home {
-  --hero-frame-h: clamp(42rem, 90svh, 52rem);
+  --hero-frame-h: 100svh;
+}
+
+.home .hero--home {
+  padding-inline: clamp(var(--space-3), 3vw, var(--space-4));
+  padding-bottom: var(--space-2);
 }
 
 .home .home-section--lanes {
-  margin-top: clamp(1.5rem, 3.5vh, 2.25rem);
-  padding-block: clamp(2.5rem, 5vw, 4rem) var(--space-3);
+  margin-top: 0;
+  padding-block: clamp(1.5rem, 3vw, 2.25rem) var(--space-2);
+}
+
+.home .home-section--lanes > .section-head {
+  gap: 0.25rem;
+  margin-bottom: var(--space-3);
+}
+
+.home .home-section--lanes > .section-head p {
+  margin-top: 0;
 }
 
 .home .gallery--lanes {
   max-width: 960px;
-  gap: var(--space-2);
+  gap: clamp(0.75rem, 1.5vw, var(--space-2));
+}
+
+.home .gallery--lanes .gallery__item {
+  padding: var(--space-1);
 }
 
 .home .lane-card__media {
@@ -715,12 +737,12 @@ body.home {
 }
 
 .home .lane-card__body {
-  min-height: 7rem;
-  padding: var(--space-2);
+  min-height: 6.25rem;
+  padding: var(--space-1) var(--space-2) var(--space-2);
 }
 
 .home .lane-card__body p {
-  margin-top: var(--space-1);
+  margin-top: 0.35rem;
   font-size: 0.9rem;
   line-height: 1.5;
 }
@@ -744,16 +766,32 @@ body:not(.home) .site-footer {
 }
 
 body.home .site-footer {
-  margin-top: var(--space-2);
-  padding: var(--space-4) 0 var(--space-3);
+  margin-top: var(--space-1);
+  padding: var(--space-3) 0 var(--space-2);
 }
 
 body.home .site-footer__cta {
-  margin-bottom: var(--space-3);
+  margin-bottom: var(--space-2);
 }
 
 body.home .contact-panel {
   padding: var(--space-1);
+  gap: var(--space-2);
+}
+
+body.home :is(.contact-panel__main, .contact-panel__status) {
+  padding: var(--space-3);
+}
+
+body.home .contact-panel__actions {
+  gap: var(--space-1);
+  margin-top: var(--space-3);
+}
+
+@media (min-width: 901px) {
+  .home .pos-photo-3 {
+    left: 13.5%;
+  }
 }
 
 @media (max-width: 900px) {
@@ -1324,7 +1362,10 @@ body.home .site-header--home {
   .travel-journal-row { grid-template-columns: 1fr; }
   .travel-coming-soon { min-height: 13rem; }
   body.home { --hero-frame-h: 100svh; }
-  .home .home-section--lanes { padding-block: var(--space-5) var(--space-3); }
+  .home .hero--home { padding-top: calc(var(--home-nav-h) + var(--space-2)); }
+  .home .hero--home .hero__center { margin-top: var(--space-1); }
+  .home .hero--home .collage { gap: var(--space-1); margin-top: var(--space-2); }
+  .home .home-section--lanes { padding-block: var(--space-4) var(--space-2); }
   .admin-dashboard { padding-inline: var(--space-2); }
   .admin-dashboard__header, .admin-content-form__heading, .admin-content-list__heading { align-items: stretch; flex-direction: column; }
   .admin-dashboard__nav { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -1335,4 +1376,298 @@ body.home .site-header--home {
   .react-admin__albums article, .react-admin__photos > div { align-items: start; flex-direction: column; }
   .admin-content-card__preview { width: 100%; height: 9rem; }
   .admin-content-list__tools { align-items: stretch; flex-direction: column; }
+}
+
+/* Defer interior page content until the visitor starts reading the page. */
+body.tech-page :is(.tech-path, .tech-toolbox, .tech-certificates, .tech-community, .story-closing),
+body.travel-page .travel-collections,
+body.life-page :is(.life-rhythm, .court-section, .small-wins, .life-albums, .story-closing) {
+  transition:
+    opacity var(--duration-enter) var(--ease-fluid),
+    transform calc(var(--duration-enter) + 100ms) var(--ease-fluid);
+}
+
+body.tech-page:not(.page-scroll-started) :is(.tech-path, .tech-toolbox, .tech-certificates, .tech-community, .story-closing),
+body.travel-page:not(.page-scroll-started) .travel-collections,
+body.life-page:not(.page-scroll-started) :is(.life-rhythm, .court-section, .small-wins, .life-albums, .story-closing) {
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
+  transform: translate3d(0, 0.75rem, 0);
+}
+
+/* A light neutral shelf keeps the certificate grid calm and readable. */
+.tech-page .credential-shelf {
+  --shelf-row-height: clamp(10rem, 18vw, 13.5rem);
+  --shelf-row-gap: clamp(1rem, 2vw, 1.6rem);
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-auto-rows: var(--shelf-row-height);
+  align-items: end;
+  gap: var(--shelf-row-gap) var(--space-2);
+  overflow: hidden;
+  padding: var(--space-2) var(--space-2) calc(var(--space-2) + 0.85rem);
+  border: 1px solid rgb(255 255 255 / 68%);
+  border-radius: var(--radius-lg);
+  background:
+    linear-gradient(145deg, rgb(250 252 253 / 84%), rgb(216 224 231 / 78%));
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 82%),
+    inset 0 -1.25rem 2.2rem rgb(97 111 124 / 10%),
+    14px 16px 30px rgb(54 67 80 / 15%),
+    -8px -8px 18px rgb(255 255 255 / 72%);
+  isolation: isolate;
+}
+
+.tech-page .credential-shelf::before,
+.tech-page .credential-shelf::after {
+  position: absolute;
+  right: var(--space-2);
+  left: var(--space-2);
+  z-index: 0;
+  height: 0.7rem;
+  opacity: 1;
+  border: 1px solid rgb(255 255 255 / 54%);
+  border-radius: var(--radius-pill);
+  background: linear-gradient(180deg, #c7d0d9, #aeb9c4 58%, #98a5b2);
+  box-shadow: 0 0.65rem 0.8rem rgb(63 77 91 / 22%), inset 0 1px 0 rgb(255 255 255 / 66%);
+  content: "";
+}
+
+.tech-page .credential-shelf::before {
+  top: calc(var(--space-2) + var(--shelf-row-height) + 0.45rem);
+}
+
+.tech-page .credential-shelf::after {
+  bottom: var(--space-2);
+}
+
+.tech-page .credential-book {
+  z-index: 1;
+  align-self: end;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  cursor: zoom-in;
+  font: inherit;
+  text-align: left;
+  margin-bottom: 0.55rem;
+  transition: transform var(--duration-fast) var(--ease-fluid), filter var(--duration-fast) var(--ease-fluid);
+}
+
+.tech-page .credential-book figure {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  margin: 0;
+  overflow: hidden;
+  border: 1px solid rgb(255 255 255 / 72%);
+  border-radius: var(--radius-md);
+  box-shadow: 0 0.8rem 1.35rem rgb(54 67 80 / 20%);
+  transition: box-shadow var(--duration-fast) var(--ease-fluid), transform var(--duration-fast) var(--ease-fluid);
+}
+
+.tech-page .credential-book figure::after {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 52%;
+  background: linear-gradient(180deg, transparent, rgb(7 10 14 / 90%));
+  content: "";
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--duration-fast) var(--ease-fluid);
+}
+
+.tech-page .credential-book img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform var(--duration-slow) var(--ease-fluid), filter var(--duration-slow) var(--ease-fluid);
+}
+
+.tech-page .credential-book:hover,
+.tech-page .credential-book:focus-visible {
+  transform: translate3d(0, -0.35rem, 0);
+}
+
+.tech-page .credential-book:hover figure,
+.tech-page .credential-book:focus-visible figure {
+  box-shadow: 0 1.1rem 1.8rem rgb(54 67 80 / 26%);
+}
+
+.tech-page .credential-book:hover figure::after,
+.tech-page .credential-book:focus-visible figure::after {
+  opacity: 1;
+}
+
+.tech-page .credential-book:hover img,
+.tech-page .credential-book:focus-visible img {
+  filter: saturate(1.05) contrast(1.03);
+  transform: scale(1.035);
+}
+
+.tech-page .credential-book figcaption {
+  position: absolute;
+  right: var(--space-2);
+  bottom: var(--space-2);
+  left: var(--space-2);
+  z-index: 1;
+  padding: 0;
+  color: #fff;
+  opacity: 0;
+  pointer-events: none;
+  transform: translate3d(0, 0.4rem, 0);
+  transition: opacity var(--duration-fast) var(--ease-fluid), transform var(--duration-fast) var(--ease-fluid);
+}
+
+.tech-page .credential-book figcaption strong {
+  color: inherit;
+  font-size: clamp(0.9rem, 1.35vw, 1.2rem);
+  line-height: 1.1;
+}
+
+.tech-page .credential-book:hover figcaption,
+.tech-page .credential-book:focus-visible figcaption {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+}
+
+.tech-page .credential-book:focus-visible {
+  outline: 2px solid var(--accent-primary-soft);
+  outline-offset: 0.35rem;
+}
+
+.tech-page .credential-shelf--1-rows::before {
+  display: none;
+}
+
+.album-modal.certificate-modal {
+  width: min(calc(100vw - 2 * var(--space-3)), calc((100dvh - 10rem) * 4 / 3), 40rem);
+  max-width: none;
+  max-height: calc(100dvh - 2 * var(--space-2));
+  margin: auto;
+  padding: 0;
+  overflow: visible;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+.album-modal.certificate-modal[open] {
+  animation: certificate-modal-enter var(--duration-enter) var(--ease-fluid) both;
+}
+
+.album-modal.certificate-modal::backdrop {
+  background:
+    radial-gradient(ellipse at 50% 112%, rgb(213 0 28 / 42%) 0%, rgb(125 0 20 / 19%) 28%, transparent 58%),
+    radial-gradient(circle at 12% 14%, rgb(255 255 255 / 7%) 0%, transparent 24%),
+    linear-gradient(155deg, rgb(2 3 6 / 95%), rgb(12 13 18 / 92%) 58%, rgb(3 4 7 / 96%));
+  backdrop-filter: blur(0.7rem) saturate(82%);
+  -webkit-backdrop-filter: blur(0.7rem) saturate(82%);
+  animation: certificate-backdrop-enter var(--duration-enter) var(--ease-fluid) both;
+}
+
+.certificate-modal__surface {
+  overflow: hidden;
+  border: 1px solid rgb(255 255 255 / 9%);
+  border-radius: clamp(1.2rem, 2vw, 1.7rem);
+  background: #0a0c10;
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 6%),
+    0 2rem 5rem rgb(0 0 0 / 46%);
+}
+
+.certificate-modal__body {
+  padding: clamp(0.9rem, 2vw, var(--space-2)) clamp(var(--space-2), 3vw, var(--space-3)) clamp(var(--space-2), 3vw, var(--space-3));
+  color: rgb(240 243 247 / 82%);
+}
+
+.album-modal.certificate-modal[open] .certificate-modal__body {
+  animation: certificate-details-enter 520ms var(--ease-fluid) 150ms both;
+  will-change: opacity, transform;
+}
+
+.certificate-modal__body h2 {
+  margin: 0;
+  color: #fff;
+  font-size: clamp(1.2rem, 2.4vw, 1.75rem);
+}
+
+.certificate-modal__body p {
+  max-width: 58ch;
+  margin: var(--space-1) 0 0;
+  color: rgb(240 243 247 / 78%);
+  line-height: var(--line-height-base);
+}
+
+.certificate-modal__preview {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  margin: 0;
+  overflow: hidden;
+  background: #161a20;
+}
+
+.certificate-modal__preview img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  object-fit: contain;
+}
+
+.certificate-modal__close {
+  position: absolute;
+  top: -3.35rem;
+  right: 0.15rem;
+  color: #fff;
+  background: rgb(91 102 116 / 88%);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 24%), 0 0.65rem 1.4rem rgb(0 0 0 / 30%);
+}
+
+@keyframes certificate-modal-enter {
+  from { opacity: 0; transform: translate3d(0, 1rem, 0) scale(0.975); }
+  to { opacity: 1; transform: translate3d(0, 0, 0) scale(1); }
+}
+
+@keyframes certificate-details-enter {
+  from { opacity: 0; transform: translate3d(0, -1.2rem, 0); }
+  to { opacity: 1; transform: translate3d(0, 0, 0); }
+}
+
+@keyframes certificate-backdrop-enter {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@media (max-width: 768px) {
+  .tech-page .credential-shelf {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    --shelf-row-height: clamp(8rem, 38vw, 11rem);
+    --shelf-row-gap: var(--space-3);
+  }
+
+  .tech-page .credential-shelf::before {
+    top: calc(var(--space-2) + var(--shelf-row-height) + 0.4rem);
+  }
+
+  .album-modal.certificate-modal {
+    width: min(calc(100vw - 2 * var(--space-2)), calc((100dvh - 8rem) * 4 / 3), 40rem);
+    max-height: calc(100dvh - 2 * var(--space-2));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tech-page .credential-book,
+  .tech-page .credential-book figure { transition: none; }
+  .album-modal.certificate-modal[open],
+  .album-modal.certificate-modal::backdrop,
+  .album-modal.certificate-modal[open] .certificate-modal__body { animation: none; }
 }

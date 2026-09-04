@@ -32,7 +32,7 @@ class BallpitBoundary extends Component {
   }
 }
 
-export default function HeroBallpit() {
+export default function HeroBallpit({ revealed = true }) {
   const [capable, setCapable] = useState(false);
   const [compact, setCompact] = useState(window.innerWidth < 720);
 
@@ -57,7 +57,7 @@ export default function HeroBallpit() {
 
   return (
     <div
-      className={`hero-ballpit ${capable ? "is-live" : "is-static"}`}
+      className={`hero-ballpit ${capable ? "is-live" : "is-static"} ${revealed ? "is-revealed" : "is-gathered"}`}
       aria-hidden="true"
     >
       {capable && (
@@ -69,7 +69,8 @@ export default function HeroBallpit() {
               gravity={0}
               friction={0.998}
               wallBounce={0.55}
-              followCursor={false}
+              followCursor
+              showCursorBall={false}
               colors={HERO_BALL_COLORS}
               ambientIntensity={1.15}
               lightIntensity={150}

@@ -5,6 +5,12 @@ import App from "./App.jsx";
 import "../../css/main.css";
 import "./styles.css";
 
+// Prevent below-the-fold home content from flashing before the entry overlay
+// has mounted during a hard refresh.
+if (window.location.pathname === "/") {
+  document.documentElement.classList.add("home-entry-pending");
+}
+
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <BrowserRouter>

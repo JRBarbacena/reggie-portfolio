@@ -13,26 +13,48 @@ export default function AppShell({ children }) {
   const navigate = useNavigate();
   const isHome = pathname === "/";
   const headerRef = useRef(null);
+  const hasReadPastHeroRef = useRef(false);
 
   useEffect(() => {
-    document.body.classList.remove(...routeBodyClasses);
+    hasReadPastHeroRef.current = false;
+    document.body.classList.remove(...routeBodyClasses, "page-scroll-started");
     document.documentElement.classList.remove("is-page-leaving");
     if (isHome) document.body.classList.add("home");
     else if (pathname === "/tech") document.body.classList.add("story-page", "tech-page");
     else if (pathname === "/travel") document.body.classList.add("story-page", "travel-page");
     else if (pathname === "/life") document.body.classList.add("story-page", "life-page");
     window.scrollTo({ top: 0, behavior: "instant" });
-    return () => document.body.classList.remove(...routeBodyClasses);
+    return () => {
+      hasReadPastHeroRef.current = false;
+      document.body.classList.remove(...routeBodyClasses, "page-scroll-started");
+    };
   }, [isHome, pathname]);
 
   useEffect(() => {
     const header = headerRef.current;
     if (!header || isHome) return undefined;
-    const syncHeader = () => header.classList.toggle("is-scrolled", window.scrollY > 12);
+    const motionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+    let scrollFrame = 0;
+    const syncHeader = () => {
+      scrollFrame = 0;
+      const hasStartedScrolling = window.scrollY > 12;
+      const shouldSkipDeferredSections = motionQuery.matches || navigator.connection?.saveData;
+      if (hasStartedScrolling || shouldSkipDeferredSections) hasReadPastHeroRef.current = true;
+      header.classList.toggle("is-scrolled", hasStartedScrolling);
+      // Reveal the interior only once per page visit. The header may return to its
+      // unscrolled styling at the top, but content that has already appeared stays put.
+      document.body.classList.toggle("page-scroll-started", hasReadPastHeroRef.current);
+    };
+    const scheduleHeaderSync = () => {
+      if (!scrollFrame) scrollFrame = window.requestAnimationFrame(syncHeader);
+    };
     syncHeader();
-    window.addEventListener("scroll", syncHeader, { passive: true });
+    window.addEventListener("scroll", scheduleHeaderSync, { passive: true });
+    motionQuery.addEventListener("change", scheduleHeaderSync);
     return () => {
-      window.removeEventListener("scroll", syncHeader);
+      window.removeEventListener("scroll", scheduleHeaderSync);
+      motionQuery.removeEventListener("change", scheduleHeaderSync);
+      if (scrollFrame) window.cancelAnimationFrame(scrollFrame);
       header.classList.remove("is-scrolled");
     };
   }, [isHome, pathname]);
@@ -40,6 +62,9 @@ export default function AppShell({ children }) {
   const handleLinkClick = (event) => {
     const link = event.target.closest("a[href]");
     if (!link || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || link.target || link.hasAttribute("download")) return;
+    // Fan-carousel side cards use their first activation to move into the
+    // center. Their own click handler prevents navigation for that activation.
+    if (link.hasAttribute("data-center-before-navigation") && link.dataset.centered !== "true") return;
     const destination = new URL(link.href, window.location.href);
     if (destination.origin !== window.location.origin || destination.pathname === window.location.pathname) return;
     event.preventDefault();

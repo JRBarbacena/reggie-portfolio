@@ -46,6 +46,7 @@ const DEFAULTS = {
   maxZ: 2,
   controlSphere0: false,
   followCursor: false,
+  showCursorBall: false,
 };
 
 const tempPosition = new Vector3();
@@ -113,7 +114,7 @@ class BallPhysics {
 
   update(frame) {
     const { config, positionData, velocityData, sizeData } = this;
-    const startIndex = config.controlSphere0 ? 1 : 0;
+    const startIndex = 1;
 
     if (config.controlSphere0) {
       tempPosition.fromArray(positionData, 0).lerp(this.center, 0.1).toArray(positionData, 0);
@@ -236,7 +237,7 @@ class BallInstances extends InstancedMesh {
     this.physics.update(frame);
     for (let index = 0; index < this.count; index += 1) {
       instanceObject.position.fromArray(this.physics.positionData, index * 3);
-      instanceObject.scale.setScalar(index === 0 && !this.config.followCursor ? 0 : this.physics.sizeData[index]);
+      instanceObject.scale.setScalar(index === 0 && !this.config.showCursorBall ? 0 : this.physics.sizeData[index]);
       instanceObject.updateMatrix();
       this.setMatrixAt(index, instanceObject.matrix);
       if (index === 0) this.light.position.copy(instanceObject.position);
@@ -267,6 +268,8 @@ function createBallpit(canvas, options = {}) {
   let disposed = false;
   let intersecting = true;
   let scrollFrameId = 0;
+  let pointerFrameId = 0;
+  let pendingPointer = null;
 
   const resize = () => {
     const width = Math.max(1, canvas.parentElement?.clientWidth ?? canvas.clientWidth);
@@ -339,23 +342,35 @@ function createBallpit(canvas, options = {}) {
   const raycaster = new Raycaster();
   const plane = new Plane(new Vector3(0, 0, 1), 0);
   const hit = new Vector3();
-  const onPointerMove = (event) => {
-    if (!spheres.config.followCursor) return;
+  const syncPointer = () => {
+    pointerFrameId = 0;
+    if (!pendingPointer || !spheres.config.followCursor || disposed) return;
+    const { x, y } = pendingPointer;
     const bounds = canvas.getBoundingClientRect();
-    const inside = event.clientX >= bounds.left && event.clientX <= bounds.right
-      && event.clientY >= bounds.top && event.clientY <= bounds.bottom;
+    const inside = x >= bounds.left && x <= bounds.right
+      && y >= bounds.top && y <= bounds.bottom;
     if (!inside) {
       spheres.config.controlSphere0 = false;
       return;
     }
-    pointer.set(((event.clientX - bounds.left) / bounds.width) * 2 - 1, -(((event.clientY - bounds.top) / bounds.height) * 2 - 1));
+    pointer.set(((x - bounds.left) / bounds.width) * 2 - 1, -(((y - bounds.top) / bounds.height) * 2 - 1));
     raycaster.setFromCamera(pointer, camera);
     camera.getWorldDirection(plane.normal);
     raycaster.ray.intersectPlane(plane, hit);
     spheres.physics.center.copy(hit);
     spheres.config.controlSphere0 = true;
   };
-  const onPointerLeave = () => { spheres.config.controlSphere0 = false; };
+  const onPointerMove = (event) => {
+    if (!spheres.config.followCursor) return;
+    pendingPointer = { x: event.clientX, y: event.clientY };
+    if (!pointerFrameId) pointerFrameId = requestAnimationFrame(syncPointer);
+  };
+  const onPointerLeave = () => {
+    pendingPointer = null;
+    if (pointerFrameId) cancelAnimationFrame(pointerFrameId);
+    pointerFrameId = 0;
+    spheres.config.controlSphere0 = false;
+  };
   window.addEventListener("pointermove", onPointerMove, { passive: true });
   document.documentElement.addEventListener("pointerleave", onPointerLeave);
   resize();
@@ -380,6 +395,7 @@ function createBallpit(canvas, options = {}) {
       stop();
       canvas.dataset.animationState = "disposed";
       cancelAnimationFrame(scrollFrameId);
+      cancelAnimationFrame(pointerFrameId);
       resizeObserver?.disconnect();
       intersectionObserver.disconnect();
       document.removeEventListener("visibilitychange", onVisibilityChange);
