@@ -5,6 +5,7 @@ import SiteNavigation from "./SiteNavigation.jsx";
 import NeoScrollbar from "./NeoScrollbar.jsx";
 import ClickSpark from "./ClickSpark.jsx";
 import SmoothScroll from "./SmoothScroll.jsx";
+import ChatbotWidget from "./ChatbotWidget.jsx";
 
 const routeBodyClasses = ["home", "story-page", "tech-page", "travel-page", "life-page"];
 
@@ -103,5 +104,6 @@ export default function AppShell({ children }) {
     {children}
     <SiteFooter />
     <NeoScrollbar />
+    {pathname !== "/admin" && <ChatbotWidget />}
   </div>;
 }

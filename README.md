@@ -49,6 +49,17 @@ Use the publishable key—not a service-role or secret key. Database, storage,
 authentication, admin allow-list, and row-level security setup is documented in
 [docs/SUPABASE_SETUP.md](docs/SUPABASE_SETUP.md).
 
+## Portfolio assistant
+
+The floating mascot is a local React/SVG component with keyboard-accessible
+FAQ, temporary live-chat, and contact states. FAQ answers run locally without
+AI credits. Human chat and contact submission run through Vercel server
+functions, so Supabase secrets never reach the browser. Configure the
+server-only Supabase variables in
+[docs/CHATBOT_SETUP.md](docs/CHATBOT_SETUP.md) before enabling them in a
+deployment. Until then, the widget remains usable and directs visitors to the
+contact option instead of pretending that a live response is available.
+
 ## Verification
 
 ```bash

@@ -1,6 +1,6 @@
 const CACHE_PREFIX = "reggie-react-portfolio";
-const SHELL_CACHE = `${CACHE_PREFIX}-shell-v3`;
-const MEDIA_CACHE = `${CACHE_PREFIX}-media-v1`;
+const SHELL_CACHE = `${CACHE_PREFIX}-shell-v4`;
+const MEDIA_CACHE = `${CACHE_PREFIX}-media-v2`;
 const CORE_SHELL = [
   "/",
   "/offline.html",
@@ -83,14 +83,18 @@ async function networkFirstPage(request, url) {
 }
 
 async function cacheFirstAsset(request) {
-  const cached = await caches.match(request, { ignoreVary: true });
+  const url = new URL(request.url);
+  const cacheName = url.pathname.startsWith("/assets/") ? SHELL_CACHE : MEDIA_CACHE;
+  const cache = await caches.open(cacheName);
+  const cached = await cache.match(request, { ignoreVary: true });
   if (cached) return cached;
   const response = await fetch(request);
   if (response.ok) {
-    const cache = await caches.open(MEDIA_CACHE);
     await cache.put(request, response.clone());
-    const keys = await cache.keys();
-    await Promise.all(keys.slice(0, Math.max(0, keys.length - 80)).map((key) => cache.delete(key)));
+    if (cacheName === MEDIA_CACHE) {
+      const keys = await cache.keys();
+      await Promise.all(keys.slice(0, Math.max(0, keys.length - 80)).map((key) => cache.delete(key)));
+    }
   }
   return response;
 }
