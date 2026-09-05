@@ -26,6 +26,10 @@ and the private contact inbox:
 - `SUPABASE_URL`
 - `SUPABASE_SERVICE_ROLE_KEY` (or `SUPABASE_SECRET_KEY` for projects using the newer key name)
 
+Optional first-message email alerts additionally use `RESEND_API_KEY`, with
+`CHAT_NOTIFICATION_EMAIL`, `CHAT_NOTIFICATION_FROM`, and `SITE_URL` available
+as overrides. These remain server-only and must never use a `VITE_` prefix.
+
 Never prefix a secret with `VITE_`, add it to `react-app/.env.local`, or expose
 it in a client-side component. The browser uses only the two publishable
 variables; Vercel Functions use the server-only values. After changing a Vite

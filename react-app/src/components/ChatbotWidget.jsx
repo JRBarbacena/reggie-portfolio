@@ -5,8 +5,8 @@ import LiveChatPanel from "./LiveChatPanel.jsx";
 import "./ChatbotWidget.css";
 
 const QUICK_PROMPTS = [
-  "What kind of work does Reggie build?",
-  "Show me the best place to start.",
+  "Hi",
+  "Hello",
 ];
 
 const ACTIVITY_LABELS = {
@@ -26,8 +26,16 @@ function SendIcon() {
   return <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4 4 16 8-16 8 3-8-3-8Zm3 8h8" /></svg>;
 }
 
+function MessageIdentity({ role }) {
+  return <span className="chatbot-message__identity">
+    {role === "assistant" && <ChatbotMascot state="idle" size={24} animated={false} />}
+    <span>{role === "assistant" ? "Zenith" : "You"}</span>
+  </span>;
+}
+
 export default function ChatbotWidget() {
   const launcherRef = useRef(null);
+  const panelRef = useRef(null);
   const inputRef = useRef(null);
   const returnFocusRef = useRef(false);
   const [liveChatMode, setLiveChatMode] = useState(false);
@@ -41,6 +49,7 @@ export default function ChatbotWidget() {
     draft,
     finishPanelTransition,
     hasUnread,
+    handoffSuggested,
     mascotState,
     messages,
     openPanel,
@@ -66,19 +75,41 @@ export default function ChatbotWidget() {
 
   useEffect(() => {
     if (!panelVisible) return undefined;
-    const closeOnEscape = (event) => {
-      if (event.key !== "Escape") return;
-      event.preventDefault();
-      returnFocusRef.current = true;
-      closePanel();
+    document.documentElement.classList.add("chatbot-scroll-locked");
+    const handleDialogKeys = (event) => {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        returnFocusRef.current = true;
+        closePanel();
+        return;
+      }
+      if (event.key !== "Tab") return;
+      const focusable = [...(panelRef.current?.querySelectorAll('button:not(:disabled), a[href], input:not(:disabled), textarea:not(:disabled), select:not(:disabled), [tabindex]:not([tabindex="-1"])') ?? [])];
+      if (!focusable.length) return;
+      const first = focusable[0];
+      const last = focusable.at(-1);
+      if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
+      else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
     };
-    window.addEventListener("keydown", closeOnEscape);
-    return () => window.removeEventListener("keydown", closeOnEscape);
+    const preventBackgroundScroll = (event) => {
+      if (panelRef.current?.contains(event.target)) return;
+      event.preventDefault();
+    };
+
+    window.addEventListener("keydown", handleDialogKeys);
+    window.addEventListener("wheel", preventBackgroundScroll, { capture: true, passive: false });
+    window.addEventListener("touchmove", preventBackgroundScroll, { capture: true, passive: false });
+    return () => {
+      document.documentElement.classList.remove("chatbot-scroll-locked");
+      window.removeEventListener("keydown", handleDialogKeys);
+      window.removeEventListener("wheel", preventBackgroundScroll, { capture: true });
+      window.removeEventListener("touchmove", preventBackgroundScroll, { capture: true });
+    };
   }, [closePanel, panelVisible]);
 
-  const togglePanel = () => {
+  const togglePanel = (event) => {
     if (panelVisible) {
-      returnFocusRef.current = true;
+      returnFocusRef.current = event.detail === 0;
       closePanel();
     } else {
       openPanel();
@@ -104,13 +135,16 @@ export default function ChatbotWidget() {
 
   return (
     <aside className="chatbot-widget" data-panel-state={panelState} aria-label="Zenith portfolio assistant">
+      {panelVisible && <div className="chatbot-backdrop" aria-hidden="true" data-lenis-prevent onClick={() => { returnFocusRef.current = false; closePanel(); }} />}
       {panelVisible && (
         <section
+          ref={panelRef}
           id="portfolio-assistant"
           className="chatbot-panel"
           role="dialog"
-          aria-modal="false"
+          aria-modal="true"
           aria-labelledby="chatbot-title"
+          data-lenis-prevent
           onAnimationEnd={handlePanelAnimationEnd}
         >
           <header className="chatbot-panel__header">
@@ -123,7 +157,7 @@ export default function ChatbotWidget() {
               </p>
               <h2 id="chatbot-title">Ask about Reggie&apos;s work</h2>
             </div>
-            <button type="button" className="chatbot-panel__close" onClick={() => { returnFocusRef.current = true; closePanel(); }} aria-label="Close portfolio assistant">
+            <button type="button" className="chatbot-panel__close" onClick={(event) => { returnFocusRef.current = event.detail === 0; closePanel(); }} aria-label="Close portfolio assistant">
               <CloseIcon />
             </button>
           </header>
@@ -149,16 +183,15 @@ export default function ChatbotWidget() {
           ) : (
             <>
               <div className="chatbot-panel__messages" aria-live="polite" aria-relevant="additions text">
-                {messages.map((message) => <article className={`chatbot-message chatbot-message--${message.role}`} key={message.id}><p>{message.content}</p></article>)}
+                {messages.map((message) => <article className={`chatbot-message chatbot-message--${message.role}`} aria-label={`${message.role === "assistant" ? "Zenith" : "You"}: ${message.content}`} key={message.id}><MessageIdentity role={message.role} /><p>{message.content}</p></article>)}
                 {activity === "thinking" && <div className="chatbot-thinking" aria-label="Assistant is thinking"><span /><span /><span /></div>}
               </div>
               <div className="chatbot-panel__composer">
                 {requestError && <p className="chatbot-panel__status is-error" role="status">{requestError}</p>}
-                <div className="chatbot-panel__quick-actions" aria-label="Suggested questions">
+                {messages.length === 1 && <div className="chatbot-panel__quick-actions" aria-label="Start a conversation">
                   {QUICK_PROMPTS.map((prompt) => <button type="button" key={prompt} disabled={busy} onClick={() => sendChat(prompt)}>{prompt}</button>)}
-                  <button type="button" onClick={() => setLiveChatMode(true)}>Chat with Reggie</button>
-                  <button type="button" onClick={showContactForm}>Send Reggie a message</button>
-                </div>
+                </div>}
+                {handoffSuggested && <button className="chatbot-panel__handoff" type="button" onClick={() => setLiveChatMode(true)}>Talk to Reggie</button>}
                 <form className="chatbot-chat-form" onSubmit={handleChatSubmit}>
                   <label className="sr-only" htmlFor="portfolio-assistant-input">Ask about the portfolio</label>
                   <textarea
@@ -197,12 +230,13 @@ export default function ChatbotWidget() {
         aria-controls="portfolio-assistant"
         aria-expanded={panelVisible}
         onClick={togglePanel}
+        onPointerDown={(event) => { if (event.pointerType === "mouse") event.preventDefault(); }}
         onPointerEnter={() => setHovered(true)}
         onPointerLeave={() => setHovered(false)}
         onFocus={() => setHovered(true)}
         onBlur={() => setHovered(false)}
       >
-        <ChatbotMascot state={mascotState} size={66} />
+        <ChatbotMascot state={mascotState} size={50} />
         {hasUnread && !panelVisible && <span className="chatbot-launcher__notice" aria-label="New assistant response" />}
       </button>
     </aside>

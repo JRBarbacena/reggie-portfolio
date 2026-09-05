@@ -2,10 +2,14 @@
   --mascot-eye-x: 0px;
   --mascot-eye-y: 0px;
   --mascot-lean: 0deg;
+  --mascot-follow-x: 0px;
+  --mascot-follow-y: 0px;
   display: block;
   overflow: visible;
+  translate: var(--mascot-follow-x) var(--mascot-follow-y);
   transform: translateZ(0);
   transform-origin: 50% 58%;
+  transition: translate 180ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .chatbot-mascot__shadow,
@@ -86,6 +90,14 @@
 .chatbot-mascot[data-state="closing"] .chatbot-mascot__body {
   animation: chatbot-mascot-close 370ms cubic-bezier(0.32, 0, 0.67, 0) both;
 }
+
+.chatbot-mascot--static,
+.chatbot-mascot--static :is(.chatbot-mascot__body, .chatbot-mascot__shadow, .chatbot-mascot__face, .chatbot-mascot__eye) {
+  animation: none !important;
+  transition: none !important;
+}
+
+.chatbot-mascot--static { translate: 0 0; }
 
 @keyframes chatbot-mascot-breathe {
   0%, 100% { transform: rotate(var(--mascot-lean)) translateY(0) scale(1); }
@@ -171,4 +183,6 @@
     animation: none !important;
     transition-duration: 0.01ms !important;
   }
+
+  .chatbot-mascot { translate: 0 0 !important; }
 }

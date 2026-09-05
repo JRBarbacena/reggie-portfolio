@@ -32,17 +32,20 @@ class BallpitBoundary extends Component {
   }
 }
 
-export default function HeroBallpit({ revealed = true }) {
+export default function HeroBallpit({ enabled = true, revealed = true, interactive = true, onReady }) {
   const [capable, setCapable] = useState(false);
   const [compact, setCompact] = useState(window.innerWidth < 720);
+  const [capabilityChecked, setCapabilityChecked] = useState(false);
 
   useEffect(() => {
+    if (!enabled) return undefined;
     const motionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
     const compactQuery = window.matchMedia("(max-width: 719px)");
     const connection = navigator.connection;
     const update = () => {
       setCompact(compactQuery.matches);
       setCapable(!motionQuery.matches && !connection?.saveData && supportsWebGL());
+      setCapabilityChecked(true);
     };
     update();
     motionQuery.addEventListener("change", update);
@@ -53,14 +56,18 @@ export default function HeroBallpit({ revealed = true }) {
       compactQuery.removeEventListener("change", update);
       connection?.removeEventListener?.("change", update);
     };
-  }, []);
+  }, [enabled]);
+
+  useEffect(() => {
+    if (enabled && capabilityChecked && !capable) onReady?.();
+  }, [enabled, capabilityChecked, capable, onReady]);
 
   return (
     <div
       className={`hero-ballpit ${capable ? "is-live" : "is-static"} ${revealed ? "is-revealed" : "is-gathered"}`}
       aria-hidden="true"
     >
-      {capable && (
+      {enabled && capable && (
         <BallpitBoundary>
           <Suspense fallback={null}>
             <Ballpit
@@ -70,6 +77,8 @@ export default function HeroBallpit({ revealed = true }) {
               friction={0.998}
               wallBounce={0.55}
               followCursor
+              paused={!interactive}
+              onReady={onReady}
               showCursorBall={false}
               colors={HERO_BALL_COLORS}
               ambientIntensity={1.15}

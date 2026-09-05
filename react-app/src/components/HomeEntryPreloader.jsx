@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { animate, cubicBezier, scrambleText } from "animejs";
 import "./HomeEntryPreloader.css";
@@ -7,30 +7,24 @@ const PORTFOLIO_OWNER = "Reggie Barbacena";
 const CURTAIN_DURATION = 950;
 const APPLE_EASE = cubicBezier(0.22, 1, 0.36, 1);
 
-export default function HomeEntryPreloader({ onReveal, onComplete }) {
+export default function HomeEntryPreloader({ ready = true, onPrepare, onReveal, onComplete }) {
   const overlayRef = useRef(null);
   const nameRef = useRef(null);
   const finishedRef = useRef(false);
+  const [scrambleComplete, setScrambleComplete] = useState(false);
 
   useEffect(() => {
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
     let animation;
     let startFrame = 0;
-    let finishTimer = 0;
 
-    const finish = () => {
-      if (finishedRef.current) return;
-      finishedRef.current = true;
-      onReveal();
-      overlayRef.current?.classList.add("is-lifting");
-      finishTimer = window.setTimeout(onComplete, CURTAIN_DURATION);
+    const prepare = () => {
+      setScrambleComplete(true);
+      onPrepare?.();
     };
 
     if (reducedMotion.matches) {
-      startFrame = window.requestAnimationFrame(() => {
-        onReveal();
-        onComplete();
-      });
+      startFrame = window.requestAnimationFrame(prepare);
       return () => window.cancelAnimationFrame(startFrame);
     }
 
@@ -51,16 +45,24 @@ export default function HomeEntryPreloader({ onReveal, onComplete }) {
           seed: 19,
           ease: APPLE_EASE,
         }),
-        onComplete: finish,
+        onComplete: prepare,
       });
     });
 
     return () => {
       window.cancelAnimationFrame(startFrame);
-      window.clearTimeout(finishTimer);
       animation?.cancel?.();
     };
-  }, [onComplete, onReveal]);
+  }, [onPrepare]);
+
+  useEffect(() => {
+    if (!ready || !scrambleComplete || finishedRef.current) return undefined;
+    finishedRef.current = true;
+    onReveal();
+    overlayRef.current?.classList.add("is-lifting");
+    const finishTimer = window.setTimeout(onComplete, CURTAIN_DURATION);
+    return () => window.clearTimeout(finishTimer);
+  }, [onComplete, onReveal, ready, scrambleComplete]);
 
   return createPortal(
     <div ref={overlayRef} className="home-entry-preloader" role="status" aria-live="polite" aria-label="Opening Reggie Barbacena's portfolio">

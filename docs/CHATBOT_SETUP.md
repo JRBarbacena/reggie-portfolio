@@ -120,6 +120,20 @@ The existing browser variables remain separate:
 After saving or changing any Vercel environment variable, create a new
 deployment. Variable changes do not alter deployments that already exist.
 
+Email notification for the first visitor message in each temporary chat is
+optional. To enable it, create a Resend API key and add these server-only
+Vercel variables:
+
+| Variable | Required | Value |
+|---|---|---|
+| `RESEND_API_KEY` | Yes | Resend API key beginning with `re_` |
+| `CHAT_NOTIFICATION_EMAIL` | No | Inbox to notify; defaults to `iggybarbacena@gmail.com` |
+| `CHAT_NOTIFICATION_FROM` | No | Verified sender; defaults to `Zenith <onboarding@resend.dev>` |
+| `SITE_URL` | No | Production origin used for the `/admin` link |
+
+The message is still saved when email is unconfigured or delivery fails.
+Zenith sends only one notification email per chat session to avoid inbox spam.
+
 ## 4. FAQ and temporary-chat pattern
 
 OpenAI is not required. Reviewed FAQ matching happens in the browser and does
@@ -141,11 +155,13 @@ admin dashboard also subscribes to secured Postgres changes.
 1. Redeploy the latest commit in Vercel.
 2. Open the deployment and ask Zenith a simple portfolio question.
 3. Confirm an FAQ question is answered without a network request.
-4. Start **Chat with Reggie** and confirm `POST /api/live-chat` succeeds.
+4. Ask Zenith to **talk to Reggie**, use the offered handoff, and confirm `POST /api/live-chat` succeeds.
 5. Sign in at `/admin`, open **Chats**, reply, and confirm the visitor receives it.
-6. End the test chat and confirm it disappears from both screens.
-7. Submit one test contact message, then verify it under **Inbox**.
-8. Check Vercel Function logs if an endpoint returns `502` or `503`.
+6. Enable chat alerts for the dashboard session and confirm a new visitor reply produces a sound and visual notice.
+7. If Resend is configured, confirm the first visitor message sends an email containing the visitor name.
+8. End the test chat and confirm it disappears from both screens.
+9. Submit one test contact message, then verify it under **Inbox**.
+10. Check Vercel Function logs if an endpoint returns `502` or `503`.
 
 When using `npm run dev:react` at `localhost:5173`, FAQ works but Vercel
 Functions do not run. Use a Vercel preview deployment for the simplest full

@@ -59,8 +59,16 @@ export default function HomePage() {
   const [openChip, setOpenChip] = useState(null);
   const [entryVisible, setEntryVisible] = useState(shouldShowHomeEntry);
   const [heroReady, setHeroReady] = useState(() => !entryVisible);
+  const [heroPrepared, setHeroPrepared] = useState(() => !entryVisible);
+  const [heroInteractive, setHeroInteractive] = useState(() => !entryVisible);
+  const [heroWarmup, setHeroWarmup] = useState(() => !entryVisible);
   const revealHero = useCallback(() => setHeroReady(true), []);
-  const finishEntry = useCallback(() => setEntryVisible(false), []);
+  const beginHeroWarmup = useCallback(() => setHeroWarmup(true), []);
+  const prepareHero = useCallback(() => setHeroPrepared(true), []);
+  const finishEntry = useCallback(() => {
+    setEntryVisible(false);
+    setHeroInteractive(true);
+  }, []);
 
   useLayoutEffect(() => {
     homeEntryMountedThisDocument = true;
@@ -85,9 +93,15 @@ export default function HomePage() {
     return () => window.cancelAnimationFrame(frame);
   }, [entryVisible]);
 
+  useEffect(() => {
+    if (!entryVisible || !heroWarmup || heroPrepared) return undefined;
+    const fallback = window.setTimeout(() => setHeroPrepared(true), 1800);
+    return () => window.clearTimeout(fallback);
+  }, [entryVisible, heroPrepared, heroWarmup]);
+
   return <><main id="main" tabIndex="-1">
     <section className="hero hero--home home-section home-section--hero" aria-labelledby="hero-title">
-      <HeroBallpit revealed={heroReady} />
+      <HeroBallpit enabled={heroWarmup} revealed={heroReady} interactive={heroInteractive} onReady={prepareHero} />
       <header className="site-header site-header--home"><SiteNavigation /></header>
       <div className="hero__center"><HomeHeroIntro active={!entryVisible} id="hero-title" /></div>
       <div className="collage" role="group" aria-label="Photos and details about Reggie">
@@ -102,5 +116,5 @@ export default function HomePage() {
       <div className="section-head section-head--center" data-reveal><h2 id="explore-title">Where should we go next?</h2><p>Explore the code I build, the places I wander, and the moments that shape life in between.</p></div>
       <div data-reveal><HomeLaneCarousel lanes={lanes} /></div>
     </section>
-  </main>{entryVisible && <HomeEntryPreloader onReveal={revealHero} onComplete={finishEntry} />}</>;
+  </main>{entryVisible && <HomeEntryPreloader ready={heroPrepared} onPrepare={beginHeroWarmup} onReveal={revealHero} onComplete={finishEntry} />}</>;
 }

@@ -1,11 +1,11 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { mascotStateFor, safeChatHistory } from "../lib/chatbot-state.js";
-import { answerPortfolioFaq } from "../lib/portfolio-faq.js";
+import { getPortfolioFaqResponse } from "../lib/portfolio-faq.js";
 
 const WELCOME_MESSAGE = {
   id: "zenith-welcome",
   role: "assistant",
-  content: "Hi — I’m Zenith. Ask about Reggie’s work, explore the site, or send him a message directly.",
+  content: "Hi, I’m Zenith. Say hello to begin.",
 };
 
 const CONTACT_TOPICS = new Set(["General inquiry", "Project collaboration", "Coffee chat", "Speaking or event", "Other"]);
@@ -67,6 +67,7 @@ export default function useChatbotController() {
   const [requestError, setRequestError] = useState("");
   const [contactStatus, setContactStatus] = useState(null);
   const [busy, setBusy] = useState(false);
+  const [handoffSuggested, setHandoffSuggested] = useState(false);
 
   const panelStateRef = useRef(panelState);
   const activityRef = useRef(activity);
@@ -149,8 +150,9 @@ export default function useChatbotController() {
 
     try {
       if (!reducedMotion) await new Promise((resolve) => window.setTimeout(resolve, 420));
-      const answer = answerPortfolioFaq(content);
-      setMessages((current) => [...current, createMessage("assistant", answer)]);
+      const response = getPortfolioFaqResponse(content);
+      setHandoffSuggested(response.offerHandoff);
+      setMessages((current) => [...current, createMessage("assistant", response.answer)]);
       if (["closed", "closing"].includes(panelStateRef.current)) {
         setHasUnread(true);
         updateActivity("idle");
@@ -247,6 +249,7 @@ export default function useChatbotController() {
     draft,
     finishPanelTransition,
     hasUnread,
+    handoffSuggested,
     mascotState,
     messages,
     openPanel,

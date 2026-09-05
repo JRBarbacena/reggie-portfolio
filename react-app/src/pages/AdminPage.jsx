@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { requireSupabase, supabase } from "../lib/supabase.js";
 
 const MAX_IMAGE_BYTES = 10 * 1024 * 1024;
@@ -152,9 +152,9 @@ function InboxList({ inquiries, inboxState, busy, onStatusChange }) {
   </section>;
 }
 
-function LiveChats({ chats, chatState, busy, onReply, onEnd }) {
+function LiveChats({ chats, chatState, busy, alertsEnabled, onEnableAlerts, onReply, onEnd }) {
   return <section className="admin-live-chats" aria-labelledby="live-chats-title">
-    <div className="admin-content-list__heading"><div><p className="react-eyebrow">Temporary conversations</p><h2 id="live-chats-title">Live chats</h2></div><span>{chatState === "ready" ? `${chats.length} active` : "One-hour retention"}</span></div>
+    <div className="admin-content-list__heading"><div><p className="react-eyebrow">Temporary conversations</p><h2 id="live-chats-title">Live chats</h2></div><div className="admin-live-chats__tools"><span>{chatState === "ready" ? `${chats.length} active` : "One-hour retention"}</span><button type="button" onClick={onEnableAlerts}>{alertsEnabled ? "Sound alerts on" : "Enable chat alerts"}</button></div></div>
     {chatState === "loading" && <p className="react-muted">Loading active chats…</p>}
     {chatState === "unavailable" && <div className="album-empty" role="status"><strong>Temporary chat has not been set up yet.</strong><span>Run `20260904_006_ephemeral_live_chat.sql` in Supabase, then refresh.</span></div>}
     {chatState === "ready" && chats.length === 0 && <div className="album-empty" role="status"><strong>No active chats.</strong><span>New visitor conversations appear here during their one-hour window.</span></div>}
@@ -179,6 +179,37 @@ export default function AdminPage() {
   const [inboxState, setInboxState] = useState("loading");
   const [chats, setChats] = useState([]);
   const [chatState, setChatState] = useState("loading");
+  const [chatAlertsEnabled, setChatAlertsEnabled] = useState(false);
+  const alertAudioRef = useRef(null);
+
+  const playChatDing = useCallback(async () => {
+    const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+    if (!AudioContextClass) return;
+    const context = alertAudioRef.current ?? new AudioContextClass();
+    alertAudioRef.current = context;
+    if (context.state === "suspended") await context.resume().catch(() => {});
+    if (context.state !== "running") return;
+    const oscillator = context.createOscillator();
+    const gain = context.createGain();
+    oscillator.type = "sine";
+    oscillator.frequency.setValueAtTime(740, context.currentTime);
+    oscillator.frequency.exponentialRampToValueAtTime(980, context.currentTime + 0.11);
+    gain.gain.setValueAtTime(0.0001, context.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.13, context.currentTime + 0.015);
+    gain.gain.exponentialRampToValueAtTime(0.0001, context.currentTime + 0.22);
+    oscillator.connect(gain).connect(context.destination);
+    oscillator.start();
+    oscillator.stop(context.currentTime + 0.23);
+  }, []);
+
+  const enableChatAlerts = useCallback(async () => {
+    setChatAlertsEnabled(true);
+    await playChatDing().catch(() => {});
+    if ("Notification" in window && Notification.permission === "default") {
+      await Notification.requestPermission().catch(() => {});
+    }
+    setMessage("Chat alerts are enabled for this dashboard session.");
+  }, [playChatDing]);
 
   const refreshSession = async () => {
     if (!supabase) return;
@@ -259,20 +290,44 @@ export default function AdminPage() {
     loadChats();
   }, [isAdmin]);
 
+  useEffect(() => () => {
+    alertAudioRef.current?.close().catch(() => {});
+    alertAudioRef.current = null;
+  }, []);
+
   useEffect(() => {
     if (!isAdmin || !supabase || chatState === "unavailable") return undefined;
     const heartbeat = () => supabase.from("chat_presence").update({ status: "online", last_seen_at: new Date().toISOString() }).eq("id", true).then(() => {});
     heartbeat();
     const heartbeatTimer = window.setInterval(heartbeat, 30_000);
+    const announceVisitorMessage = async (payload) => {
+      const sessionId = payload.new?.session_id;
+      const { data } = sessionId
+        ? await supabase.from("chat_sessions").select("visitor_name").eq("id", sessionId).maybeSingle()
+        : { data: null };
+      const visitorName = data?.visitor_name || "A visitor";
+      setMessage(`${visitorName} sent a new chat message.`);
+      if (chatAlertsEnabled) {
+        playChatDing().catch(() => {});
+        if ("Notification" in window && Notification.permission === "granted") {
+          try {
+            new Notification("New Zenith chat", { body: `${visitorName}: ${String(payload.new?.body || "New message").slice(0, 120)}`, icon: "/images/brand/pwa-192.png" });
+          } catch { /* The in-dashboard notice remains available. */ }
+        }
+      }
+    };
     const channel = supabase.channel("portfolio-admin-live-chats")
       .on("postgres_changes", { event: "*", schema: "public", table: "chat_sessions" }, loadChats)
-      .on("postgres_changes", { event: "*", schema: "public", table: "chat_messages" }, loadChats)
+      .on("postgres_changes", { event: "INSERT", schema: "public", table: "chat_messages" }, (payload) => {
+        loadChats();
+        if (payload.new?.sender === "visitor") announceVisitorMessage(payload);
+      })
       .subscribe();
     return () => {
       window.clearInterval(heartbeatTimer);
       supabase.removeChannel(channel);
     };
-  }, [isAdmin]);
+  }, [chatAlertsEnabled, isAdmin, playChatDing]);
 
   const sendMagicLink = async (event) => {
     event.preventDefault(); setBusy(true); setMessage("");
@@ -469,6 +524,6 @@ export default function AdminPage() {
     </section>}
 
     {view === "inbox" && <InboxList inquiries={inquiries} inboxState={inboxState} busy={busy} onStatusChange={updateInquiryStatus} />}
-    {view === "chats" && <LiveChats chats={chats} chatState={chatState} busy={busy} onReply={replyToChat} onEnd={endChat} />}
+    {view === "chats" && <LiveChats chats={chats} chatState={chatState} busy={busy} alertsEnabled={chatAlertsEnabled} onEnableAlerts={enableChatAlerts} onReply={replyToChat} onEnd={endChat} />}
   </section></main>;
 }

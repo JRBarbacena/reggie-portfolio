@@ -42,13 +42,47 @@ function tokenHash(token) {
 async function activeSession(client, id, token) {
   if (!/^[0-9a-f-]{36}$/i.test(String(id)) || !/^[A-Za-z0-9_-]{40,60}$/.test(String(token))) return null;
   const { data } = await client.from("chat_sessions")
-    .select("id,status,expires_at")
+    .select("id,status,expires_at,visitor_name")
     .eq("id", id)
     .eq("token_hash", tokenHash(token))
     .eq("status", "open")
     .gt("expires_at", new Date().toISOString())
     .maybeSingle();
   return data ?? null;
+}
+
+async function sendNewChatEmail({ sessionId, visitorName, message }) {
+  const apiKey = process.env.RESEND_API_KEY;
+  const recipient = process.env.CHAT_NOTIFICATION_EMAIL || "iggybarbacena@gmail.com";
+  if (!apiKey || !recipient) return;
+
+  const safeName = String(visitorName || "Visitor").replace(/[\r\n]+/g, " ").slice(0, 80);
+  const adminUrl = `${process.env.SITE_URL || "https://reggiebarbacena.vercel.app"}/admin`;
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 5_000);
+  try {
+    const notification = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        "Content-Type": "application/json",
+        "Idempotency-Key": `zenith-chat-${sessionId}`,
+        "User-Agent": "reggie-portfolio/1.0",
+      },
+      body: JSON.stringify({
+        from: process.env.CHAT_NOTIFICATION_FROM || "Zenith <onboarding@resend.dev>",
+        to: [recipient],
+        subject: `${safeName} wants to chat through Zenith`,
+        text: `${safeName} started a temporary portfolio chat.\n\nFirst message:\n${message}\n\nOpen the private dashboard to reply:\n${adminUrl}\n\nThe conversation expires one hour after its latest message.`,
+      }),
+      signal: controller.signal,
+    });
+    if (!notification.ok) console.error("Chat email notification failed", { status: notification.status });
+  } catch (error) {
+    console.error("Chat email notification failed", { name: error?.name, message: error?.message });
+  } finally {
+    clearTimeout(timeout);
+  }
 }
 
 async function presence(client) {
@@ -89,8 +123,16 @@ export default async function handler(request, response) {
     if (body.action === "send") {
       const message = String(body.message ?? "").trim().slice(0, 1200);
       if (!message) return sendJson(response, 400, { message: "Write a message before sending." });
+      const { count: existingVisitorMessages, error: countError } = await client.from("chat_messages")
+        .select("id", { count: "exact", head: true })
+        .eq("session_id", session.id)
+        .eq("sender", "visitor");
+      if (countError) throw countError;
       const { error } = await client.from("chat_messages").insert({ session_id: session.id, sender: "visitor", body: message });
       if (error) throw error;
+      if (existingVisitorMessages === 0) {
+        await sendNewChatEmail({ sessionId: session.id, visitorName: session.visitor_name, message });
+      }
     } else if (body.action === "end") {
       await client.from("chat_sessions").delete().eq("id", session.id);
       return sendJson(response, 200, { ended: true });

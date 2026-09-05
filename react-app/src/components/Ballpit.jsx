@@ -47,6 +47,7 @@ const DEFAULTS = {
   controlSphere0: false,
   followCursor: false,
   showCursorBall: false,
+  paused: false,
 };
 
 const tempPosition = new Vector3();
@@ -270,6 +271,7 @@ function createBallpit(canvas, options = {}) {
   let scrollFrameId = 0;
   let pointerFrameId = 0;
   let pendingPointer = null;
+  let manuallyPaused = Boolean(options.paused);
 
   const resize = () => {
     const width = Math.max(1, canvas.parentElement?.clientWidth ?? canvas.clientWidth);
@@ -291,7 +293,7 @@ function createBallpit(canvas, options = {}) {
     renderer.render(scene, camera);
   };
   const start = () => {
-    if (running || disposed) return;
+    if (running || disposed || manuallyPaused) return;
     running = true;
     canvas.dataset.animationState = "running";
     spheres.physics.maintainMotion();
@@ -312,7 +314,7 @@ function createBallpit(canvas, options = {}) {
       && bounds.right > 0
       && bounds.top < window.innerHeight
       && bounds.left < window.innerWidth;
-    if (intersecting && !document.hidden) start(); else stop();
+    if (intersecting && !document.hidden && !manuallyPaused) start(); else stop();
   };
 
   const scheduleVisibilitySync = () => {
@@ -327,7 +329,7 @@ function createBallpit(canvas, options = {}) {
   resizeObserver?.observe(canvas.parentElement ?? canvas);
   const intersectionObserver = new IntersectionObserver(([entry]) => {
     intersecting = entry.isIntersecting;
-    if (intersecting && !document.hidden) start(); else stop();
+    if (intersecting && !document.hidden && !manuallyPaused) start(); else stop();
   }, { threshold: 0.01 });
   intersectionObserver.observe(canvas);
   const onVisibilityChange = () => {
@@ -374,21 +376,31 @@ function createBallpit(canvas, options = {}) {
   window.addEventListener("pointermove", onPointerMove, { passive: true });
   document.documentElement.addEventListener("pointerleave", onPointerLeave);
   resize();
-  start();
+  spheres.update({ delta: 0, elapsed: 0 });
+  renderer.render(scene, camera);
+  if (manuallyPaused) canvas.dataset.animationState = "paused";
+  else start();
 
   return {
     updateConfig(next) {
+      const wasPaused = manuallyPaused;
+      if (next.paused !== undefined) manuallyPaused = Boolean(next.paused);
       if (next.count !== undefined && next.count !== spheres.config.count) {
         scene.remove(spheres);
         spheres.disposeResources();
         spheres = new BallInstances(renderer, { ...spheres.config, ...next });
         scene.add(spheres);
         resize();
+        spheres.update({ delta: 0, elapsed: 0 });
+        renderer.render(scene, camera);
+        if (manuallyPaused) stop(); else syncVisibility();
         return;
       }
       Object.assign(spheres.config, next);
       if (next.colors) spheres.setColors(next.colors);
       if (next.minSize !== undefined || next.maxSize !== undefined || next.size0 !== undefined) spheres.physics.setSizes();
+      if (manuallyPaused && !wasPaused) stop();
+      if (!manuallyPaused && wasPaused) syncVisibility();
     },
     dispose() {
       disposed = true;
@@ -412,18 +424,24 @@ function createBallpit(canvas, options = {}) {
   };
 }
 
-export default function Ballpit({ className = "", followCursor = true, ...props }) {
+export default function Ballpit({ className = "", followCursor = true, paused = false, onReady, ...props }) {
   const canvasRef = useRef(null);
   const instanceRef = useRef(null);
   const firstRenderRef = useRef(true);
-  const currentConfigRef = useRef({ followCursor, ...props });
-  currentConfigRef.current = { followCursor, ...props };
+  const currentConfigRef = useRef({ followCursor, paused, ...props });
+  currentConfigRef.current = { followCursor, paused, ...props };
   const configSignature = JSON.stringify(currentConfigRef.current);
 
   useEffect(() => {
     if (!canvasRef.current) return undefined;
-    instanceRef.current = createBallpit(canvasRef.current, { followCursor, ...props });
+    let setupFrame = requestAnimationFrame(() => {
+      setupFrame = 0;
+      if (!canvasRef.current) return;
+      instanceRef.current = createBallpit(canvasRef.current, currentConfigRef.current);
+      onReady?.();
+    });
     return () => {
+      if (setupFrame) cancelAnimationFrame(setupFrame);
       instanceRef.current?.dispose();
       instanceRef.current = null;
     };
@@ -446,6 +464,7 @@ export default function Ballpit({ className = "", followCursor = true, ...props 
       aria-hidden="true"
       data-ball-count={props.count ?? DEFAULTS.count}
       data-follow-cursor={followCursor}
+      data-paused={paused}
     />
   );
 }

@@ -37,6 +37,7 @@ export default function SmoothScroll() {
     let disposed = false;
     let animationFrame = 0;
     let lenis;
+    let scrollLockObserver;
     let removeListeners = () => {};
 
     import("lenis").then(({ default: Lenis }) => {
@@ -53,6 +54,14 @@ export default function SmoothScroll() {
           && node.matches("dialog, textarea, select, [data-lenis-prevent], .neo-scrollbar"),
       });
       root.dataset.scrollMotion = "smooth";
+
+      const syncScrollLock = () => {
+        if (root.classList.contains("chatbot-scroll-locked")) lenis.stop();
+        else lenis.start();
+      };
+      scrollLockObserver = new MutationObserver(syncScrollLock);
+      scrollLockObserver.observe(root, { attributes: true, attributeFilter: ["class"] });
+      syncScrollLock();
 
       const frame = (time) => {
         animationFrame = 0;
@@ -73,6 +82,7 @@ export default function SmoothScroll() {
       removeListeners = () => {
         window.removeEventListener("wheel", wake);
         document.removeEventListener("visibilitychange", sleepWhenHidden);
+        scrollLockObserver?.disconnect();
       };
     });
 

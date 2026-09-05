@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
 const STORAGE_KEY = "zenith-live-chat-session";
+const REGGIE_PHOTO = "/images/photos/Hundred_Island.JPG";
 
 function savedSession() {
   try { return JSON.parse(sessionStorage.getItem(STORAGE_KEY) || "null"); } catch { return null; }
@@ -105,7 +106,7 @@ export default function LiveChatPanel({ onBack }) {
 
   return <div className="zenith-live-chat">
     <div className="chatbot-panel__section-heading">
-      <div><strong>Chat with Reggie</strong><span>Temporary messages expire one hour after the latest reply.</span></div>
+      <div className="zenith-live-chat__peer"><img src={REGGIE_PHOTO} alt="John Reggie Barbacena" /><div><strong>Chat with Reggie</strong><span>Temporary messages expire one hour after the latest reply.</span></div></div>
       <button type="button" onClick={onBack}>Back to Zenith</button>
     </div>
     {!session ? <form className="zenith-live-chat__start" onSubmit={start}>
@@ -117,7 +118,13 @@ export default function LiveChatPanel({ onBack }) {
       <div className="zenith-live-chat__toolbar"><div className={`zenith-presence is-${presence}`}><span /> Reggie is {presence}</div><button type="button" disabled={busy} onClick={endChat}>End &amp; erase</button></div>
       <div className="zenith-live-chat__messages" aria-live="polite">
         {messages.length === 0 && <p className="zenith-live-chat__empty">Say hello. If Reggie is away, this conversation will remain available for one hour.</p>}
-        {messages.map((entry) => <article className={`chatbot-message chatbot-message--${entry.sender === "visitor" ? "user" : "assistant"}`} key={entry.id}><p>{entry.body}</p></article>)}
+        {messages.map((entry) => <article className={`chatbot-message chatbot-message--${entry.sender === "visitor" ? "user" : "assistant"}`} aria-label={`${entry.sender === "visitor" ? "You" : "Reggie"}: ${entry.body}`} key={entry.id}>
+          <span className="chatbot-message__identity">
+            {entry.sender === "admin" && <img src={REGGIE_PHOTO} alt="" />}
+            <span>{entry.sender === "visitor" ? "You" : "Reggie"}</span>
+          </span>
+          <p>{entry.body}</p>
+        </article>)}
         <span ref={endRef} />
       </div>
       <form className="chatbot-chat-form zenith-live-chat__composer" onSubmit={send}>

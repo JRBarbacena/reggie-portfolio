@@ -15,7 +15,7 @@ export const CHATBOT_MASCOT_STATES = [
   "closing",
 ];
 
-const TRACKING_STATES = new Set(["hover", "listening"]);
+const TRACKING_STATES = new Set(["idle", "hover", "listening", "open"]);
 
 function validState(state) {
   return CHATBOT_MASCOT_STATES.includes(state) ? state : "idle";
@@ -30,6 +30,7 @@ export default function ChatbotMascot({
   state = "idle",
   size = 64,
   className = "",
+  animated = true,
   onAnimationEnd,
 }) {
   const mascotRef = useRef(null);
@@ -49,15 +50,18 @@ export default function ChatbotMascot({
 
   useEffect(() => {
     const mascot = mascotRef.current;
-    if (!mascot) return undefined;
+    if (!mascot || !animated) return undefined;
 
     const resetPointer = () => {
       mascot.style.setProperty("--mascot-eye-x", "0px");
       mascot.style.setProperty("--mascot-eye-y", "0px");
       mascot.style.setProperty("--mascot-lean", "0deg");
+      mascot.style.setProperty("--mascot-follow-x", "0px");
+      mascot.style.setProperty("--mascot-follow-y", "0px");
     };
 
-    if (!TRACKING_STATES.has(mascotState)) {
+    const motionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+    if (motionQuery.matches || !TRACKING_STATES.has(mascotState)) {
       resetPointer();
       return undefined;
     }
@@ -69,14 +73,23 @@ export default function ChatbotMascot({
       const bounds = mascot.getBoundingClientRect();
       const centerX = bounds.left + bounds.width / 2;
       const centerY = bounds.top + bounds.height / 2;
-      const normalizedX = Math.max(-1, Math.min(1, (point.x - centerX) / Math.max(1, bounds.width / 2)));
-      const normalizedY = Math.max(-1, Math.min(1, (point.y - centerY) / Math.max(1, bounds.height / 2)));
-      mascot.style.setProperty("--mascot-eye-x", `${(normalizedX * 3.1).toFixed(2)}px`);
-      mascot.style.setProperty("--mascot-eye-y", `${(normalizedY * 1.7).toFixed(2)}px`);
-      mascot.style.setProperty("--mascot-lean", `${(normalizedX * 1.35).toFixed(2)}deg`);
+      const deltaX = point.x - centerX;
+      const deltaY = point.y - centerY;
+      const distance = Math.max(1, Math.hypot(deltaX, deltaY));
+      const strength = Math.min(1, distance / 240);
+      const directionX = deltaX / distance;
+      const directionY = deltaY / distance;
+      const eyeX = Math.max(-1, Math.min(1, deltaX / 180));
+      const eyeY = Math.max(-1, Math.min(1, deltaY / 180));
+      mascot.style.setProperty("--mascot-eye-x", `${(eyeX * 3.4).toFixed(2)}px`);
+      mascot.style.setProperty("--mascot-eye-y", `${(eyeY * 2).toFixed(2)}px`);
+      mascot.style.setProperty("--mascot-lean", `${(eyeX * 1.8).toFixed(2)}deg`);
+      mascot.style.setProperty("--mascot-follow-x", `${(directionX * strength * 4.5).toFixed(2)}px`);
+      mascot.style.setProperty("--mascot-follow-y", `${(directionY * strength * 3.5).toFixed(2)}px`);
     };
 
     const handlePointerMove = (event) => {
+      if (event.pointerType && event.pointerType !== "mouse") return;
       pointerRef.current = { x: event.clientX, y: event.clientY };
       if (!pointerFrameRef.current) pointerFrameRef.current = requestAnimationFrame(updatePointer);
     };
@@ -85,20 +98,22 @@ export default function ChatbotMascot({
       resetPointer();
     };
 
-    mascot.addEventListener("pointermove", handlePointerMove);
-    mascot.addEventListener("pointerleave", handlePointerLeave);
+    window.addEventListener("pointermove", handlePointerMove, { passive: true });
+    document.documentElement.addEventListener("mouseleave", handlePointerLeave);
+    window.addEventListener("blur", handlePointerLeave);
     return () => {
-      mascot.removeEventListener("pointermove", handlePointerMove);
-      mascot.removeEventListener("pointerleave", handlePointerLeave);
+      window.removeEventListener("pointermove", handlePointerMove);
+      document.documentElement.removeEventListener("mouseleave", handlePointerLeave);
+      window.removeEventListener("blur", handlePointerLeave);
       if (pointerFrameRef.current) cancelAnimationFrame(pointerFrameRef.current);
       pointerFrameRef.current = 0;
       resetPointer();
     };
-  }, [mascotState]);
+  }, [animated, mascotState]);
 
   useEffect(() => {
     const motionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
-    if (motionQuery.matches || !["idle", "hover", "open", "listening"].includes(mascotState)) {
+    if (!animated || motionQuery.matches || !["idle", "hover", "open", "listening"].includes(mascotState)) {
       setIsBlinking(false);
       return undefined;
     }
@@ -124,12 +139,12 @@ export default function ChatbotMascot({
       blinkTimersRef.current = [];
       setIsBlinking(false);
     };
-  }, [mascotState]);
+  }, [animated, mascotState]);
 
   return (
     <svg
       ref={mascotRef}
-      className={["chatbot-mascot", className].filter(Boolean).join(" ")}
+      className={["chatbot-mascot", !animated && "chatbot-mascot--static", className].filter(Boolean).join(" ")}
       data-state={mascotState}
       data-blinking={isBlinking}
       width={size}
