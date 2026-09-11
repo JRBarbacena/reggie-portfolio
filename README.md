@@ -64,19 +64,13 @@ contact option instead of pretending that a live response is available.
 
 ```bash
 npm run verify
-npm run test:e2e:smoke
-npm run qa:react
 npm audit --audit-level=high
 ```
 
 - `verify` checks generated deployment configuration, UTF-8, unit tests, the
   React production build, security headers, redirects, and SPA route fallback.
-- `test:e2e:smoke` checks routes, navigation, preloader rules, motion,
-  reduced-motion behavior, responsive typography, focus, and album states.
-- `qa:react` runs mobile/desktop accessibility, overflow, PWA/offline,
-  performance-signal, Admin, and retired-route acceptance checks.
-- `qa:visual` writes reproducible review captures under
-  `artifacts/visual-acceptance`.
+- Manual release review covers browser interaction, motion, responsive layout,
+  accessibility, PWA/offline behavior, Admin, and album states.
 
 ## Deployment
 

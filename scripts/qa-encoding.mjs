@@ -4,7 +4,6 @@ import path from "node:path";
 const root = path.resolve(import.meta.dirname, "..");
 const ignoredDirectories = new Set([
   ".git", ".vercel", "artifacts", "coverage", "dist-react", "node_modules",
-  "playwright-report", "test-results",
 ]);
 const textExtensions = new Set([
   ".css", ".html", ".js", ".json", ".jsx", ".md", ".mjs", ".sql", ".svg", ".txt", ".yml", ".yaml",

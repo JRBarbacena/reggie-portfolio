@@ -64,8 +64,8 @@
     "rewriteRule": {
       "type": "object", "additionalProperties": false, "required": ["source", "destination"],
       "properties": {
-        "source": { "const": "/(.*)" },
-        "destination": { "const": "/" }
+        "source": { "const": "/((?!api/).*)" },
+        "destination": { "const": "/index" }
       }
     },
     "headerRule": {
