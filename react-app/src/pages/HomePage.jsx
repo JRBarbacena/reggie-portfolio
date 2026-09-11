@@ -62,12 +62,16 @@ export default function HomePage() {
   const [heroPrepared, setHeroPrepared] = useState(() => !entryVisible);
   const [heroInteractive, setHeroInteractive] = useState(() => !entryVisible);
   const [heroWarmup, setHeroWarmup] = useState(() => !entryVisible);
-  const revealHero = useCallback(() => setHeroReady(true), []);
+  const revealHero = useCallback(() => {
+    setHeroReady(true);
+    // Start the prepared Ballpit underneath the lifting curtain so its first
+    // visible frame is already in motion.
+    setHeroInteractive(true);
+  }, []);
   const beginHeroWarmup = useCallback(() => setHeroWarmup(true), []);
   const prepareHero = useCallback(() => setHeroPrepared(true), []);
   const finishEntry = useCallback(() => {
     setEntryVisible(false);
-    setHeroInteractive(true);
   }, []);
 
   useLayoutEffect(() => {

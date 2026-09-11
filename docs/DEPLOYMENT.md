@@ -44,8 +44,7 @@ Vercel preview callback patterns required for `/admin` passwordless links.
 
 ## Release procedure
 
-1. Run `npm run verify`, `npm run test:e2e:smoke`, `npm run qa:react`, and
-   `npm audit --audit-level=high`.
+1. Run `npm run verify` and `npm audit --audit-level=high`.
 2. Push a branch and inspect its Vercel preview on desktop and mobile.
 3. Confirm public Supabase content, the `/admin` sign-in callback, PWA install,
    chatbot fallback behavior, and one secure contact submission.
@@ -59,7 +58,9 @@ The GitHub repository is public and `main` is protected. Pull requests must be
 up to date and pass these checks:
 
 - Generated, encoding, unit, React build, and route verification
-- Chromium interaction and motion smoke
+
+Browser interaction and motion are reviewed manually before merging; there is
+no browser-automation status check.
 
 Linear history and resolved conversations are required. Protection applies to
 administrators; force-pushes and branch deletion are disabled. Approval count is

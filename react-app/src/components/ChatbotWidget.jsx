@@ -5,8 +5,8 @@ import LiveChatPanel from "./LiveChatPanel.jsx";
 import "./ChatbotWidget.css";
 
 const QUICK_PROMPTS = [
-  "Hi",
-  "Hello",
+  "Hello Zenith",
+  "Talk to Reggie",
 ];
 
 const ACTIVITY_LABELS = {
@@ -189,7 +189,10 @@ export default function ChatbotWidget() {
               <div className="chatbot-panel__composer">
                 {requestError && <p className="chatbot-panel__status is-error" role="status">{requestError}</p>}
                 {messages.length === 1 && <div className="chatbot-panel__quick-actions" aria-label="Start a conversation">
-                  {QUICK_PROMPTS.map((prompt) => <button type="button" key={prompt} disabled={busy} onClick={() => sendChat(prompt)}>{prompt}</button>)}
+                  {QUICK_PROMPTS.map((prompt) => <button type="button" key={prompt} disabled={busy} onClick={() => {
+                    if (prompt === "Talk to Reggie") setLiveChatMode(true);
+                    else sendChat(prompt);
+                  }}>{prompt}</button>)}
                 </div>}
                 {handoffSuggested && <button className="chatbot-panel__handoff" type="button" onClick={() => setLiveChatMode(true)}>Talk to Reggie</button>}
                 <form className="chatbot-chat-form" onSubmit={handleChatSubmit}>

@@ -117,26 +117,13 @@ $env:PORT=4175
 npm.cmd run preview
 ```
 
-Browser smoke tests use port 4174 by default so they do not collide with the normal preview.
-
 ## 4. CI pipelines and GitHub Actions
 
 All third-party GitHub Actions are pinned to immutable commit hashes. Workflows have read-only repository permissions, bounded timeouts, concurrency cancellation, and explicit manual triggers.
 
-### Portfolio QA
-
-Triggers: pushes to `main`, pull requests to `main`, and manual dispatch.
-
-Jobs:
-
-- deterministic static verification runs generation drift checks, content readiness, origin policy, static analysis, responsive/motion source checks, unit tests, and route-contract tests;
-- Chromium interaction smoke installs only Chromium, runs the release interaction suite, and uploads failure evidence.
-
-### Lighthouse
-
-Triggers: pull requests, weekly schedule, and manual dispatch.
-
-It audits performance and accessibility using the repository's local preview contract and uploads reports even if the audit fails.
+Deterministic local verification runs generation drift checks, encoding checks,
+unit tests, the React production build, and route-contract tests. Browser
+interaction and performance review are manual release steps.
 
 ### Link check
 
@@ -188,7 +175,8 @@ vulnerabilities. Keep the scheduled dependency workflow enabled.
 
 The navigation mark and preloader are product components, not disposable build details. Infrastructure changes must not replace or remove branded UI unless the product request explicitly asks for it.
 
-Control: include visual component assertions for the original monogram, preloader, social icons, and Home motion in browser smoke tests.
+Control: include the original monogram, preloader, social icons, and Home motion
+in the manual visual release checklist.
 
 ### B. Generic reveal transforms conflicted with composed layouts
 
@@ -256,7 +244,6 @@ Run:
 ```powershell
 npm.cmd run generate
 npm.cmd run verify
-npm.cmd run test:e2e:smoke
 npm.cmd audit --audit-level=high
 ```
 
