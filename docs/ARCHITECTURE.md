@@ -70,11 +70,10 @@ React, and executes the production HTTP contract twice. The route contract check
 security headers, clean routes, aliases, Admin, the physical offline document,
 assets, and SPA fallback.
 
-`npm run test:e2e:smoke` runs Chromium interaction checks through a repository
-runner that owns the preview-server lifecycle. `npm run qa:react` adds Axe,
-mobile/desktop overflow, PWA/offline, preloader, Ballpit, and performance-signal
-acceptance. Scheduled Lighthouse, link, and dependency workflows provide slower
-release evidence.
+Browser interaction, responsive layout, PWA/offline behavior, preloader,
+Ballpit, and accessibility are reviewed manually before release. Scheduled link
+and dependency workflows provide additional repository checks without requiring
+a bundled browser automation stack.
 
 ## Deployment and rollback
 

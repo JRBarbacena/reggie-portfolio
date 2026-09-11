@@ -12,6 +12,34 @@ const certificates = [
 ];
 const CERTIFICATES_PER_ROW = 4;
 
+const devDaysPhotos = [
+  "2F80711D-1C12-45AA-83B7-B6F67826288A.jpg",
+  "IMG_3949.JPG",
+  "IMG_3950.JPG",
+  "IMG_3952.JPG",
+  "IMG_3961.JPG",
+  "IMG_3971.JPG",
+  "IMG_3972.JPG",
+  "IMG_3980.JPG",
+  "IMG_3983.JPG",
+  "IMG_3994.JPG",
+  "IMG_3999.JPG",
+];
+
+const builtInTechAlbums = [
+  {
+    id: "built-in-devdays",
+    title: "DevDays at Microsoft",
+    description: "A day of developer conversations, community connections, and learning inside Microsoft Philippines.",
+    location: "Microsoft Philippines",
+    cover: "/images/photos/devdays/IMG_3961.JPG",
+    signedPhotos: devDaysPhotos.map((filename, index) => ({
+      id: `built-in-devdays-${index + 1}`,
+      url: `/images/photos/devdays/${filename}`,
+    })),
+  },
+];
+
 async function signedMediaUrl(path) {
   if (!supabase || !path) return "";
   const { data, error } = await supabase.storage.from("album-media").createSignedUrl(path, 60 * 60);
@@ -58,6 +86,7 @@ export default function TechPage() {
     setSelectedCertificate(null);
     if (trigger?.restoreFocus) window.setTimeout(() => trigger.element?.focus({ preventScroll: true }), 0);
   };
+  const visibleAlbums = [...builtInTechAlbums, ...publishedAlbums];
 
   // The shared AppShell renders the site footer after these Tech sections.
   return <main id="main" className="content-column" aria-label="Technology portfolio">
@@ -70,7 +99,13 @@ export default function TechPage() {
     {/* Certificate section: verified learning credentials and shelf. */}
     <CertificateShelf onSelect={(certificate, trigger, restoreFocus) => { certificateTriggerRef.current = { element: trigger, restoreFocus }; setSelectedCertificate(certificate); }} />
     {/* Album section: published Tech photo collections and modal viewer. */}
-    <section className="tech-community" id="community" aria-labelledby="community-title"><SectionHead id="community-title" title="Albums from the field" copy="Moments from the communities, build nights, and spaces helping shape my tech journey." />{albumStatus === "loading" && <p className="album-empty" role="status">Checking for published albums…</p>}{albumStatus === "error" && <p className="album-empty" role="alert">Albums could not be loaded right now. Please try again later.</p>}{albumStatus === "unavailable" && <p className="album-empty">Album service is not configured.</p>}{albumStatus === "ready" && publishedAlbums.length === 0 && <div className="album-empty" role="status"><strong>No published Tech albums yet.</strong><span>New albums will appear here after they are published from the private dashboard.</span></div>}{publishedAlbums.length > 0 && <div className="album-grid">{publishedAlbums.map((album, index) => <button className="album-card card" type="button" data-reveal data-reveal-delay={index % 4 || undefined} key={album.id} onClick={(event) => { triggerRef.current = event.currentTarget; setSelectedAlbum(album); }}><img src={album.cover} alt={album.title} loading="lazy" /><span>{album.location || "Tech album"}</span><strong>{album.title}</strong><small>Open album</small></button>)}</div>}</section>
+    <section className="tech-community" id="community" aria-labelledby="community-title">
+      <SectionHead id="community-title" title="Albums from the field" copy="Moments from the communities, build nights, and spaces helping shape my tech journey." />
+      <div className="album-grid">
+        {visibleAlbums.map((album, index) => <button className="album-card card" type="button" data-reveal data-reveal-delay={index % 4 || undefined} key={album.id} onClick={(event) => { triggerRef.current = event.currentTarget; setSelectedAlbum(album); }}><img src={album.cover} alt={`Cover for ${album.title}`} loading="lazy" decoding="async" /><span>{album.location || "Tech album"}</span><strong>{album.title}</strong><small>Open album</small></button>)}
+      </div>
+      {albumStatus === "error" && <p className="album-empty" role="status">The built-in gallery is available, but dashboard albums could not be loaded right now.</p>}
+    </section>
     <dialog ref={dialogRef} className="album-modal" aria-labelledby="album-modal-title" onCancel={(event) => { event.preventDefault(); closeAlbum(); }} onClick={(event) => { if (event.target === event.currentTarget) closeAlbum(); }} onClose={() => setSelectedAlbum(null)}>{selectedAlbum && <><div className="album-modal__bar"><div><p>Photo album</p><h2 id="album-modal-title">{selectedAlbum.title}</h2></div><button className="album-modal__close" type="button" onClick={closeAlbum} aria-label="Close photo album">×</button></div><p className="album-modal__description">{selectedAlbum.description}</p><div className="album-modal__gallery">{selectedAlbum.signedPhotos.map((photo, index) => <figure key={photo.id}><img src={photo.url} alt={`${selectedAlbum.title} photo ${index + 1}`} loading="lazy" /></figure>)}</div></>}</dialog>
     <CertificateDialog dialogRef={certificateDialogRef} selectedCertificate={selectedCertificate} closeCertificate={closeCertificate} onClosed={() => setSelectedCertificate(null)} />
     {/* CTA section; the shared footer follows this page in AppShell. */}

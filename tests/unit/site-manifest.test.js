@@ -23,7 +23,7 @@ function manifestFixture() {
       cleanUrls: true,
       framework: "vite",
       outputDirectory: "dist-react",
-      rewrites: [{ source: "/(.*)", destination: "/" }],
+      rewrites: [{ source: "/((?!api/).*)", destination: "/index" }],
       trailingSlash: false,
       headers: [],
     },
