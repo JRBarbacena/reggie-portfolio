@@ -10,7 +10,7 @@
 - Install command: `npm ci` or Vercel's lockfile default
 
 The committed `vercel.json` supplies these build values, security headers,
-legacy redirects, and React SPA fallback. Do not override them with conflicting
+legacy URL redirects, and React SPA fallback. Do not override them with conflicting
 dashboard values.
 
 ## Environment variables
@@ -39,8 +39,18 @@ build.
 Follow [CHATBOT_SETUP.md](CHATBOT_SETUP.md) for the ordered Supabase migration,
 Vercel secret, Responses API, and end-to-end verification steps.
 
-In Supabase Authentication URL Configuration, add the production domain and
-Vercel preview callback patterns required for `/admin` passwordless links.
+In **Supabase Dashboard → Authentication → URL Configuration**, set:
+
+- Site URL: `https://reggiebarbacena.vercel.app`
+- Redirect URL: `https://reggiebarbacena.vercel.app/admin`
+- Local redirects: `http://localhost:5173/admin` and
+  `http://127.0.0.1:5173/admin`
+- Optional Vercel preview redirect:
+  `https://reggie-portfolio-*-dummynigiegie-2626s-projects.vercel.app/**`
+
+The production `/admin` redirect must be an exact allow-list entry. If it is
+missing, Supabase falls back to Site URL. After changing these values, request
+a new magic link because an already-sent email keeps its original destination.
 
 ## Release procedure
 
@@ -49,7 +59,7 @@ Vercel preview callback patterns required for `/admin` passwordless links.
 3. Confirm public Supabase content, the `/admin` sign-in callback, PWA install,
    chatbot fallback behavior, and one secure contact submission.
 4. Merge to `main` only after required checks pass.
-5. Verify `/`, `/tech`, `/travel`, `/life`, `/admin`, one legacy `.html` alias,
+5. Verify `/`, `/tech`, `/travel`, `/life`, `/admin`, one legacy `.html` URL,
    and a direct deep-link reload on production.
 
 ## Repository controls

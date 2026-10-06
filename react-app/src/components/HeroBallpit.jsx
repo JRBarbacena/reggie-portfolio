@@ -41,19 +41,26 @@ export default function HeroBallpit({ enabled = true, revealed = true, interacti
     if (!enabled) return undefined;
     const motionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
     const compactQuery = window.matchMedia("(max-width: 719px)");
+    const phoneQuery = window.matchMedia("(max-width: 700px), (pointer: coarse) and (max-height: 500px)");
     const connection = navigator.connection;
+    // Probe once per mount rather than allocating another context on rotation.
+    let webglSupported;
     const update = () => {
       setCompact(compactQuery.matches);
-      setCapable(!motionQuery.matches && !connection?.saveData && supportsWebGL());
+      const allowAnimation = !phoneQuery.matches && !motionQuery.matches && !connection?.saveData;
+      if (allowAnimation && webglSupported === undefined) webglSupported = supportsWebGL();
+      setCapable(allowAnimation && Boolean(webglSupported));
       setCapabilityChecked(true);
     };
     update();
     motionQuery.addEventListener("change", update);
     compactQuery.addEventListener("change", update);
+    phoneQuery.addEventListener("change", update);
     connection?.addEventListener?.("change", update);
     return () => {
       motionQuery.removeEventListener("change", update);
       compactQuery.removeEventListener("change", update);
+      phoneQuery.removeEventListener("change", update);
       connection?.removeEventListener?.("change", update);
     };
   }, [enabled]);
@@ -72,7 +79,7 @@ export default function HeroBallpit({ enabled = true, revealed = true, interacti
           <Suspense fallback={null}>
             <Ballpit
               className="hero-ballpit__canvas"
-              count={65}
+              count={48}
               gravity={0}
               friction={0.998}
               wallBounce={0.55}

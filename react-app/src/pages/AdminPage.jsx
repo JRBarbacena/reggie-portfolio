@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { requireSupabase, supabase } from "../lib/supabase.js";
 
 const MAX_IMAGE_BYTES = 10 * 1024 * 1024;
+const MAX_UPLOAD_DIMENSION = 1920;
 const MAX_TECH_PHOTOS = 30;
 const MAX_TRAVEL_PHOTOS = 12;
 const MAX_LIFE_PHOTOS = 30;
@@ -9,6 +10,44 @@ const MAX_LIFE_PHOTOS = 30;
 function extensionFor(file) {
   const extension = file.name.split(".").pop()?.toLowerCase();
   return /^[a-z0-9]{2,5}$/.test(extension ?? "") ? extension : "jpg";
+}
+
+function webpFilename(name) {
+  const stem = name.replace(/\.[^.]+$/, "").replace(/[^a-z0-9-_]+/gi, "-").replace(/^-+|-+$/g, "") || "photo";
+  return `${stem}.webp`;
+}
+
+function blobFromCanvas(canvas) {
+  if (canvas.convertToBlob) return canvas.convertToBlob({ type: "image/webp", quality: 0.82 });
+  return new Promise((resolve) => canvas.toBlob(resolve, "image/webp", 0.82));
+}
+
+// Album uploads are user-generated and cannot use the build-time Sharp pipeline.
+// Convert them in-browser when possible, cap their dimensions, and retain the
+// original file only as a safe fallback for formats the browser cannot decode.
+async function optimizeUploadImage(file) {
+  if (!globalThis.createImageBitmap || !globalThis.document?.createElement) return file;
+  let bitmap;
+  try {
+    bitmap = await createImageBitmap(file, { imageOrientation: "from-image" });
+    const longestSide = Math.max(bitmap.width, bitmap.height);
+    const scale = Math.min(1, MAX_UPLOAD_DIMENSION / longestSide);
+    const width = Math.max(1, Math.round(bitmap.width * scale));
+    const height = Math.max(1, Math.round(bitmap.height * scale));
+    const canvas = document.createElement("canvas");
+    canvas.width = width;
+    canvas.height = height;
+    const context = canvas.getContext("2d", { alpha: false });
+    if (!context) return file;
+    context.drawImage(bitmap, 0, 0, width, height);
+    const blob = await blobFromCanvas(canvas);
+    if (!blob || blob.size >= file.size) return file;
+    return new File([blob], webpFilename(file.name), { type: "image/webp", lastModified: file.lastModified });
+  } catch {
+    return file;
+  } finally {
+    bitmap?.close?.();
+  }
 }
 
 function validateImages(files) {
@@ -339,8 +378,9 @@ export default function AdminPage() {
   };
 
   const upload = async (client, albumId, file, label) => {
-    const path = `${albumId}/${label}-${crypto.randomUUID()}.${extensionFor(file)}`;
-    const { error } = await client.storage.from("album-media").upload(path, file, { contentType: file.type, upsert: false });
+    const preparedFile = await optimizeUploadImage(file);
+    const path = `${albumId}/${label}-${crypto.randomUUID()}.${extensionFor(preparedFile)}`;
+    const { error } = await client.storage.from("album-media").upload(path, preparedFile, { contentType: preparedFile.type, upsert: false });
     if (error) throw error;
     return path;
   };

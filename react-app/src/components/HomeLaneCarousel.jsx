@@ -1,6 +1,7 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { gsap } from "gsap";
+import { responsivePhotoDimensions, responsivePhotoPath, responsivePhotoSrcSet } from "../responsive-photos.js";
 import "./HomeLaneCarousel.css";
 
 function relativeSlot(index, centerIndex, total) {
@@ -55,17 +56,17 @@ export default function HomeLaneCarousel({ lanes }) {
 
         card.dataset.centered = String(distance === 0);
         if (reducedMotion) {
-          gsap.set(card, target);
+          gsap.set(card, { ...target, clearProps: "willChange" });
           return;
         }
 
         if (firstLayout) {
           gsap.fromTo(card,
             { x: 0, y: 105, rotation: 0, scale: 0.72, opacity: 0 },
-            { ...target, duration: 0.9, delay: 0.08 + index * 0.08, ease: "elastic.out(1, 0.8)", overwrite: true },
+            { ...target, duration: 0.9, delay: 0.08 + index * 0.08, ease: "elastic.out(1, 0.8)", overwrite: true, willChange: "transform, opacity", onComplete: () => gsap.set(card, { clearProps: "willChange" }) },
           );
         } else {
-          gsap.to(card, { ...target, duration: 0.58, ease: "power3.out", overwrite: "auto" });
+          gsap.to(card, { ...target, duration: 0.58, ease: "power3.out", overwrite: "auto", willChange: "transform, opacity", onComplete: () => gsap.set(card, { clearProps: "willChange" }) });
         }
       });
 
@@ -111,7 +112,7 @@ export default function HomeLaneCarousel({ lanes }) {
         }}
       >
         <figure className="home-lane-card__media">
-          <img src={`/images/photos/${lane.image}`} alt={lane.alt} width="640" height="480" loading="lazy" decoding="async" />
+          <img src={responsivePhotoPath(lane.image, 640)} srcSet={responsivePhotoSrcSet(lane.image)} sizes="(max-width: 640px) calc(100vw - 6rem), 17rem" alt={lane.alt} {...responsivePhotoDimensions(lane.image)} loading="lazy" decoding="async" />
           <figcaption>View {lane.title}</figcaption>
         </figure>
         <p>{lane.description}</p>

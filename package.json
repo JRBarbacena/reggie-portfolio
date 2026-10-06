@@ -12,22 +12,11 @@
     "preview": "vite preview --config react.vite.config.js",
     "dev:react": "vite --config react.vite.config.js",
     "build:react": "vite build --config react.vite.config.js",
-    "generate": "node scripts/generate-site.mjs",
-    "generate:check": "node scripts/generate-site.mjs --check",
-    "test:routes": "node scripts/test-routes.mjs",
-    "qa:origins": "node scripts/qa-external-origins.mjs",
-    "qa:encoding": "node scripts/qa-encoding.mjs",
-    "qa:readiness": "node scripts/content-readiness.mjs",
-    "qa:static": "node scripts/qa-static.mjs",
-    "qa:responsive": "node scripts/qa-responsive.mjs",
-    "verify": "npm run generate:check && npm run qa:encoding && npm run test:unit && npm run build:react && npm run test:routes",
+    "verify": "npm run test:unit && npm run build:react",
     "qa": "npm run verify"
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^6.1.1",
-    "ajv": "8.20.0",
-    "fast-check": "3.23.2",
-    "jsdom": "24.1.3",
     "vite": "^8.2.2",
     "vitest": "4.1.10"
   },

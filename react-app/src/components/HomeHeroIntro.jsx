@@ -41,12 +41,12 @@ export default function HomeHeroIntro({ active, id }) {
         opacity: [0, 1],
         translateY: ["0.75em", "0"],
         duration: 720,
-        delay: stagger(90, { start: 360 }),
+        delay: stagger(82, { start: 260 }),
         ease: "outExpo",
       });
     };
 
-    startTimer = window.setTimeout(play, 620);
+    startTimer = window.setTimeout(play, 180);
     return () => {
       window.clearTimeout(startTimer);
       window.clearInterval(typingTimer);

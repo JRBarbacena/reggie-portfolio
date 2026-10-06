@@ -36,14 +36,14 @@
 }
 
 .home-entry-preloader.is-lifting {
-  animation: home-entry-curtain-up 950ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation: home-entry-curtain-up var(--home-entry-curtain-duration, 720ms) cubic-bezier(0.22, 1, 0.36, 1) both;
   box-shadow: 0 1.5rem 4rem rgb(21 21 30 / 12%);
   pointer-events: none;
 }
 
 @keyframes home-entry-curtain-up {
   0% { transform: translate3d(0, 0, 0); }
-  14% { transform: translate3d(0, -0.35rem, 0); }
+  10% { transform: translate3d(0, -0.2rem, 0); }
   100% { transform: translate3d(0, -105%, 0); }
 }
 

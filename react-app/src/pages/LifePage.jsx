@@ -1,5 +1,6 @@
 import { CoffeeIcon, HouseLineIcon, MotorcycleIcon, VolleyballIcon } from "@phosphor-icons/react";
 import PublishedAlbumSection from "../components/PublishedAlbumSection.jsx";
+import { responsivePhotoPath, responsivePhotoSrcSet } from "../responsive-photos.js";
 
 const rhythms = [
   {
@@ -25,7 +26,7 @@ const rhythms = [
 export default function LifePage() {
   return (
     <main id="main" className="content-column life-redesign">
-      <section className="story-hero life-hero" aria-labelledby="life-title">
+      <section className="story-hero life-hero" aria-labelledby="life-title" data-viewport-section>
         <div className="story-hero__copy" data-reveal>
           <p className="story-kicker"><span>Beyond the screen</span></p>
           <h1 id="life-title">Life feels better <em>in motion.</em></h1>
@@ -41,10 +42,10 @@ export default function LifePage() {
 
         <div className="story-hero__visual life-visual life-collage" data-reveal data-reveal-delay="2">
           <figure className="life-collage__photo life-collage__photo--main card">
-            <img src="/images/photos/Patawow_VB.JPG" alt="Reggie with his volleyball team" width="1536" height="2048" fetchPriority="high" />
+            <img src={responsivePhotoPath("Patawow_VB.JPG")} srcSet={responsivePhotoSrcSet("Patawow_VB.JPG")} sizes="(max-width: 760px) 74vw, 32vw" alt="Reggie with his volleyball team" width="2048" height="1536" fetchPriority="high" />
           </figure>
           <figure className="life-collage__photo life-collage__photo--secondary card">
-            <img src="/images/photos/Cursor_Cafe.JPG" alt="Reggie spending time at Café Cursor Manila" width="1536" height="2048" />
+            <img src={responsivePhotoPath("Cursor_Cafe.JPG")} srcSet={responsivePhotoSrcSet("Cursor_Cafe.JPG")} sizes="(max-width: 760px) 42vw, 18vw" alt="Reggie spending time at Café Cursor Manila" width="640" height="853" decoding="async" />
           </figure>
           <div className="life-collage__note neu-inset">
             <span>Current rhythm</span>
@@ -54,7 +55,7 @@ export default function LifePage() {
         </div>
       </section>
 
-      <section className="life-rhythm" aria-labelledby="life-rhythm-title">
+      <section className="life-rhythm" aria-labelledby="life-rhythm-title" data-viewport-section>
         <SectionHead id="life-rhythm-title" title="What keeps me moving" copy="The interests that bring energy, balance, and perspective back into everything I build." />
         <div className="life-rhythm__grid">
           {rhythms.map(({ Icon, eyebrow, title, copy }, index) => (
@@ -68,35 +69,35 @@ export default function LifePage() {
         </div>
       </section>
 
-      <section className="court-section" aria-labelledby="court-title">
+      <section className="court-section" aria-labelledby="court-title" data-viewport-section>
         <SectionHead id="court-title" title="Better when it is played" copy="Fast rallies, open courts, close games, and the right crew." />
         <div className="life-gallery">
           <article className="life-shot life-shot--wide card" data-reveal>
             <figure>
-              <img src="/images/photos/Patawow_VB.JPG" alt="Reggie standing with his volleyball teammates on an indoor court" width="2048" height="1536" loading="lazy" />
+              <img src={responsivePhotoPath("Patawow_VB.JPG")} srcSet={responsivePhotoSrcSet("Patawow_VB.JPG")} sizes="(max-width: 760px) 92vw, 60vw" alt="Reggie standing with his volleyball teammates on an indoor court" width="2048" height="1536" loading="lazy" decoding="async" />
               <figcaption><span>Volleyball / The crew</span><strong>Show up. Play hard.</strong></figcaption>
             </figure>
           </article>
           <article className="life-shot card" data-reveal data-reveal-delay="1">
             <figure>
-              <img src="/images/photos/champs_vb.JPG" alt="Reggie holding a championship trophy and medal after a volleyball match" width="1536" height="2048" loading="lazy" />
+              <img src={responsivePhotoPath("champs_vb.JPG")} srcSet={responsivePhotoSrcSet("champs_vb.JPG")} sizes="(max-width: 760px) 92vw, 30vw" alt="Reggie holding a championship trophy and medal after a volleyball match" width="640" height="853" loading="lazy" decoding="async" />
               <figcaption><span>Volleyball</span><strong>Worth the rally</strong></figcaption>
             </figure>
           </article>
           <article className="life-shot card" data-reveal data-reveal-delay="2">
             <figure>
-              <img src="/images/photos/basketball.JPG" alt="Reggie wearing number one during a basketball game" width="1365" height="2048" loading="lazy" />
+              <img src={responsivePhotoPath("basketball.JPG")} srcSet={responsivePhotoSrcSet("basketball.JPG")} sizes="(max-width: 760px) 92vw, 30vw" alt="Reggie wearing number one during a basketball game" width="1365" height="2048" loading="lazy" decoding="async" />
               <figcaption><span>Basketball</span><strong>Any open court</strong></figcaption>
             </figure>
           </article>
         </div>
       </section>
 
-      <section className="small-wins" aria-labelledby="small-wins-title">
+      <section className="small-wins" aria-labelledby="small-wins-title" data-viewport-section>
         <SectionHead id="small-wins-title" title="The everyday good stuff" copy="Simple rituals that make an ordinary day land just right." />
         <div className="small-wins__grid">
           <article className="coffee-story card" data-reveal>
-            <img src="/images/photos/Cursor_Cafe.JPG" alt="Reggie holding a coffee at Café Cursor Manila" width="1536" height="2048" loading="lazy" />
+            <img src={responsivePhotoPath("Cursor_Cafe.JPG")} srcSet={responsivePhotoSrcSet("Cursor_Cafe.JPG")} sizes="(max-width: 760px) 92vw, 48vw" alt="Reggie holding a coffee at Café Cursor Manila" width="640" height="853" loading="lazy" decoding="async" />
             <div>
               <p className="timeline__meta">Usual order</p>
               <h3>White Chocolate Mocha</h3>
@@ -123,7 +124,7 @@ export default function LifePage() {
         className="life-albums"
       />
 
-      <section className="story-closing neu-inset" aria-label="Life philosophy" data-reveal>
+      <section className="story-closing neu-inset" aria-label="Life philosophy" data-reveal data-viewport-section>
         <blockquote>Not every moment has to be productive to be worth remembering.</blockquote>
         <span aria-hidden="true">PLAY / RIDE / RESET</span>
       </section>
@@ -132,5 +133,5 @@ export default function LifePage() {
 }
 
 function SectionHead({ id, title, copy }) {
-  return <div className="section-head"><h2 id={id}>{title}</h2><p>{copy}</p></div>;
+  return <div className="section-head" data-reveal><h2 id={id}>{title}</h2><p>{copy}</p></div>;
 }

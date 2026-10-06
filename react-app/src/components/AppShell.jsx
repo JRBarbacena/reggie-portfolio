@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useLayoutEffect, useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import SiteFooter from "./SiteFooter.jsx";
 import SiteNavigation from "./SiteNavigation.jsx";
@@ -74,26 +74,87 @@ export default function AppShell({ children }) {
     window.setTimeout(() => navigate(`${destination.pathname}${destination.search}${destination.hash}`), delay);
   };
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const elements = [...document.querySelectorAll("[data-reveal]")];
+    const sections = [...document.querySelectorAll("[data-viewport-section]")];
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (reducedMotion || !("IntersectionObserver" in window)) {
-      elements.forEach((element) => element.classList.add("is-revealed"));
+      elements.forEach((element) => element.classList.add("is-revealed", "reveal-complete"));
+      sections.forEach((section) => section.classList.add("is-viewport-active", "has-entered-viewport"));
       return undefined;
     }
+    const root = document.getElementById("root");
+    const isInViewport = (element) => {
+      const bounds = element.getBoundingClientRect();
+      return bounds.top < window.innerHeight && bounds.bottom > 0;
+    };
+    // Never delay the hero or any content that is already visible when a route
+    // first paints. Only elements outside the initial viewport use the reveal.
+    elements.filter(isInViewport).forEach((element) => element.classList.add("is-revealed", "reveal-complete"));
+    sections.filter(isInViewport).forEach((section) => section.classList.add("is-viewport-active", "has-entered-viewport"));
+    const settleTimers = new Set();
+    const revealFrames = new Set();
+    const reveal = (element) => {
+      if (element.classList.contains("is-revealed")) return;
+      element.classList.add("reveal-active");
+      const frame = window.requestAnimationFrame(() => {
+        revealFrames.delete(frame);
+        element.classList.add("is-revealed");
+      });
+      revealFrames.add(frame);
+      let timer;
+      const settle = () => {
+        element.removeEventListener("transitionend", onTransitionEnd);
+        if (timer) {
+          window.clearTimeout(timer);
+          settleTimers.delete(timer);
+        }
+        element.classList.add("reveal-complete");
+        element.classList.remove("reveal-active");
+      };
+      const onTransitionEnd = (event) => { if (event.target === element) settle(); };
+      element.addEventListener("transitionend", onTransitionEnd);
+      timer = window.setTimeout(settle, 1100);
+      settleTimers.add(timer);
+    };
     const observer = new IntersectionObserver((entries) => entries.forEach((entry) => {
       if (!entry.isIntersecting) return;
-      entry.target.classList.add("is-revealed"); observer.unobserve(entry.target);
-    }), { threshold: 0.12, rootMargin: "0px 0px -5%" });
+      reveal(entry.target);
+      observer.unobserve(entry.target);
+    }), { threshold: 0.04, rootMargin: "80px 0px -2%" });
+    const sectionObserver = new IntersectionObserver((entries) => entries.forEach((entry) => {
+      entry.target.classList.toggle("is-viewport-active", entry.isIntersecting);
+      if (entry.isIntersecting) entry.target.classList.add("has-entered-viewport");
+    }), { threshold: 0, rootMargin: "18% 0px 18% 0px" });
     const observe = (element) => { if (!element.classList.contains("is-revealed")) observer.observe(element); };
+    const observeSection = (element) => {
+      if (!element.classList.contains("has-entered-viewport")) sectionObserver.observe(element);
+    };
     elements.forEach(observe);
+    sections.forEach(observeSection);
     const mutations = new MutationObserver((records) => records.forEach((record) => record.addedNodes.forEach((node) => {
       if (!(node instanceof Element)) return;
       if (node.matches("[data-reveal]")) observe(node);
       node.querySelectorAll?.("[data-reveal]").forEach(observe);
+      if (node.matches("[data-viewport-section]")) observeSection(node);
+      node.querySelectorAll?.("[data-viewport-section]").forEach(observeSection);
     })));
-    mutations.observe(document.getElementById("root"), { childList: true, subtree: true });
-    return () => { observer.disconnect(); mutations.disconnect(); };
+    mutations.observe(root, { childList: true, subtree: true });
+    const revealFocusedContent = (event) => {
+      const element = event.target.closest?.("[data-reveal]");
+      if (element) reveal(element);
+    };
+    root.addEventListener("focusin", revealFocusedContent);
+    // Enable the hidden starting state only after the observers are installed.
+    document.documentElement.classList.add("motion-ready");
+    return () => {
+      observer.disconnect();
+      sectionObserver.disconnect();
+      mutations.disconnect();
+      root.removeEventListener("focusin", revealFocusedContent);
+      revealFrames.forEach(window.cancelAnimationFrame);
+      settleTimers.forEach(window.clearTimeout);
+    };
   }, [pathname]);
 
   return <div className="app-shell" onClickCapture={handleLinkClick}>
