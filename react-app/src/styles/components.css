@@ -4506,8 +4506,8 @@ body.tech-page {
 /* Native page navigation gets a restrained cross-page fade with no loading
    panel or progress indicator. */
 :where(.home, .tech-page, .travel-page, .life-page) {
-  animation: page-enter-fade var(--duration-base) var(--ease-enter) both;
-  transition: opacity 150ms var(--ease-exit);
+  animation: page-enter-fade 420ms var(--ease-fluid) both;
+  transition: opacity 220ms var(--ease-exit);
 }
 
 html.is-page-leaving body {

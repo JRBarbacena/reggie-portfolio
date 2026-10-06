@@ -540,6 +540,11 @@ body { margin: 0; }
   line-height: 1.08;
 }
 
+.tech-page .tech-hero > [data-reveal] {
+  width: min(100%, 46rem);
+  text-align: center;
+}
+
 .tech-page .tech-hero__subhead,
 .travel-page .tech-hero__subhead {
   max-width: 46rem;
@@ -1448,8 +1453,8 @@ html.motion-ready [data-viewport-section]:not(.has-entered-viewport) {
 
 html.motion-ready [data-viewport-section] {
   transition:
-    opacity 600ms cubic-bezier(0.2, 0.72, 0.22, 1),
-    translate 600ms cubic-bezier(0.2, 0.72, 0.22, 1);
+    opacity 850ms var(--ease-fluid),
+    translate 900ms var(--ease-fluid);
 }
 
 [data-viewport-section].is-viewport-active,

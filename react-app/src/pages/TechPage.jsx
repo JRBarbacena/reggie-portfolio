@@ -89,7 +89,6 @@ export default function TechPage() {
   const [selectedAlbum, setSelectedAlbum] = useState(null);
   const [selectedCertificate, setSelectedCertificate] = useState(null);
   const [publishedAlbums, setPublishedAlbums] = useState([]);
-  const [albumStatus, setAlbumStatus] = useState("idle");
   const triggerRef = useRef(null);
   const certificateDialogRef = useRef(null);
   const certificateTriggerRef = useRef(null);
@@ -98,14 +97,13 @@ export default function TechPage() {
 
   useEffect(() => {
     if (!albumsReady) return undefined;
-    if (!supabase) { setAlbumStatus("unavailable"); return undefined; }
-    setAlbumStatus("loading");
+    if (!supabase) return undefined;
     let live = true;
     supabase.from("albums").select("id,title,description,location,cover_path,album_photos(id,storage_path,sort_order)").eq("published", true).eq("destination", "tech").order("created_at", { ascending: false }).order("sort_order", { referencedTable: "album_photos", ascending: true }).then(async ({ data, error }) => {
       if (!live) return;
-      if (error) { setAlbumStatus("error"); return; }
+      if (error) return;
       const withMedia = await Promise.all((data ?? []).map(async (album) => ({ ...album, cover: await signedMediaUrl(album.cover_path), signedPhotos: await Promise.all((album.album_photos ?? []).map(async (photo) => ({ ...photo, url: await signedMediaUrl(photo.storage_path) }))) })));
-      if (live) { setPublishedAlbums(withMedia); setAlbumStatus("ready"); }
+      if (live) setPublishedAlbums(withMedia);
     });
     return () => { live = false; };
   }, [albumsReady]);
@@ -140,7 +138,6 @@ export default function TechPage() {
       <div className="album-grid">
         {visibleAlbums.map((album, index) => <button className="album-card card" type="button" data-reveal data-reveal-delay={index % 4 || undefined} key={album.id} onClick={(event) => { triggerRef.current = event.currentTarget; setSelectedAlbum(album); }}><img src={album.cover} srcSet={album.coverSrcSet} sizes="(max-width: 700px) 88vw, (max-width: 1050px) 42vw, 27vw" alt={`Cover for ${album.title}`} loading="lazy" decoding="async" /><span>{album.location || "Tech album"}</span><strong>{album.title}</strong><small>Open album</small></button>)}
       </div>
-      {albumStatus === "error" && <p className="album-empty" role="status">The built-in gallery is available, but dashboard albums could not be loaded right now.</p>}
     </section>
     <AlbumViewer album={selectedAlbum} titleId="tech-album-viewer-title" onRequestClose={closeAlbum} />
     <CertificateDialog dialogRef={certificateDialogRef} selectedCertificate={selectedCertificate} closeCertificate={closeCertificate} onClosed={() => setSelectedCertificate(null)} />
