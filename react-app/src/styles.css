@@ -555,8 +555,18 @@ body { margin: 0; }
 
 .tech-page .terminal,
 .travel-page .terminal {
-  width: min(100%, 58rem);
+  width: 80%;
+  max-width: none;
+  justify-self: center;
   margin-top: var(--space-2);
+  text-align: left;
+}
+
+@media (max-width: 700px) {
+  .tech-page .terminal,
+  .travel-page .terminal {
+    width: 100%;
+  }
 }
 
 .tech-page .terminal__bar,
@@ -591,6 +601,14 @@ body { margin: 0; }
   padding: 0.85rem 1rem;
   font-size: clamp(0.78rem, 1.5vw, 0.9rem);
   line-height: 1.45;
+  text-align: left;
+}
+
+.tech-page .terminal__body p,
+.travel-page .terminal__body p {
+  width: 100%;
+  margin-inline: 0;
+  text-align: left;
 }
 
 .tech-page .terminal__output,
