@@ -540,7 +540,7 @@ body { margin: 0; }
   line-height: 1.08;
 }
 
-.tech-page .tech-hero > [data-reveal]:not(.terminal) {
+.tech-page .tech-hero > [data-reveal] {
   width: min(100%, 46rem);
   text-align: center;
 }
