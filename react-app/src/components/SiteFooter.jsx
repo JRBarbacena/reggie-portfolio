@@ -24,9 +24,9 @@ export default function SiteFooter() {
     return () => { window.removeEventListener("scroll", syncDock); document.body.classList.remove("has-scrolled-home"); };
   }, [pathname]);
 
-  return <footer className="site-footer"><div className="content-column">
+  return <footer className="site-footer" data-viewport-section><div className="content-column">
     <div className="site-footer__cta" data-reveal><h2>Let&apos;s talk</h2><p>A small corner for a hello, a new idea, or a future collaboration.</p></div>
     <section className="contact-panel card" aria-label="Contact information" data-reveal data-reveal-delay="1"><div className="contact-panel__main"><p className="contact-panel__eyebrow">Greetings</p><h3>Have something in mind?</h3><p>Whether it is a project, an idea, or simply a quick hello, my inbox is always a good place to start.</p><div className="contact-panel__actions"><a className="btn btn-primary" href="mailto:iggybarbacena@gmail.com">Send a message</a></div></div><div className="contact-panel__status" aria-label="Live status"><p className="contact-panel__eyebrow">Live status</p><dl className="status-list"><div><dt>Location</dt><dd><span className="country-badge">PH</span>San Mateo, Rizal</dd></div><div><dt>Timezone</dt><dd>GMT+8 · Manila</dd></div><div><dt>Currently</dt><dd><span className="status-activity">💻 Building &amp; learning</span></dd></div><div><dt>Open to</dt><dd className="status-list__pills"><span>Collabs</span><span>Coffee chats</span><span>Talks</span><span>Volleyball</span><span>Ride &amp; chats</span></dd></div></dl></div></section>
-    <p className="site-footer__base text-meta">© 2026 John Reggie Barbacena. All rights reserved.</p>
+    <p className="site-footer__base text-meta" data-reveal>© 2026 John Reggie Barbacena. All rights reserved.</p>
   </div><nav className="social-dock" aria-label="Social links"><ul>{socials.map(([label, href]) => <li key={label}><a className="social-dock__link" href={href} target="_blank" rel="noopener noreferrer" aria-label={label}><SocialIcon label={label} /></a></li>)}</ul></nav></footer>;
 }

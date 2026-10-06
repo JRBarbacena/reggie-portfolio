@@ -4,8 +4,8 @@
 
 The production portfolio is a client-rendered React 19 single-page application
 built by Vite. React Router owns Home, Tech, Travel, Life, Admin, and 404 views.
-Vercel serves the static `dist-react` output and rewrites deep links to the React
-shell after applying permanent legacy-HTML redirects.
+Vercel serves the static `dist-react` output, redirects retained legacy URL
+aliases, and rewrites deep links to the React shell.
 
 ```text
 react-app/index.html
@@ -14,13 +14,10 @@ react-app/index.html
         -> AppShell
            -> shared navigation, footer, motion, scrollbar
            -> lazy Home / Tech / Travel / Life / Admin routes
-  -> shared css/ design system
+  -> shared React design system
   -> Supabase publishable client
   -> production service worker and manifest
 ```
-
-The old root HTML and browser-JavaScript implementation remains in source control
-as rollback/reference material, but it is not the Vercel production output.
 
 ## Data and authorization
 
@@ -47,33 +44,32 @@ cursor-following sphere, and falls back to a static treatment for reduced motion
 or Save-Data. The first-session/reload Home preloader is portaled outside the
 inert application root and is skipped during internal navigation.
 
+The shared `AppShell` owns one-time viewport reveals for all four public routes:
+Home, Tech, Travel, and Life. A unit test verifies that every route keeps both
+reveal and deferred-section markers, preventing a future Home-only change.
+
 ## PWA behavior
 
-Vite copies the public PWA files from `assets` into `dist-react`. The service
-worker caches the React shell and discovered built chunks, uses network-first
+Vite copies public PWA files from `react-app/public` into `dist-react`. The
+service worker caches the React shell entry assets, loads route chunks only when
+they are requested, uses network-first
 navigation, keeps public pages available offline, and deliberately serves the
 physical offline document for `/admin` while disconnected. Runtime media caching
 is same-origin and bounded.
 
 ## Production configuration
 
-`config/site-manifest.json` is the checked source of truth for product routes,
-legacy aliases, headers, React build/output settings, and SPA rewrites.
-`scripts/generate-site.mjs` validates it and generates `vercel.json` plus retained
-route/cache fixtures. The CSP permits Supabase HTTPS/WebSocket connections and
+`vercel.json` is the checked source of truth for headers, the React build/output
+settings, and SPA rewrites. The CSP permits Supabase HTTPS/WebSocket connections and
 signed images while denying frames, plugins, camera, microphone, and geolocation.
 
 ## Verification architecture
 
-`npm run verify` validates generated files and encoding, runs unit tests, builds
-React, and executes the production HTTP contract twice. The route contract checks
-security headers, clean routes, aliases, Admin, the physical offline document,
-assets, and SPA fallback.
+`npm run verify` runs current unit tests and builds React for production.
 
 Browser interaction, responsive layout, PWA/offline behavior, preloader,
 Ballpit, and accessibility are reviewed manually before release. Scheduled link
-and dependency workflows provide additional repository checks without requiring
-a bundled browser automation stack.
+and dependency workflows provide additional repository checks.
 
 ## Deployment and rollback
 

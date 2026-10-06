@@ -37,6 +37,18 @@ describe("Zenith FAQ", () => {
     expect(answerPortfolioFaq("Is live chat private?")).toContain("one hour");
   });
 
+  it("answers detailed public facts without inventing them", () => {
+    expect(answerPortfolioFaq("What is Reggie's full name?")).toContain("John Reggie M. Barbacena");
+    expect(answerPortfolioFaq("Who issued the certificates?")).toContain("Certiport");
+    expect(answerPortfolioFaq("Tell me about the DevDays album")).toContain("11 photos");
+    expect(answerPortfolioFaq("What are the home interest icons?")).toContain("Macbook M4");
+    expect(answerPortfolioFaq("What social media can I follow?")).toContain("@jjstr.rgg");
+    expect(answerPortfolioFaq("How was this website built?")).toContain("React 19");
+    expect(answerPortfolioFaq("Does he know Java?")).toContain("Java");
+    expect(answerPortfolioFaq("What can Zenith access?")).toContain("public portfolio content");
+    expect(answerPortfolioFaq("What is his phone number?")).toContain("not published");
+  });
+
   it("asks visitors to stop using profanity before matching other intents", () => {
     expect(getPortfolioFaqResponse("This is fucking bad")).toMatchObject({ intent: "profanity", offerHandoff: false });
     expect(answerPortfolioFaq("putang ina")).toContain("stop swearing");

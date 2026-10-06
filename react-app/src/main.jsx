@@ -2,10 +2,25 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
 import App from "./App.jsx";
-import "../../css/main.css";
+import "./styles/main.css";
 import "./styles.css";
+import "./responsive.css";
 
 const STALE_DEPLOYMENT_RELOAD_KEY = "reggie-portfolio-stale-deployment-reload";
+
+function routeAuthCallbackToAdmin() {
+  if (window.location.pathname !== "/") return;
+  const hash = new URLSearchParams(window.location.hash.slice(1));
+  const query = new URLSearchParams(window.location.search);
+  const isAuthCallback = hash.has("access_token")
+    || hash.has("error")
+    || hash.has("error_code")
+    || query.has("code");
+  if (!isAuthCallback) return;
+  window.history.replaceState(null, "", `/admin${window.location.search}${window.location.hash}`);
+}
+
+routeAuthCallbackToAdmin();
 
 function recoverFromStaleDeployment() {
   try {

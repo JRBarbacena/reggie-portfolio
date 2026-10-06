@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { mascotStateFor, safeChatHistory } from "../lib/chatbot-state.js";
-import { getPortfolioFaqResponse } from "../lib/portfolio-faq.js";
 
 const WELCOME_MESSAGE = {
   id: "zenith-welcome",
@@ -10,6 +9,12 @@ const WELCOME_MESSAGE = {
 
 const CONTACT_TOPICS = new Set(["General inquiry", "Project collaboration", "Coffee chat", "Speaking or event", "Other"]);
 const FEEDBACK_TIMEOUTS = { responding: 1400, success: 1800, error: 2000 };
+let portfolioFaqModulePromise;
+
+function loadPortfolioFaq() {
+  portfolioFaqModulePromise ??= import("../lib/portfolio-faq.js");
+  return portfolioFaqModulePromise;
+}
 
 function createMessage(role, content) {
   return {
@@ -150,7 +155,8 @@ export default function useChatbotController() {
 
     try {
       if (!reducedMotion) await new Promise((resolve) => window.setTimeout(resolve, 420));
-      const response = getPortfolioFaqResponse(content);
+      const { getCompletePortfolioResponse } = await loadPortfolioFaq();
+      const response = await getCompletePortfolioResponse(content);
       setHandoffSuggested(response.offerHandoff);
       setMessages((current) => [...current, createMessage("assistant", response.answer)]);
       if (["closed", "closing"].includes(panelStateRef.current)) {

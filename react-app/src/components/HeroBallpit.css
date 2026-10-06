@@ -32,7 +32,7 @@
 }
 
 .hero-ballpit.is-revealed .hero-ballpit__canvas {
-  animation: hero-ballpit-scatter 1250ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation: hero-ballpit-scatter 940ms cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 html:not(.portfolio-entered) .hero--home :is(.site-header--home, .hero__center, .photo-window, .hero-chip) {
@@ -41,7 +41,7 @@ html:not(.portfolio-entered) .hero--home :is(.site-header--home, .hero__center, 
 }
 
 .portfolio-entered .hero--home .site-header--home {
-  animation: hero-content-in 720ms cubic-bezier(0.22, 1, 0.36, 1) 80ms both;
+  animation: hero-content-in 640ms cubic-bezier(0.22, 1, 0.36, 1) 70ms both;
 }
 
 .hero-ballpit.is-static::before {

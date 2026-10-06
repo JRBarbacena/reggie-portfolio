@@ -1,0 +1,112 @@
+/* Fluid layouts also apply to split-screen windows and device rotation. */
+.app-shell :is(main, section, article, figure, .section-head) { min-width: 0; }
+.app-shell :is(h1, h2, h3, p) { overflow-wrap: break-word; }
+.app-shell .terminal { max-width: 100%; }
+.app-shell .terminal__body { overflow-wrap: anywhere; }
+.app-shell .terminal__body p { white-space: normal; }
+.app-shell .home-hero-intro__greeting { white-space: normal; line-height: 1.35; }
+.home-entry-preloader .home-entry-preloader__name { max-width: 100%; }
+
+/* A composed grid replaces overlapping desktop coordinates on tablets. */
+@media (max-width: 1180px), (max-height: 600px) {
+  body.home .hero--home {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: auto;
+    min-height: 100svh;
+    padding: 6rem max(1.25rem, env(safe-area-inset-right)) 2rem max(1.25rem, env(safe-area-inset-left));
+    gap: 1.75rem;
+  }
+  body.home .hero--home .hero__center {
+    position: relative;
+    inset: auto;
+    width: 100%;
+    margin: 0;
+    transform: none;
+    display: grid;
+    place-items: center;
+  }
+  body.home .home-hero-intro { width: 100%; max-width: 44rem; }
+  body.home .home-hero-intro__headline { font-size: clamp(2.3rem, 5.6vw, 4.2rem); max-width: 20ch; }
+  body.home .hero--home .collage {
+    position: relative;
+    inset: auto;
+    transform: none;
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    width: min(100%, 60rem);
+    max-width: none;
+    margin: 0 auto;
+    gap: 1rem;
+    pointer-events: auto;
+    align-items: start;
+  }
+  body.home .hero--home .collage .photo-window {
+    display: block;
+    position: relative;
+    inset: auto;
+    width: 100%;
+    transform: none;
+    margin: 0;
+    padding: 0.3rem;
+  }
+  body.home .hero--home .photo-window__img {
+    height: clamp(7rem, 17vw, 11rem);
+    width: 100%;
+    object-fit: cover;
+  }
+  body.home .hero--home .photo-window__bar { min-width: 0; gap: 0.2rem; }
+  body.home .hero--home .photo-window__name { min-width: 0; margin-left: 0; }
+  body.home .hero--home .collage .hero-chip {
+    position: relative;
+    inset: auto;
+    transform: none;
+    width: 100%;
+    min-width: 0;
+    justify-content: center;
+  }
+  body.home .hero--home .hero-chip__detail {
+    top: auto;
+    bottom: calc(100% + 0.5rem);
+    max-width: min(16rem, 80vw);
+    white-space: normal;
+  }
+  body.home .hero-ballpit { height: 100%; }
+}
+
+@media (min-width: 701px) and (max-width: 900px) {
+  body.home .hero--home .collage { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+  body.home .hero--home .collage .photo-window { grid-column: span 2; }
+  body.home .hero--home .photo-window__img { height: clamp(8rem, 18vw, 11rem); }
+}
+
+@media (max-width: 700px) {
+  body.home .hero--home { gap: 1.4rem; padding-top: 6rem; }
+  body.home .hero--home .collage { grid-template-columns: repeat(2, minmax(0, 1fr)); max-width: 28rem; }
+  body.home .hero--home .collage .photo-window:nth-of-type(n + 3),
+  body.home .hero--home .collage .hero-chip { display: none; }
+  body.home .hero--home .photo-window__img { height: clamp(9rem, 43vw, 13rem); }
+  body.home .home-hero-intro__greeting { font-size: 0.85rem; max-width: 32ch; min-height: 2.7em; }
+  body.home .home-hero-intro__headline { font-size: clamp(2rem, 9vw, 3.4rem); line-height: 1.02; }
+  .app-shell .content-column { width: 100%; max-width: 100%; padding-inline: max(1rem, env(safe-area-inset-left)) max(1rem, env(safe-area-inset-right)); }
+  body.tech-page .tech-hero h1,
+  body.travel-page .travel-redesign__hero h1 { max-width: 100%; white-space: normal; font-size: clamp(1.8rem, 7vw, 2.6rem); line-height: 1.15; }
+  .app-shell .contact-panel { grid-template-columns: 1fr; }
+  .app-shell .terminal__bar { flex-wrap: wrap; gap: 0.5rem; }
+  .app-shell .home-lane-carousel__stage { height: 28rem; }
+  .app-shell .home-lane-carousel__controls > button { width: 2.75rem; height: 2.75rem; }
+  .home-entry-preloader .home-entry-preloader__name { font-size: clamp(1.8rem, 8vw, 3.5rem); }
+  body.home .hero-ballpit.is-static::before { display: none; }
+}
+
+@media (hover: none), (pointer: coarse) {
+  .app-shell :is(input, select, textarea) { font-size: 16px; }
+  .app-shell :is(.chatbot-panel__close, .certificate-modal__close, .album-modal__close) { min-width: 44px; min-height: 44px; }
+  .app-shell .credential-book figcaption { opacity: 1; transform: none; }
+  .app-shell .neo-scrollbar { display: none; }
+  .app-shell .photo-window { backdrop-filter: none; -webkit-backdrop-filter: none; }
+  .app-shell .chatbot-panel { max-height: calc(100dvh - 6rem - env(safe-area-inset-bottom)); overflow-y: auto; }
+  .app-shell .chatbot-message { overflow-wrap: anywhere; }
+  .app-shell :is(.chatbot-panel__messages, .zenith-live-chat__messages) { min-height: 0; }
+}

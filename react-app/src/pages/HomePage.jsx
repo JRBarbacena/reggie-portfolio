@@ -1,13 +1,15 @@
-import { useCallback, useEffect, useLayoutEffect, useState } from "react";
+import { lazy, Suspense, useCallback, useEffect, useLayoutEffect, useState } from "react";
 import { CoffeeIcon, LaptopIcon, MotorcycleIcon, UserGearIcon, VolleyballIcon } from "@phosphor-icons/react";
 import SiteNavigation from "../components/SiteNavigation.jsx";
 import HeroBallpit from "../components/HeroBallpit.jsx";
 import HomeEntryPreloader from "../components/HomeEntryPreloader.jsx";
 import HomeHeroIntro from "../components/HomeHeroIntro.jsx";
-import HomeLaneCarousel from "../components/HomeLaneCarousel.jsx";
 import { initialBrowserPathname } from "../runtime-session.js";
+import useNearViewport from "../hooks/useNearViewport.js";
+import { responsivePhotoDimensions, responsivePhotoPath, responsivePhotoSrcSet } from "../responsive-photos.js";
 
 const ENTRY_STATUS_KEY = "reggie-portfolio-home-entry-seen";
+const HomeLaneCarousel = lazy(() => import("../components/HomeLaneCarousel.jsx"));
 let homeEntryMountedThisDocument = false;
 
 function shouldShowHomeEntry() {
@@ -52,7 +54,7 @@ function ChipIcon({ id }) {
 
 function PhotoWindow({ photo, priority }) {
   const [name, alt, position] = photo;
-  return <figure className={`photo-window ${position}`}><span className="photo-window__bar" aria-hidden="true"><i /><i /><i /><span className="photo-window__name">{name}</span></span><img className="photo-window__img" src={`/images/photos/${name}`} alt={alt} width="320" height="240" loading={priority ? undefined : "lazy"} decoding="async" fetchPriority={priority ? "high" : undefined} /></figure>;
+  return <figure className={`photo-window ${position}`}><span className="photo-window__bar" aria-hidden="true"><i /><i /><i /><span className="photo-window__name">{name}</span></span><img className="photo-window__img" src={responsivePhotoPath(name, 640)} srcSet={responsivePhotoSrcSet(name)} sizes="(max-width: 720px) 42vw, 13vw" alt={alt} {...responsivePhotoDimensions(name)} loading={priority ? undefined : "lazy"} decoding="async" fetchPriority={priority ? "high" : undefined} /></figure>;
 }
 
 export default function HomePage() {
@@ -62,11 +64,13 @@ export default function HomePage() {
   const [heroPrepared, setHeroPrepared] = useState(() => !entryVisible);
   const [heroInteractive, setHeroInteractive] = useState(() => !entryVisible);
   const [heroWarmup, setHeroWarmup] = useState(() => !entryVisible);
+  const [lanesRef, lanesReady] = useNearViewport("360px 0px");
   const revealHero = useCallback(() => {
     setHeroReady(true);
     // Start the prepared Ballpit underneath the lifting curtain so its first
     // visible frame is already in motion.
     setHeroInteractive(true);
+    document.documentElement.classList.add("portfolio-entered");
   }, []);
   const beginHeroWarmup = useCallback(() => setHeroWarmup(true), []);
   const prepareHero = useCallback(() => setHeroPrepared(true), []);
@@ -107,7 +111,7 @@ export default function HomePage() {
     <section className="hero hero--home home-section home-section--hero" aria-labelledby="hero-title">
       <HeroBallpit enabled={heroWarmup} revealed={heroReady} interactive={heroInteractive} onReady={prepareHero} />
       <header className="site-header site-header--home"><SiteNavigation /></header>
-      <div className="hero__center"><HomeHeroIntro active={!entryVisible} id="hero-title" /></div>
+      <div className="hero__center"><HomeHeroIntro active={heroReady} id="hero-title" /></div>
       <div className="collage" role="group" aria-label="Photos and details about Reggie">
         {photos.map((photo, index) => <PhotoWindow key={photo[0]} photo={photo} priority={index === 0} />)}
         {chips.map(([id, title, detail, position]) => {
@@ -116,9 +120,9 @@ export default function HomePage() {
         })}
       </div>
     </section>
-    <section className="home-section home-section--lanes content-column" aria-labelledby="explore-title">
+    <section ref={lanesRef} className="home-section home-section--lanes content-column" aria-labelledby="explore-title" data-viewport-section>
       <div className="section-head section-head--center" data-reveal><h2 id="explore-title">Where should we go next?</h2><p>Explore the code I build, the places I wander, and the moments that shape life in between.</p></div>
-      <div data-reveal><HomeLaneCarousel lanes={lanes} /></div>
+      {lanesReady ? <Suspense fallback={<div className="viewport-placeholder viewport-placeholder--carousel" aria-hidden="true" />}><HomeLaneCarousel lanes={lanes} /></Suspense> : <div className="viewport-placeholder viewport-placeholder--carousel" aria-hidden="true" />}
     </section>
   </main>{entryVisible && <HomeEntryPreloader ready={heroPrepared} onPrepare={beginHeroWarmup} onReveal={revealHero} onComplete={finishEntry} />}</>;
 }

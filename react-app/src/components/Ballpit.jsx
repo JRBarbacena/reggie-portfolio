@@ -211,7 +211,7 @@ class BallInstances extends InstancedMesh {
     const environment = pmrem.fromScene(room, 0.04).texture;
     room.dispose();
     pmrem.dispose();
-    const geometry = new SphereGeometry(1, 32, 24);
+    const geometry = new SphereGeometry(1, 20, 16);
     const material = new MeshPhysicalMaterial({ envMap: environment, ...config.materialParams });
     material.envMapRotation.x = -Math.PI / 2;
     super(geometry, material, config.count);
@@ -257,7 +257,7 @@ function createBallpit(canvas, options = {}) {
   const renderer = new WebGLRenderer({ canvas, antialias: true, alpha: true, powerPreference: "high-performance" });
   renderer.outputColorSpace = SRGBColorSpace;
   renderer.toneMapping = ACESFilmicToneMapping;
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, window.matchMedia("(pointer: coarse)").matches ? 1 : 1.25));
   const scene = new Scene();
   const camera = new PerspectiveCamera(50, 1, 0.1, 100);
   camera.position.set(0, 0, 20);
@@ -267,8 +267,9 @@ function createBallpit(canvas, options = {}) {
   let frameId = 0;
   let running = false;
   let disposed = false;
+  let contextLost = false;
   let intersecting = true;
-  let scrollFrameId = 0;
+  let previousFrameTime = 0;
   let pointerFrameId = 0;
   let pendingPointer = null;
   let manuallyPaused = Boolean(options.paused);
@@ -285,18 +286,24 @@ function createBallpit(canvas, options = {}) {
     spheres.config.maxY = worldHeight / 2;
   };
 
-  const renderFrame = () => {
+  const renderFrame = (timestamp) => {
     if (!running || disposed) return;
     frameId = requestAnimationFrame(renderFrame);
+    // The simulation is collision-heavy (each sphere checks the remaining
+    // spheres). Avoid doing duplicate work on 90/120/144 Hz displays; 60 fps
+    // keeps motion fluid while leaving more headroom for the rest of the page.
+    if (timestamp - previousFrameTime < 1000 / 60) return;
+    previousFrameTime = timestamp;
     timer.update();
     spheres.update({ delta: Math.min(timer.getDelta(), 1 / 30), elapsed: timer.getElapsed() });
     renderer.render(scene, camera);
   };
   const start = () => {
-    if (running || disposed || manuallyPaused) return;
+    if (running || disposed || manuallyPaused || contextLost) return;
     running = true;
     canvas.dataset.animationState = "running";
     spheres.physics.maintainMotion();
+    previousFrameTime = 0;
     timer.reset();
     renderFrame();
   };
@@ -317,20 +324,26 @@ function createBallpit(canvas, options = {}) {
     if (intersecting && !document.hidden && !manuallyPaused) start(); else stop();
   };
 
-  const scheduleVisibilitySync = () => {
-    if (scrollFrameId || disposed) return;
-    scrollFrameId = requestAnimationFrame(() => {
-      scrollFrameId = 0;
-      syncVisibility();
-    });
+  const onContextLost = (event) => {
+    event.preventDefault();
+    contextLost = true;
+    stop();
   };
+  const onContextRestored = () => {
+    if (disposed) return;
+    contextLost = false;
+    resize();
+    syncVisibility();
+  };
+  canvas.addEventListener("webglcontextlost", onContextLost);
+  canvas.addEventListener("webglcontextrestored", onContextRestored);
 
   const resizeObserver = "ResizeObserver" in window ? new ResizeObserver(resize) : null;
   resizeObserver?.observe(canvas.parentElement ?? canvas);
   const intersectionObserver = new IntersectionObserver(([entry]) => {
     intersecting = entry.isIntersecting;
     if (intersecting && !document.hidden && !manuallyPaused) start(); else stop();
-  }, { threshold: 0.01 });
+  }, { threshold: 0.01, rootMargin: "-8% 0px -8% 0px" });
   intersectionObserver.observe(canvas);
   const onVisibilityChange = () => {
     if (document.hidden) stop(); else syncVisibility();
@@ -338,7 +351,6 @@ function createBallpit(canvas, options = {}) {
   document.addEventListener("visibilitychange", onVisibilityChange);
   window.addEventListener("pageshow", syncVisibility);
   window.addEventListener("focus", syncVisibility);
-  window.addEventListener("scroll", scheduleVisibilitySync, { passive: true });
 
   const pointer = new Vector2();
   const raycaster = new Raycaster();
@@ -404,16 +416,16 @@ function createBallpit(canvas, options = {}) {
     },
     dispose() {
       disposed = true;
+      canvas.removeEventListener("webglcontextlost", onContextLost);
+      canvas.removeEventListener("webglcontextrestored", onContextRestored);
       stop();
       canvas.dataset.animationState = "disposed";
-      cancelAnimationFrame(scrollFrameId);
       cancelAnimationFrame(pointerFrameId);
       resizeObserver?.disconnect();
       intersectionObserver.disconnect();
       document.removeEventListener("visibilitychange", onVisibilityChange);
       window.removeEventListener("pageshow", syncVisibility);
       window.removeEventListener("focus", syncVisibility);
-      window.removeEventListener("scroll", scheduleVisibilitySync);
       window.removeEventListener("pointermove", onPointerMove);
       document.documentElement.removeEventListener("pointerleave", onPointerLeave);
       spheres.disposeResources();

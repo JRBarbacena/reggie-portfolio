@@ -14,9 +14,9 @@ bright-white glassmorphism and neumorphism with a restrained red identity accent
 | `/life` | Sport, coffee, rides, and published Life albums |
 | `/admin` | Authenticated content dashboard |
 
-Legacy `/index.html`, `/tech.html`, `/travel.html`, and `/life.html` addresses
-redirect permanently to their clean routes. Unknown paths render the React 404
-view. `/offline.html` remains a physical PWA fallback document.
+Unknown paths render the React 404 view. `/offline.html` remains a physical PWA
+fallback document. Legacy `.html` links redirect to the matching React route;
+their superseded source documents are no longer part of the repository.
 
 ## Local development
 
@@ -67,8 +67,7 @@ npm run verify
 npm audit --audit-level=high
 ```
 
-- `verify` checks generated deployment configuration, UTF-8, unit tests, the
-  React production build, security headers, redirects, and SPA route fallback.
+- `verify` runs the current React unit tests and production build.
 - Manual release review covers browser interaction, motion, responsive layout,
   accessibility, PWA/offline behavior, Admin, and album states.
 
@@ -85,10 +84,7 @@ and rollback are documented in [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md).
 ## Editing rules
 
 - Public content and composition live under `react-app/src`.
-- Shared design tokens and component styles remain under `css` while the React
-  migration uses them.
-- Edit `config/site-manifest.json`, then run `npm run generate`; do not hand-edit
-  generated route/configuration artifacts.
+- Shared design tokens and component styles live under `react-app/src/styles`.
 - Never commit Supabase secret/service-role keys or `.env.local`.
 - Do not invent employment, client, metric, project, or credential content.
 

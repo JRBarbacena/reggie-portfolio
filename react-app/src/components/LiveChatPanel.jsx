@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import { responsivePhotoPath } from "../responsive-photos.js";
 
 const STORAGE_KEY = "zenith-live-chat-session";
-const REGGIE_PHOTO = "/images/photos/Hundred_Island.JPG";
+const REGGIE_PHOTO = responsivePhotoPath("Hundred_Island.JPG", 640);
 
 function savedSession() {
   try { return JSON.parse(sessionStorage.getItem(STORAGE_KEY) || "null"); } catch { return null; }
