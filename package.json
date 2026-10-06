@@ -18,7 +18,7 @@
   "devDependencies": {
     "@vitejs/plugin-react": "^6.1.1",
     "vite": "^8.2.2",
-    "vitest": "4.1.10"
+    "vitest": "^4.1.11"
   },
   "dependencies": {
     "@phosphor-icons/react": "^2.1.10",
@@ -33,6 +33,7 @@
     "three": "0.185.1"
   },
   "overrides": {
-    "fast-uri": "3.1.6"
+    "fast-uri": "3.1.6",
+    "source-map-js": "1.2.2"
   }
 }

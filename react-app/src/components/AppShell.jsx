@@ -70,7 +70,7 @@ export default function AppShell({ children }) {
     if (destination.origin !== window.location.origin || destination.pathname === window.location.pathname) return;
     event.preventDefault();
     document.documentElement.classList.add("is-page-leaving");
-    const delay = window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : 150;
+    const delay = window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : 220;
     window.setTimeout(() => navigate(`${destination.pathname}${destination.search}${destination.hash}`), delay);
   };
 
@@ -114,7 +114,7 @@ export default function AppShell({ children }) {
       };
       const onTransitionEnd = (event) => { if (event.target === element) settle(); };
       element.addEventListener("transitionend", onTransitionEnd);
-      timer = window.setTimeout(settle, 1100);
+      timer = window.setTimeout(settle, 1500);
       settleTimers.add(timer);
     };
     const observer = new IntersectionObserver((entries) => entries.forEach((entry) => {
