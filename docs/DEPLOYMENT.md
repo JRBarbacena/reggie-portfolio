@@ -13,6 +13,9 @@ The committed `vercel.json` supplies these build values, security headers,
 legacy URL redirects, and React SPA fallback. Do not override them with conflicting
 dashboard values.
 
+Use Node 22 for local release checks and Vercel builds; `package.json` and CI
+declare that runtime explicitly.
+
 ## Environment variables
 
 Configure these browser-safe values for Development, Preview, and Production:
@@ -36,6 +39,16 @@ variables; Vercel Functions use the server-only values. After changing a Vite
 environment variable, redeploy because values are embedded during the frontend
 build.
 
+Use separate Supabase projects and keys for Preview and Production whenever
+server-backed preview testing is enabled. Never expose a production server key
+to an untrusted preview deployment. If a separate preview project is not
+available, omit the server-only variables from Preview; the static portfolio
+and local Zenith FAQ will still work.
+
+Copy `.env.example` only as a naming reference. For local Vite work, place the
+two `VITE_` values in `react-app/.env.local`; keep server-only values in the
+Vercel dashboard or the local environment used by `vercel dev`.
+
 Follow [CHATBOT_SETUP.md](CHATBOT_SETUP.md) for the ordered Supabase migration,
 Vercel secret, Responses API, and end-to-end verification steps.
 
@@ -54,8 +67,9 @@ a new magic link because an already-sent email keeps its original destination.
 
 ## Release procedure
 
-1. Run `npm run verify` and `npm audit --audit-level=high`.
-2. Push a branch and inspect its Vercel preview on desktop and mobile.
+1. Use Node 22, run `npm ci`, `npm run verify`, `npm run test:e2e`, and
+   `npm audit --audit-level=high`.
+2. Push a branch and inspect its Vercel preview on desktop, tablet, and mobile.
 3. Confirm public Supabase content, the `/admin` sign-in callback, PWA install,
    chatbot fallback behavior, and one secure contact submission.
 4. Merge to `main` only after required checks pass.
@@ -70,7 +84,7 @@ up to date and pass these checks:
 - Generated, encoding, unit, React build, and route verification
 
 Browser interaction and motion are reviewed manually before merging; there is
-no browser-automation status check.
+also a Playwright status check covering desktop, tablet, and mobile viewports.
 
 Linear history and resolved conversations are required. Protection applies to
 administrators; force-pushes and branch deletion are disabled. Approval count is
@@ -91,3 +105,6 @@ each deployment. Do not commit `.vercel` credentials.
 
 After rollback, clear or advance the service-worker shell version if clients are
 still receiving an incompatible cached shell.
+
+Operational alerts, edge-rate rules, backup checks, secret rotation, and the
+full incident procedure are documented in [PRODUCTION_RUNBOOK.md](PRODUCTION_RUNBOOK.md).

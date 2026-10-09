@@ -5,6 +5,11 @@
   justify-items: center;
 }
 
+.home-lane-carousel:not(.is-entered) .home-lane-carousel__stage,
+.home-lane-carousel:not(.is-entered) .home-lane-carousel__controls {
+  pointer-events: none;
+}
+
 .home-lane-carousel__stage {
   position: relative;
   width: 100%;
@@ -132,6 +137,14 @@
   background: rgb(255 255 255 / 46%);
   backdrop-filter: blur(0.65rem);
   -webkit-backdrop-filter: blur(0.65rem);
+  opacity: 1;
+  transition: opacity 420ms var(--ease-fluid), transform 420ms var(--ease-fluid);
+}
+
+.home-lane-carousel:not(.is-entered) .home-lane-carousel__controls {
+  opacity: 0;
+  transform: translateY(0.5rem);
+  visibility: hidden;
 }
 
 .home-lane-carousel__controls > button {
@@ -207,4 +220,6 @@
   .home-lane-card__media,
   .home-lane-card__media::after,
   .home-lane-carousel__controls :is(button, svg) { transition: none; }
+
+  .home-lane-carousel__controls { transition: none; }
 }

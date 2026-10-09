@@ -646,6 +646,10 @@ body.home .site-footer__cta {
   text-align: center;
 }
 
+body.home .site-footer__base {
+  margin-top: 0.9rem;
+}
+
 body.home .site-footer__cta h2 {
   margin: 0;
   line-height: 1.05;

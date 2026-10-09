@@ -60,7 +60,6 @@ export default function ChatbotWidget() {
     setDraft,
     setHovered,
     showChat,
-    showContactForm,
     stopListening,
   } = useChatbotController();
   const panelVisible = panelState !== "closed";

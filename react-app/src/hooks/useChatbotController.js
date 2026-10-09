@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { requestJson } from "../lib/api-client.js";
 import { mascotStateFor, safeChatHistory } from "../lib/chatbot-state.js";
 
 const WELCOME_MESSAGE = {
@@ -38,14 +39,6 @@ function useReducedMotion() {
   }, []);
 
   return reducedMotion;
-}
-
-async function jsonResponse(response) {
-  try {
-    return await response.json();
-  } catch {
-    return {};
-  }
 }
 
 function contactValidation({ name, email, message, consent }) {
@@ -214,16 +207,17 @@ export default function useChatbotController() {
     setContactStatus(null);
     updateActivity("thinking");
     try {
-      const response = await fetch("/api/contact", {
+      await requestJson("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...contact,
           transcript: safeChatHistory(messages, 6),
         }),
+      }, {
+        timeoutMs: 8_000,
+        fallbackMessage: "Your message could not be sent right now.",
       });
-      const result = await jsonResponse(response);
-      if (!response.ok) throw new Error(result.message || "Your message could not be sent right now.");
       setContactStatus({ type: "success", text: "Your message is on its way. Reggie will reply by email." });
       updateActivity("success");
       return true;

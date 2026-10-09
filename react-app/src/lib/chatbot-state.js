@@ -1,3 +1,5 @@
+// @ts-check
+
 export const CHATBOT_PANEL_STATES = Object.freeze(["closed", "opening", "open", "closing"]);
 export const CHATBOT_ACTIVITY_STATES = Object.freeze(["idle", "listening", "thinking", "responding", "success", "error"]);
 

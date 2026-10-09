@@ -1,6 +1,6 @@
 const CACHE_PREFIX = "reggie-react-portfolio";
-const SHELL_CACHE = `${CACHE_PREFIX}-shell-v6`;
-const MEDIA_CACHE = `${CACHE_PREFIX}-media-v3`;
+const SHELL_CACHE = `${CACHE_PREFIX}-shell-v7`;
+const MEDIA_CACHE = `${CACHE_PREFIX}-media-v4`;
 const CORE_SHELL = [
   "/",
   "/offline.html",
@@ -49,7 +49,13 @@ self.addEventListener("fetch", (event) => {
     event.respondWith(networkFirstPage(request, url));
     return;
   }
-  event.respondWith(cacheFirstAsset(request));
+  if (url.pathname.startsWith("/assets/")) {
+    event.respondWith(cacheFirstAsset(request));
+    return;
+  }
+  if (["font", "image", "style"].includes(request.destination)) {
+    event.respondWith(staleWhileRevalidateMedia(request, event));
+  }
 });
 
 async function networkFirstPage(request, url) {
@@ -68,18 +74,34 @@ async function networkFirstPage(request, url) {
 }
 
 async function cacheFirstAsset(request) {
-  const url = new URL(request.url);
-  const cacheName = url.pathname.startsWith("/assets/") ? SHELL_CACHE : MEDIA_CACHE;
-  const cache = await caches.open(cacheName);
-  const cached = await cache.match(request, { ignoreVary: true });
+  const cache = await caches.open(SHELL_CACHE);
+  const cached = await cache.match(request);
   if (cached) return cached;
   const response = await fetch(request);
   if (response.ok) {
     await cache.put(request, response.clone());
-    if (cacheName === MEDIA_CACHE) {
-      const keys = await cache.keys();
-      await Promise.all(keys.slice(0, Math.max(0, keys.length - 80)).map((key) => cache.delete(key)));
-    }
   }
   return response;
+}
+
+async function updateMediaCache(cache, request) {
+  const response = await fetch(request);
+  const cacheControl = response.headers.get("Cache-Control") ?? "";
+  if (response.ok && !/\b(?:no-store|private)\b/i.test(cacheControl)) {
+    await cache.put(request, response.clone());
+    const keys = await cache.keys();
+    await Promise.all(keys.slice(0, Math.max(0, keys.length - 80)).map((key) => cache.delete(key)));
+  }
+  return response;
+}
+
+async function staleWhileRevalidateMedia(request, event) {
+  const cache = await caches.open(MEDIA_CACHE);
+  const cached = await cache.match(request);
+  const network = updateMediaCache(cache, request);
+  if (cached) {
+    event.waitUntil(network.catch(() => undefined));
+    return cached;
+  }
+  return network;
 }
