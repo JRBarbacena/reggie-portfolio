@@ -79,6 +79,11 @@ const builtInTechAlbums = [
   },
 ];
 
+function ExperienceLogo({ src, className = "" }) {
+  if (!src) return null;
+  return <span className={`experience-log__logo ${className}`} aria-hidden="true"><img src={src} alt="" loading="lazy" decoding="async" /></span>;
+}
+
 export default function TechPage() {
   const [selectedAlbum, setSelectedAlbum] = useState(null);
   const [selectedCertificate, setSelectedCertificate] = useState(null);
@@ -108,7 +113,41 @@ export default function TechPage() {
     {/* Hero section: developer introduction and terminal. */}
     <section className="tech-hero" aria-labelledby="tech-title" data-viewport-section><div data-reveal><h1 id="tech-title">Turning ideas into thoughtful digital experiences.</h1><p className="tech-hero__subhead">A Computer Science student specializing in Software Engineering, focused on frontend development and UI/UX where clear interfaces meet dependable code.</p></div><PortfolioTerminal command="whoami" output="Software Engineer | Philanthropist | System Design & AI" ariaLabel="Animated developer introduction" /></section>
     {/* Experience section: learning journey and educational background. */}
-    <section className="tech-path" aria-labelledby="path-title" data-viewport-section><SectionHead id="path-title" variant="experience" title={<><strong>Experience</strong><span className="tech-heading__join">&amp;</span><em>Academic Background</em></>} /><article className="experience-log tech-experience card" data-reveal><div className="experience-log__entry"><p className="experience-log__time">Current</p><span className="experience-log__marker" aria-hidden="true" /><div className="experience-log__content"><p className="timeline__meta">Education &amp; community</p><h3>BS Computer Science, major in Software Engineering</h3><p className="experience-log__school">FEU Institute of Technology</p><p>I am building the technical foundation to create reliable software, while leaning further into frontend development and UI/UX design. I also take part in ACM community activities and events at school.</p></div></div></article></section>
+    <section className="tech-path" aria-labelledby="path-title" data-viewport-section>
+      <SectionHead id="path-title" variant="experience" title={<><strong>Experience</strong><span className="tech-heading__join">&amp;</span><em>Academic Background</em></>} />
+      <ol className="experience-log tech-experience card" aria-label="Experience and academic timeline">
+        <li className="experience-log__entry is-current" data-reveal>
+          <div className="experience-log__period"><span className="experience-log__type">Leadership</span><span className="experience-log__date">2026–2027</span></div>
+          <span className="experience-log__rail" aria-hidden="true"><span className="experience-log__marker" /></span>
+          <div className="experience-log__content">
+            <h3>Association for Computing Machinery</h3>
+            <p className="experience-log__role"><span>Director for Sports</span><span className="experience-log__status">Current</span></p>
+            <p className="experience-log__description">Supporting sports activities for the ACM community by helping organize events and encouraging students to connect through play.</p>
+          </div>
+          <ExperienceLogo src="/images/brand/acm-chapter-cropped.png" className="experience-log__logo--acm" />
+        </li>
+        <li className="experience-log__entry" data-reveal data-reveal-delay="1">
+          <div className="experience-log__period"><span className="experience-log__type">Internship</span><span className="experience-log__date">2026</span></div>
+          <span className="experience-log__rail" aria-hidden="true"><span className="experience-log__marker" /></span>
+          <div className="experience-log__content">
+            <h3>FlyRank AI</h3>
+            <p className="experience-log__role">Front-End Developer &amp; AI Engineer</p>
+            <p className="experience-log__description">Contributing to frontend experiences and AI engineering work, combining thoughtful interface implementation with practical AI-powered product features.</p>
+          </div>
+          <ExperienceLogo src="/images/brand/flyrank.png" className="experience-log__logo--flyrank" />
+        </li>
+        <li className="experience-log__entry is-current" data-reveal data-reveal-delay="2">
+          <div className="experience-log__period"><span className="experience-log__type">Academic</span><span className="experience-log__date">2023–Present</span></div>
+          <span className="experience-log__rail" aria-hidden="true"><span className="experience-log__marker" /></span>
+          <div className="experience-log__content">
+            <h3>FEU Institute of Technology</h3>
+            <p className="experience-log__role"><span>Bachelor of Science in Computer Science, major in Software Engineering</span><span className="experience-log__status">Current</span></p>
+            <p className="experience-log__description">Building the technical foundation to create reliable software while developing a stronger focus on frontend engineering, thoughtful UI/UX, and dependable product experiences.</p>
+          </div>
+          <ExperienceLogo src="/images/brand/feutech.png" className="experience-log__logo--feutech" />
+        </li>
+      </ol>
+    </section>
     {/* Stack section: interactive tech-stack wall. */}
     <section ref={stackRef} className="tech-toolbox" id="stack" aria-labelledby="stack-title" data-viewport-section><SectionHead id="stack-title" variant="tools" title={<>Tools I <em>build</em> with</>} />{stackReady ? <Suspense fallback={<div className="viewport-placeholder viewport-placeholder--wall" aria-hidden="true" />}><TechStackWall /></Suspense> : <div className="viewport-placeholder viewport-placeholder--wall" aria-hidden="true" />}</section>
     {/* Certificate section: verified learning credentials and shelf. */}
@@ -134,7 +173,7 @@ function CertificateShelf({ onSelect }) {
     <SectionHead id="certificates-title" variant="certificates" title={<>Certifications <span>&amp;</span> <em>Awards</em></>} />
     <div className={`credential-shelf credential-shelf--${rows}-rows`} style={{ "--shelf-rows": rows }} data-reveal>
       {certificates.map((certificate, index) => {
-        const [preview, document, title, source, label, alt] = certificate;
+        const [preview, document, title, , label, alt] = certificate;
         return <button className="credential-book" type="button" aria-label={label} aria-haspopup="dialog" data-reveal data-reveal-delay={index || undefined} key={document} onClick={(event) => {
           const restoreFocus = event.detail === 0;
           if (!restoreFocus) event.currentTarget.blur();

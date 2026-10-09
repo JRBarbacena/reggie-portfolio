@@ -8,11 +8,17 @@
    - `20260829_004_travel_journal_content.sql`
    - `20260904_005_chatbot_inbox.sql`
    - `20260904_006_ephemeral_live_chat.sql`
+   - `20261009_007_storage_guardrails.sql`
 4. Run each migration as a separate query.
 5. In a new query, run the allow-list statement from migration 001 after replacing its placeholder with the exact email invited under **Authentication → Users**.
-6. Keep the `album-media` bucket private. Migration 001 creates it and its policies automatically.
+6. Keep the `album-media` bucket private. Migration 001 creates it and its policies automatically; migration 007 enforces the same 10 MB JPEG/PNG/WebP limits used by the admin client.
 
 The browser uses only the project URL and publishable key. Never put a secret or service-role key in the React application.
+
+After migration 007, verify **Storage → album-media → Configuration** shows a
+private bucket, a 10 MB file limit, and only `image/jpeg`, `image/png`, and
+`image/webp`. Existing objects are not rewritten; review any legacy formats
+before relying on the new policy for future uploads.
 
 ## Portfolio chatbot and private inbox
 

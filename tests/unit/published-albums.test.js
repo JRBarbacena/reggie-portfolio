@@ -3,8 +3,10 @@ import { loadPublishedAlbums } from "../../react-app/src/lib/published-albums.js
 
 function clientWith({ responses, signedUrls = {} }) {
   const selects = [];
+  const signedBatches = [];
   return {
     selects,
+    signedBatches,
     from(table) {
       expect(table).toBe("albums");
       return {
@@ -27,6 +29,13 @@ function clientWith({ responses, signedUrls = {} }) {
       from(bucket) {
         expect(bucket).toBe("album-media");
         return {
+          async createSignedUrls(paths) {
+            signedBatches.push(paths);
+            return {
+              data: paths.filter((path) => signedUrls[path]).map((path) => ({ path, signedUrl: signedUrls[path] })),
+              error: null,
+            };
+          },
           async createSignedUrl(path) {
             return signedUrls[path]
               ? { data: { signedUrl: signedUrls[path] }, error: null }
@@ -56,6 +65,8 @@ describe("published albums", () => {
       cover: "https://media.test/cover",
       signedPhotos: [{ url: "https://media.test/photo" }],
     }]);
+    expect(client.selects).toHaveLength(1);
+    expect(client.signedBatches).toEqual([["album-1/cover.jpg", "album-1/photo.jpg"]]);
   });
 
   it("retries Travel without travel_scope and defaults it to local", async () => {

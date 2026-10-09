@@ -37,7 +37,8 @@ test("portfolio assistant offers a human handoff without appearing on admin", as
   await expect(page.getByRole("button", { name: /portfolio assistant/i })).toHaveCount(0);
 });
 
-test("mouse dismissal removes focus and keeps background scrolling paused", async ({ page }) => {
+test("mouse dismissal removes focus and keeps background scrolling paused", async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== "desktop", "Mouse-only behavior is covered on the desktop project.");
   await page.goto("/tech", { waitUntil: "domcontentloaded" });
   await page.evaluate(() => window.scrollTo(0, 360));
   await page.waitForTimeout(350);
@@ -59,11 +60,11 @@ test("mouse dismissal removes focus and keeps background scrolling paused", asyn
 test("Zenith answers locally and exposes the temporary live-chat entry", async ({ page }) => {
   await page.goto("/life", { waitUntil: "domcontentloaded" });
   await page.getByRole("button", { name: "Open Zenith" }).click();
-  await expect(page.getByRole("button", { name: "Hi", exact: true })).toBeVisible();
-  await expect(page.getByRole("button", { name: "Hello", exact: true })).toBeVisible();
-  await page.getByRole("button", { name: "Hi", exact: true }).click();
+  await expect(page.getByRole("button", { name: "Hello Zenith", exact: true })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Talk to Reggie", exact: true })).toBeVisible();
+  await page.getByRole("button", { name: "Hello Zenith", exact: true }).click();
   await expect(page.getByText(/Hello! I’m Zenith/)).toBeVisible();
-  await expect(page.getByRole("button", { name: "Hi", exact: true })).toHaveCount(0);
+  await expect(page.getByRole("button", { name: "Hello Zenith", exact: true })).toHaveCount(0);
   await page.getByLabel("Ask about the portfolio").fill("I want to talk to Reggie");
   await page.getByLabel("Ask about the portfolio").press("Enter");
   await page.getByRole("button", { name: "Talk to Reggie" }).click();
@@ -121,7 +122,8 @@ test("a live reply identifies Reggie with his photo", async ({ page }) => {
   await expect(reply.locator("img")).toBeVisible();
 });
 
-test("the launcher mascot subtly follows mouse movement", async ({ page }) => {
+test("the launcher mascot subtly follows mouse movement", async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== "desktop", "Mouse-only behavior is covered on the desktop project.");
   await page.goto("/life", { waitUntil: "domcontentloaded" });
   const mascot = page.locator(".chatbot-launcher .chatbot-mascot");
   await page.mouse.move(1100, 120);

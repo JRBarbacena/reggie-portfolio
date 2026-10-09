@@ -20,7 +20,7 @@ function destinationLabel(destination) {
   return "Tech albums";
 }
 
-async function signedPreview(client, path) {
+export async function signedPreview(client, path) {
   if (!path) return "";
   const { data, error } = await client.storage.from("album-media").createSignedUrl(path, 60 * 60);
   return error ? "" : data?.signedUrl ?? "";

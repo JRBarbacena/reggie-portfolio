@@ -1,3 +1,5 @@
+// @ts-check
+
 function sourceParts(filename) {
   const normalized = filename.replaceAll("\\", "/");
   const slash = normalized.lastIndexOf("/");

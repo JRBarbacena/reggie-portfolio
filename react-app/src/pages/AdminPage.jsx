@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { requireSupabase, supabase } from "../lib/supabase.js";
-import AdminAlbumView, { contentName, photoLimitFor } from "./admin/AdminAlbumView.jsx";
+import AdminAlbumView, { contentName, photoLimitFor, signedPreview } from "./admin/AdminAlbumView.jsx";
 import AdminAuthView from "./admin/AdminAuthView.jsx";
 import AdminInboxView from "./admin/AdminInboxView.jsx";
 import AdminLiveChatView from "./admin/AdminLiveChatView.jsx";

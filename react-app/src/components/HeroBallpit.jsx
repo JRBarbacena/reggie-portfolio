@@ -79,7 +79,7 @@ export default function HeroBallpit({ enabled = true, revealed = true, interacti
           <Suspense fallback={null}>
             <Ballpit
               className="hero-ballpit__canvas"
-              count={48}
+              count={57}
               gravity={0}
               friction={0.998}
               wallBounce={0.55}

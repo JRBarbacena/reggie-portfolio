@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import { requestJson } from "../lib/api-client.js";
 import { responsivePhotoPath } from "../responsive-photos.js";
 
 const STORAGE_KEY = "zenith-live-chat-session";
@@ -9,18 +10,14 @@ function savedSession() {
 }
 
 async function chatRequest(payload) {
-  const response = await fetch("/api/live-chat", {
+  return requestJson("/api/live-chat", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload),
+  }, {
+    timeoutMs: 8_000,
+    fallbackMessage: "Temporary chat is unavailable.",
   });
-  const result = await response.json().catch(() => ({}));
-  if (!response.ok) {
-    const error = new Error(result.message || "Temporary chat is unavailable.");
-    error.status = response.status;
-    throw error;
-  }
-  return result;
 }
 
 export default function LiveChatPanel({ onBack }) {
@@ -30,6 +27,8 @@ export default function LiveChatPanel({ onBack }) {
   const [status, setStatus] = useState("");
   const [busy, setBusy] = useState(false);
   const endRef = useRef(null);
+  const sessionId = session?.sessionId;
+  const sessionToken = session?.token;
 
   const clearSession = useCallback((message = "") => {
     sessionStorage.removeItem(STORAGE_KEY);
@@ -38,7 +37,7 @@ export default function LiveChatPanel({ onBack }) {
     setStatus(message);
   }, []);
 
-  const poll = useCallback(async (activeSession = session) => {
+  const poll = useCallback(async (activeSession) => {
     if (!activeSession) return;
     try {
       const result = await chatRequest({ action: "poll", sessionId: activeSession.sessionId, token: activeSession.token });
@@ -46,18 +45,52 @@ export default function LiveChatPanel({ onBack }) {
       setPresence(result.presence ?? "offline");
       setSession((current) => current ? { ...current, expiresAt: result.expiresAt } : current);
       setStatus("");
+      return true;
     } catch (error) {
       if (error.status === 410) clearSession("That temporary chat expired. You can start a new one.");
       else setStatus(error.message);
+      return false;
     }
   }, [clearSession]);
 
   useEffect(() => {
-    if (!session) return undefined;
-    poll(session);
-    const timer = window.setInterval(() => poll(session), 4_000);
-    return () => window.clearInterval(timer);
-  }, [poll, session?.sessionId, session?.token]);
+    if (!sessionId || !sessionToken) return undefined;
+    const activeSession = { sessionId, token: sessionToken };
+    let cancelled = false;
+    let failures = 0;
+    let inFlight = false;
+    let timer;
+
+    const schedule = (delay) => {
+      if (!cancelled) timer = window.setTimeout(run, delay);
+    };
+    const run = async () => {
+      if (cancelled || inFlight) return;
+      if (document.visibilityState === "hidden") {
+        schedule(15_000);
+        return;
+      }
+      inFlight = true;
+      const succeeded = await poll(activeSession);
+      inFlight = false;
+      if (cancelled) return;
+      failures = succeeded ? 0 : Math.min(failures + 1, 3);
+      schedule(succeeded ? 4_000 : 4_000 * (2 ** failures));
+    };
+    const resumeWhenVisible = () => {
+      if (document.visibilityState !== "visible") return;
+      window.clearTimeout(timer);
+      run();
+    };
+
+    run();
+    document.addEventListener("visibilitychange", resumeWhenVisible);
+    return () => {
+      cancelled = true;
+      window.clearTimeout(timer);
+      document.removeEventListener("visibilitychange", resumeWhenVisible);
+    };
+  }, [poll, sessionId, sessionToken]);
 
   useEffect(() => {
     if (session) return;
