@@ -1529,10 +1529,9 @@ body:not(.home) .contact-panel {
 
 .status-list__pills {
   display: flex;
-  flex-wrap: nowrap;
+  flex-wrap: wrap;
+  min-width: 0;
   gap: 4px;
-  overflow-x: auto;
-  white-space: nowrap;
 }
 
 .status-list__pills span {

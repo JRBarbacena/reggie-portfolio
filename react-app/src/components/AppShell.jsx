@@ -7,7 +7,8 @@ import ClickSpark from "./ClickSpark.jsx";
 import SmoothScroll from "./SmoothScroll.jsx";
 import ChatbotWidget from "./ChatbotWidget.jsx";
 
-const routeBodyClasses = ["home", "story-page", "tech-page", "travel-page", "life-page"];
+const routeBodyClasses = ["home", "story-page", "tech-page", "travel-page", "life-page", "error-page"];
+const applicationRoutes = new Set(["/", "/tech", "/travel", "/life", "/admin"]);
 
 export default function AppShell({ children }) {
   const { pathname } = useLocation();
@@ -24,6 +25,7 @@ export default function AppShell({ children }) {
     else if (pathname === "/tech") document.body.classList.add("story-page", "tech-page");
     else if (pathname === "/travel") document.body.classList.add("story-page", "travel-page");
     else if (pathname === "/life") document.body.classList.add("story-page", "life-page");
+    else if (!applicationRoutes.has(pathname)) document.body.classList.add("error-page");
     window.scrollTo({ top: 0, behavior: "instant" });
     return () => {
       hasReadPastHeroRef.current = false;
