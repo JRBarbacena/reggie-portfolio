@@ -1,34 +1,13 @@
-import { useEffect, useRef, useState } from "react";
-import { supabase } from "../lib/supabase.js";
+import { useRef, useState } from "react";
 import AlbumViewer from "./AlbumViewer.jsx";
 import useNearViewport from "../hooks/useNearViewport.js";
-
-async function signedMediaUrl(path) {
-  if (!supabase || !path) return "";
-  const { data, error } = await supabase.storage.from("album-media").createSignedUrl(path, 60 * 60);
-  return error ? "" : data?.signedUrl ?? "";
-}
+import usePublishedAlbums from "../hooks/usePublishedAlbums.js";
 
 export default function PublishedAlbumSection({ destination, id, title, copy, className = "tech-community" }) {
-  const [albums, setAlbums] = useState([]);
-  const [status, setStatus] = useState("idle");
   const [selectedAlbum, setSelectedAlbum] = useState(null);
   const triggerRef = useRef(null);
   const [sectionRef, sectionReady] = useNearViewport();
-
-  useEffect(() => {
-    if (!sectionReady) return undefined;
-    if (!supabase) { setStatus("unavailable"); return undefined; }
-    setStatus("loading");
-    let live = true;
-    supabase.from("albums").select("id,title,description,location,cover_path,album_photos(id,storage_path,sort_order)").eq("published", true).eq("destination", destination).order("created_at", { ascending: false }).order("sort_order", { referencedTable: "album_photos", ascending: true }).then(async ({ data, error }) => {
-      if (!live) return;
-      if (error) { setStatus("error"); return; }
-      const withMedia = await Promise.all((data ?? []).map(async (album) => ({ ...album, cover: await signedMediaUrl(album.cover_path), signedPhotos: await Promise.all((album.album_photos ?? []).map(async (photo) => ({ ...photo, url: await signedMediaUrl(photo.storage_path) }))) })));
-      if (live) { setAlbums(withMedia); setStatus("ready"); }
-    });
-    return () => { live = false; };
-  }, [destination, sectionReady]);
+  const { albums, status } = usePublishedAlbums(destination, sectionReady);
 
   const closeAlbum = () => { setSelectedAlbum(null); window.setTimeout(() => triggerRef.current?.focus(), 0); };
   const label = destination[0].toUpperCase() + destination.slice(1);

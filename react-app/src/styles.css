@@ -1,7 +1,7 @@
 :root {
   color: var(--text-primary);
   background: var(--bg-base);
-  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+  font-family: var(--font-family-base);
 }
 
 html.home-entry-pending #root {
@@ -76,173 +76,13 @@ body { margin: 0; }
   backdrop-filter: blur(16px);
 }
 
-.migration-page {
-  width: min(100% - 2rem, 46rem);
-  margin: 8rem auto;
-  padding: clamp(1.5rem, 5vw, 3rem);
-  border: 1px solid rgb(255 255 255 / 55%);
-  border-radius: 1.5rem;
-  background: rgb(255 255 255 / 22%);
-  box-shadow: 12px 12px 30px rgb(102 117 139 / 18%), -10px -10px 24px rgb(255 255 255 / 60%);
-  backdrop-filter: blur(16px);
-}
-
 .route-loading {
   min-height: calc(100svh - 8rem);
 }
 
-.migration-page__eyebrow {
-  color: var(--accent-primary);
-  font-size: 0.75rem;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-}
-
-.migration-page h1 { font-size: clamp(2.25rem, 7vw, 4.5rem); }
-
-.migration-page p { line-height: 1.6; }
-
-.react-home__hero {
-  position: relative;
-  display: grid;
-  min-height: calc(100svh - 5rem);
-  place-items: center;
-  overflow: hidden;
-}
-
-.react-home__center { position: relative; z-index: 1; width: min(100% - 2rem, 48rem); }
-
-.react-home__center h1 {
-  margin: 0;
-  font-size: clamp(3rem, 7vw, 5.5rem);
-  letter-spacing: -0.05em;
-  line-height: 1.02;
-  text-align: center;
-}
-
-.react-home__center h1 span { color: var(--accent-primary); }
-
-.react-home__collage { position: absolute; inset: 0; }
-
-.react-photo-window {
-  position: absolute;
-  width: clamp(6.5rem, 8vw, 8.5rem);
-  margin: 0;
-  padding: 0.38rem;
-  border-radius: 1rem;
-  background: #e9eef5;
-  box-shadow: 10px 10px 22px rgb(102 117 139 / 25%), -8px -8px 18px rgb(255 255 255 / 78%);
-}
-
-.react-photo-window__bar { display: flex; align-items: center; gap: 0.28rem; padding: 0.18rem 0.18rem 0.35rem; }
-.react-photo-window__bar > span:not(.react-photo-window__name) { width: 0.58rem; height: 0.58rem; border-radius: 50%; background: #ff5f57; }
-.react-photo-window__bar > span:nth-child(2) { background: #febc2e; }
-.react-photo-window__bar > span:nth-child(3) { background: #28c840; }
-.react-photo-window__name { margin-left: auto; overflow: hidden; color: #667085; font-size: 0.55rem; text-overflow: ellipsis; white-space: nowrap; }
-.react-photo-window img { display: block; width: 100%; aspect-ratio: 4 / 3; border-radius: 0.55rem; object-fit: cover; }
-
-.react-hero-chip {
-  position: absolute;
-  display: inline-flex;
-  width: 5.5rem;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.35rem;
-  border: 0;
-  background: transparent;
-  color: #667085;
-  cursor: pointer;
-  font: inherit;
-}
-
-.react-hero-chip__icon {
-  display: grid;
-  width: 3.5rem;
-  height: 3.5rem;
-  place-items: center;
-  border-radius: 1rem;
-  background: #e9eef5;
-  box-shadow: 8px 8px 18px rgb(102 117 139 / 22%), -7px -7px 16px rgb(255 255 255 / 72%);
-  transition: color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
-}
-
-.react-hero-chip__icon svg { width: 1.65rem; height: 1.65rem; fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; stroke-width: 1.7; }
-
-.react-hero-chip:is(:hover, :focus-visible, .is-open) .react-hero-chip__icon { color: var(--accent-primary); box-shadow: inset 5px 5px 11px rgb(102 117 139 / 18%), inset -5px -5px 11px rgb(255 255 255 / 72%); transform: translateY(-2px); }
-.react-hero-chip__label { font-size: 0.75rem; }
-.react-hero-chip__detail { position: absolute; top: calc(100% + 0.35rem); z-index: 3; width: max-content; max-width: 15rem; padding: 0.5rem 0.75rem; border-radius: 0.8rem; background: rgb(239 244 251 / 85%); box-shadow: 8px 8px 18px rgb(102 117 139 / 18%); font-size: 0.75rem; opacity: 0; pointer-events: none; transform: translateY(-0.25rem); transition: opacity 160ms ease, transform 160ms ease; backdrop-filter: blur(12px); }
-.react-hero-chip__detail strong { display: block; color: var(--accent-primary); font-size: 0.65rem; letter-spacing: 0.08em; text-transform: uppercase; }
-.react-hero-chip:is(:hover, :focus-visible, .is-open) .react-hero-chip__detail { opacity: 1; transform: translateY(0); }
-
-.react-home .pos-photo-1 { top: 6%; left: 4%; width: clamp(10rem, 13vw, 11.5rem); transform: rotate(-4deg); }
-.react-home .pos-photo-2 { top: 15%; right: 3%; width: clamp(10rem, 13vw, 11.5rem); transform: rotate(3deg); }
-.react-home .pos-photo-3 { top: 47%; left: 19%; transform: rotate(2deg); }
-.react-home .pos-photo-4 { bottom: 7%; left: 4%; transform: rotate(-3deg); }
-.react-home .pos-photo-5 { bottom: 8%; right: 20%; transform: rotate(3deg); }
-.react-home .pos-photo-6 { top: 56%; right: 10%; transform: rotate(-2deg); }
-.react-home .pos-chip-1 { top: 12%; left: 27%; transform: rotate(-3deg); }
-.react-home .pos-chip-2 { top: 8%; right: 23%; transform: rotate(2deg); }
-.react-home .pos-chip-3 { top: 48%; left: 8%; transform: rotate(3deg); }
-.react-home .pos-chip-4 { top: 63%; right: 25%; transform: rotate(-3deg); }
-.react-home .pos-chip-5 { bottom: 10%; left: 29%; transform: rotate(2deg); }
-
-.react-home__lanes { width: min(100% - 2rem, 72rem); margin: 0 auto; padding: 6rem 0; }
-.react-home__section-head { display: grid; justify-items: center; margin-bottom: 2rem; text-align: center; }
-.react-home__section-head h2 { margin: 0; font-size: clamp(2rem, 5vw, 3.5rem); letter-spacing: -0.04em; }
-.react-home__section-head p { color: #667085; }
-.react-lane-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.25rem; }
-.react-lane-card { overflow: hidden; border: 1px solid rgb(255 255 255 / 55%); border-radius: 1.25rem; background: rgb(255 255 255 / 20%); box-shadow: 10px 10px 24px rgb(102 117 139 / 16%), -8px -8px 18px rgb(255 255 255 / 58%); color: inherit; text-decoration: none; transition: transform 160ms ease, box-shadow 160ms ease; }
-.react-lane-card:hover, .react-lane-card:focus-visible { box-shadow: 12px 12px 28px rgb(102 117 139 / 24%), -8px -8px 18px rgb(255 255 255 / 70%); transform: translateY(-3px); }
-.react-lane-card figure { display: grid; grid-template-rows: auto 1fr; aspect-ratio: 1; margin: 0; }
-.react-lane-card figcaption { padding: 0.55rem 0.75rem; overflow: hidden; color: #667085; font-size: 0.7rem; text-overflow: ellipsis; white-space: nowrap; }
-.react-lane-card img { width: 100%; height: 100%; object-fit: cover; }
-.react-lane-card > div { padding: 1rem; }
-.react-lane-card h3 { margin: 0; font-size: 1.45rem; }
-.react-lane-card p { color: #667085; line-height: 1.6; }
-
-.react-tech { width: min(100% - 2rem, 72rem); margin: 0 auto; padding: 4rem 0 6rem; }
-.react-tech__hero { display: grid; max-width: 52rem; gap: 1.5rem; margin: 3rem 0 8rem; }
-.react-tech__hero h1 { margin: 0; font-size: clamp(3rem, 7vw, 5.75rem); letter-spacing: -0.06em; line-height: 1; }
-.react-tech__hero > p { max-width: 42rem; color: #667085; font-size: 1.1rem; line-height: 1.7; }
-.react-terminal { overflow: hidden; border-radius: 1rem; background: #202938; box-shadow: 12px 12px 28px rgb(102 117 139 / 20%); color: #e8f0fa; font-family: ui-monospace, monospace; }
-.react-terminal > div { padding: 0.6rem 0.9rem; background: rgb(255 255 255 / 9%); color: #9fb0c6; font-size: 0.75rem; }
-.react-terminal p { margin: 0; padding: 0.55rem 1rem 0; line-height: 1.6; }
-.react-terminal p:last-child { padding-bottom: 1rem; color: #f2a9bd; }
-.react-terminal strong { color: #7dd3c7; }
-.react-tech__section { margin-top: 6rem; }
-.react-tech__section-head { max-width: 40rem; margin-bottom: 2rem; }
-.react-tech__section-head h2 { margin: 0; font-size: clamp(2rem, 5vw, 3.5rem); letter-spacing: -0.04em; }
-.react-tech__section-head p, .react-muted { color: #667085; line-height: 1.6; }
+.react-muted { color: #667085; line-height: 1.6; }
 .react-eyebrow { margin: 0 0 0.5rem; color: var(--accent-primary); font-size: 0.7rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; }
-.react-experience-card, .react-stack-card { border: 1px solid rgb(255 255 255 / 55%); border-radius: 1.25rem; background: rgb(255 255 255 / 20%); box-shadow: 10px 10px 24px rgb(102 117 139 / 16%), -8px -8px 18px rgb(255 255 255 / 58%); }
-.react-experience-card { padding: clamp(1.25rem, 4vw, 2.5rem); }
-.react-experience-card h3, .react-stack-card h3 { margin: 0; font-size: 1.35rem; }
-.react-experience-card > p:last-child, .react-stack-card > p { line-height: 1.65; }
-.react-stack-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.25rem; }
-.react-stack-card { padding: 1.5rem; }
-.react-stack-card ul { display: flex; flex-wrap: wrap; gap: 0.45rem; padding: 0; list-style: none; }
-.react-stack-card li { padding: 0.35rem 0.55rem; border-radius: 999px; background: rgb(255 255 255 / 50%); color: #526073; font-size: 0.8rem; }
-.react-certificates { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1rem; }
-.react-certificates a { display: grid; gap: 0.3rem; padding: 0.65rem; border-radius: 1rem; background: rgb(255 255 255 / 20%); box-shadow: 8px 8px 18px rgb(102 117 139 / 14%), -6px -6px 14px rgb(255 255 255 / 58%); color: inherit; text-decoration: none; }
-.react-certificates img { width: 100%; aspect-ratio: 1.28; border-radius: 0.6rem; object-fit: cover; }
-.react-certificates span { color: #667085; font-size: 0.8rem; }
-.react-album-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.25rem; }
-.react-album-grid button { display: grid; gap: 0.55rem; padding: 0.65rem; overflow: hidden; border: 0; border-radius: 1.25rem; background: rgb(255 255 255 / 20%); box-shadow: 10px 10px 24px rgb(102 117 139 / 16%), -8px -8px 18px rgb(255 255 255 / 58%); color: inherit; cursor: pointer; font: inherit; text-align: left; }
-.react-album-grid button:hover, .react-album-grid button:focus-visible { box-shadow: 12px 12px 28px rgb(102 117 139 / 24%), -8px -8px 18px rgb(255 255 255 / 70%); transform: translateY(-3px); }
-.react-album-grid img { width: 100%; aspect-ratio: 4 / 3; border-radius: 0.75rem; object-fit: cover; }
-.react-album-grid span, .react-album-grid small { color: #667085; font-size: 0.8rem; }
-.react-tech__closing { display: grid; justify-items: center; margin-top: 6rem; padding: 3rem; border-radius: 1.5rem; background: rgb(255 255 255 / 20%); box-shadow: inset 7px 7px 16px rgb(102 117 139 / 12%), inset -7px -7px 16px rgb(255 255 255 / 60%); text-align: center; }
-.react-tech__closing blockquote { margin: 0; font-size: clamp(1.5rem, 4vw, 2.5rem); font-weight: 700; }
-.react-tech__closing span { margin-top: 1rem; color: var(--accent-primary); font-size: 0.75rem; letter-spacing: 0.13em; }
-.react-album-dialog { width: min(100% - 2rem, 62rem); max-height: min(85vh, 52rem); border: 0; border-radius: 1.25rem; background: #edf2f8; box-shadow: 20px 20px 50px rgb(42 48 58 / 32%); color: #30394a; }
-.react-album-dialog::backdrop { background: rgb(21 21 30 / 45%); backdrop-filter: blur(5px); }
-.react-album-dialog header { display: flex; align-items: start; justify-content: space-between; gap: 1rem; }
-.react-album-dialog h2 { margin: 0; }
-.react-album-dialog header button { border: 0; border-radius: 50%; background: transparent; color: inherit; cursor: pointer; font-size: 1.5rem; }
-.react-album-dialog > p { color: #667085; line-height: 1.6; }
-.react-album-dialog__gallery { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.75rem; }
-.react-album-dialog__gallery img { width: 100%; border-radius: 0.75rem; object-fit: cover; }
+
 .album-empty { display: grid; max-width: 38rem; gap: 0.3rem; padding: 1rem 1.1rem; border: 1px solid rgb(255 255 255 / 55%); border-radius: 1rem; background: rgb(255 255 255 / 22%); box-shadow: inset 5px 5px 12px rgb(102 117 139 / 10%), inset -5px -5px 12px rgb(255 255 255 / 55%); color: #667085; line-height: 1.55; }
 .album-empty strong { color: #30394a; }
 .album-empty span { display: block; }
@@ -1242,7 +1082,6 @@ body.home .site-header--home {
 
 .card,
 .credential-shelf,
-.migration-page,
 .react-admin__panel,
 .admin-content-form,
 .admin-dashboard__stats article,
@@ -1330,8 +1169,7 @@ body.home .site-header--home {
   box-shadow: 0 10px 24px rgb(72 91 96 / 16%);
 }
 
-.story-closing.neu-inset,
-.react-tech__closing {
+.story-closing.neu-inset {
   border: 1px solid var(--glass-border);
   background: rgb(248 251 251 / 34%);
   box-shadow: inset 5px 5px 12px rgb(142 158 162 / 15%),
@@ -1344,8 +1182,7 @@ body.home .site-header--home {
   border-color: rgb(213 0 28 / 9%);
 }
 
-.album-modal,
-.react-album-dialog {
+.album-modal {
   border: 1px solid var(--glass-border);
   background: var(--glass-surface-strong);
   box-shadow: 0 28px 70px rgb(35 48 52 / 30%);
@@ -1417,23 +1254,6 @@ body.home .site-header--home {
 
   .app-footer { flex-direction: column; }
 
-  .react-home__hero { min-height: calc(100svh - 4.5rem); align-content: start; padding-top: 5rem; overflow: visible; }
-  .react-home__center h1 { font-size: clamp(2.75rem, 13vw, 4rem); }
-  .react-home__collage { position: relative; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.75rem; width: min(100% - 2rem, 36rem); margin: 2rem auto 0; }
-  .react-photo-window, .react-hero-chip { position: relative; inset: auto; transform: none !important; }
-  .react-photo-window { display: none; width: 100%; }
-  .react-photo-window.pos-photo-1, .react-photo-window.pos-photo-2 { display: block; }
-  .react-hero-chip { width: 100%; padding: 0.5rem 0; }
-  .react-hero-chip__detail { left: 50%; transform: translate(-50%, -0.25rem); }
-  .react-hero-chip:is(:hover, :focus-visible, .is-open) .react-hero-chip__detail { transform: translate(-50%, 0); }
-  .react-home__lanes { padding: 4rem 0; }
-  .react-lane-grid { grid-template-columns: 1fr; }
-  .react-tech { padding-top: 2rem; }
-  .react-tech__hero { margin: 2rem 0 5rem; }
-  .react-tech__section { margin-top: 4rem; }
-  .react-stack-grid, .react-album-grid { grid-template-columns: 1fr; }
-  .react-certificates { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .react-album-dialog__gallery { grid-template-columns: 1fr; }
   .travel-redesign__hero { min-height: auto; margin: var(--space-3) auto var(--space-5); }
   .travel-page .travel-redesign__hero h1 { font-size: clamp(1.3rem, 6vw, 1.65rem); }
   .travel-collection-list { gap: var(--space-5); }

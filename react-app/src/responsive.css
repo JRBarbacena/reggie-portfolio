@@ -6,6 +6,8 @@
 .app-shell .terminal__body p { white-space: normal; }
 .app-shell .home-hero-intro__greeting { white-space: normal; line-height: 1.35; }
 .home-entry-preloader .home-entry-preloader__name { max-width: 100%; }
+html, body { overflow-x: clip; }
+.app-shell :is(.contact-panel, .contact-panel__status, .status-list, .status-list div, .home-card, .story-closing, .site-footer) { min-width: 0; }
 
 /* A composed grid replaces overlapping desktop coordinates on tablets. */
 @media (max-width: 1180px), (max-height: 600px) {
@@ -95,9 +97,33 @@
   .app-shell .contact-panel { grid-template-columns: 1fr; }
   .app-shell .terminal__bar { flex-wrap: wrap; gap: 0.5rem; }
   .app-shell .home-lane-carousel__stage { height: 28rem; }
+  .app-shell .home-lane-carousel { --lane-card-width: min(15.5rem, calc(100vw - 6.5rem)); }
   .app-shell .home-lane-carousel__controls > button { width: 2.75rem; height: 2.75rem; }
   .home-entry-preloader .home-entry-preloader__name { font-size: clamp(1.8rem, 8vw, 3.5rem); }
   body.home .hero-ballpit.is-static::before { display: none; }
+  .react-admin .admin-dashboard__nav button {
+    min-height: 2.75rem;
+    white-space: normal;
+    line-height: 1.25;
+  }
+}
+
+@media (max-width: 480px) {
+  body.home .home-hero-intro,
+  body.home .home-hero-intro__headline { max-width: 100%; }
+  body.home .home-hero-intro__headline { font-size: clamp(1.75rem, 8.4vw, 2.35rem); }
+  body.home .home-hero-intro__greeting { font-size: 0.78rem; letter-spacing: 0; }
+  .life-redesign .home-card__coordinates { flex-wrap: wrap; min-width: 0; }
+  .story-closing > span { max-width: 100%; letter-spacing: 0.08em; }
+  .app-shell .home-lane-carousel { --lane-card-width: min(13.25rem, calc(100vw - 7.5rem)); }
+  .tech-page .credential-book { min-width: 0; }
+  .tech-page .credential-book figcaption strong { overflow-wrap: anywhere; }
+}
+
+@media (max-width: 375px) {
+  .admin-dashboard__nav,
+  .admin-dashboard__stats { grid-template-columns: 1fr; }
+  .react-admin .admin-dashboard__nav button { font-size: 0.82rem; }
 }
 
 @media (hover: none), (pointer: coarse) {

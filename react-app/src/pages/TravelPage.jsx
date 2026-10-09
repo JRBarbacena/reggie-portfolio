@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
-import { supabase } from "../lib/supabase.js";
 import PortfolioTerminal from "../components/PortfolioTerminal.jsx";
 import useNearViewport from "../hooks/useNearViewport.js";
+import usePublishedAlbums from "../hooks/usePublishedAlbums.js";
 
 const travelCollections = [
   {
@@ -20,78 +20,17 @@ const travelCollections = [
   },
 ];
 
-async function signedMediaUrl(path) {
-  if (!supabase || !path) return "";
-  const { data, error } = await supabase.storage.from("album-media").createSignedUrl(path, 60 * 60);
-  return error ? "" : data?.signedUrl ?? "";
-}
-
 function excerptFor(story) {
   const plainText = story.replace(/\s+/g, " ").trim();
   return plainText.length > 150 ? `${plainText.slice(0, 147)}…` : plainText;
 }
 
 export default function TravelPage() {
-  const [journals, setJournals] = useState([]);
-  const [status, setStatus] = useState("idle");
   const [selectedJournal, setSelectedJournal] = useState(null);
   const dialogRef = useRef(null);
   const triggerRef = useRef(null);
   const [collectionsRef, collectionsReady] = useNearViewport();
-
-  useEffect(() => {
-    if (!collectionsReady) return undefined;
-    if (!supabase) {
-      setStatus("unavailable");
-      return undefined;
-    }
-
-    let live = true;
-    const loadJournals = async () => {
-      let response = await supabase
-        .from("albums")
-        .select("id,title,description,location,cover_path,travel_scope,album_photos(id,storage_path,sort_order)")
-        .eq("published", true)
-        .eq("destination", "travel")
-        .order("created_at", { ascending: false })
-        .order("sort_order", { referencedTable: "album_photos", ascending: true });
-
-      if (response.error) {
-        response = await supabase
-          .from("albums")
-          .select("id,title,description,location,cover_path,album_photos(id,storage_path,sort_order)")
-          .eq("published", true)
-          .eq("destination", "travel")
-          .order("created_at", { ascending: false })
-          .order("sort_order", { referencedTable: "album_photos", ascending: true });
-      }
-
-      if (!live) return;
-      if (response.error) {
-        setJournals([]);
-        setStatus("ready");
-        return;
-      }
-
-      const withMedia = await Promise.all((response.data ?? []).map(async (journal) => ({
-        ...journal,
-        travel_scope: journal.travel_scope ?? "local",
-        cover: await signedMediaUrl(journal.cover_path),
-        signedPhotos: await Promise.all((journal.album_photos ?? []).map(async (photo) => ({
-          ...photo,
-          url: await signedMediaUrl(photo.storage_path),
-        }))),
-      })));
-
-      if (live) {
-        setJournals(withMedia);
-        setStatus("ready");
-      }
-    };
-
-    loadJournals();
-    return () => { live = false; };
-  }, [collectionsReady]);
+  const { albums: journals, status } = usePublishedAlbums("travel", collectionsReady);
 
   useEffect(() => {
     const dialog = dialogRef.current;
@@ -114,6 +53,9 @@ export default function TravelPage() {
       </section>
 
       <section ref={collectionsRef} className="travel-collections" aria-label="Travel journals" data-viewport-section>
+        {status === "loading" && <p className="album-empty" role="status" data-reveal>Checking for published journals…</p>}
+        {status === "error" && <p className="album-empty" role="alert" data-reveal>Journals could not be loaded right now. Please try again later.</p>}
+        {status === "unavailable" && <p className="album-empty" data-reveal>Journal service is not configured.</p>}
         <div className="travel-collection-list">
           {travelCollections.map((collection, collectionIndex) => {
             const collectionJournals = journals.filter((journal) => journal.travel_scope === collection.key);

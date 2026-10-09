@@ -1,8 +1,8 @@
 import { lazy, Suspense, useEffect, useRef, useState } from "react";
-import { supabase } from "../lib/supabase.js";
 import AlbumViewer from "../components/AlbumViewer.jsx";
 import PortfolioTerminal from "../components/PortfolioTerminal.jsx";
 import useNearViewport from "../hooks/useNearViewport.js";
+import usePublishedAlbums from "../hooks/usePublishedAlbums.js";
 import { responsiveCertificatePath, responsiveCertificateSrcSet, responsivePhotoPath, responsivePhotoSrcSet } from "../responsive-photos.js";
 import "./TechHeadings.css";
 
@@ -79,34 +79,15 @@ const builtInTechAlbums = [
   },
 ];
 
-async function signedMediaUrl(path) {
-  if (!supabase || !path) return "";
-  const { data, error } = await supabase.storage.from("album-media").createSignedUrl(path, 60 * 60);
-  return error ? "" : data?.signedUrl ?? "";
-}
-
 export default function TechPage() {
   const [selectedAlbum, setSelectedAlbum] = useState(null);
   const [selectedCertificate, setSelectedCertificate] = useState(null);
-  const [publishedAlbums, setPublishedAlbums] = useState([]);
   const triggerRef = useRef(null);
   const certificateDialogRef = useRef(null);
   const certificateTriggerRef = useRef(null);
   const [stackRef, stackReady] = useNearViewport();
   const [albumRef, albumsReady] = useNearViewport();
-
-  useEffect(() => {
-    if (!albumsReady) return undefined;
-    if (!supabase) return undefined;
-    let live = true;
-    supabase.from("albums").select("id,title,description,location,cover_path,album_photos(id,storage_path,sort_order)").eq("published", true).eq("destination", "tech").order("created_at", { ascending: false }).order("sort_order", { referencedTable: "album_photos", ascending: true }).then(async ({ data, error }) => {
-      if (!live) return;
-      if (error) return;
-      const withMedia = await Promise.all((data ?? []).map(async (album) => ({ ...album, cover: await signedMediaUrl(album.cover_path), signedPhotos: await Promise.all((album.album_photos ?? []).map(async (photo) => ({ ...photo, url: await signedMediaUrl(photo.storage_path) }))) })));
-      if (live) setPublishedAlbums(withMedia);
-    });
-    return () => { live = false; };
-  }, [albumsReady]);
+  const { albums: publishedAlbums } = usePublishedAlbums("tech", albumsReady);
 
   useEffect(() => {
     const dialog = certificateDialogRef.current;
