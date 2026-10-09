@@ -46,7 +46,7 @@
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
     "react-router-dom": "^7.18.2",
-    "simple-icons": "^16.29.0",
+    "simple-icons": "^16.34.0",
     "three": "0.185.1"
   },
   "overrides": {
