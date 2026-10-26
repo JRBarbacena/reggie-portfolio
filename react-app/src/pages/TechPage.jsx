@@ -132,7 +132,7 @@ export default function TechPage() {
           <div className="experience-log__content">
             <h3>FlyRank AI</h3>
             <p className="experience-log__role">Front-End Developer &amp; AI Engineer</p>
-            <p className="experience-log__description">Contributing to frontend experiences and AI engineering work, combining thoughtful interface implementation with practical AI-powered product features.</p>
+            <p className="experience-log__description">Participated in FlyRank AI&apos;s Front-End AI Engineering internship, gaining practical experience in AI-assisted software development and prompt engineering. Developed a more structured approach to task planning by learning to break down requirements into manageable steps, formulate effective prompts, and use AI tools as a pair-programming assistant to support coding, debugging, and problem-solving.</p>
           </div>
           <ExperienceLogo src="/images/brand/flyrank.png" className="experience-log__logo--flyrank" />
         </li>
