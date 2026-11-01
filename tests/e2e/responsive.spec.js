@@ -34,3 +34,12 @@ test("social dock stays anchored to the viewport", async ({ page }) => {
   expect(bounds.viewportHeight - bounds.bottom).toBeGreaterThanOrEqual(0);
   expect(bounds.viewportHeight - bounds.bottom).toBeLessThan(64);
 });
+
+test("touch viewports skip the cinematic entry and expose home content immediately", async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name === "desktop", "The cinematic entry remains a desktop experience.");
+  await page.emulateMedia({ reducedMotion: "no-preference" });
+  await page.goto("/", { waitUntil: "domcontentloaded" });
+
+  await expect(page.locator(".home-entry-preloader")).toHaveCount(0);
+  await expect(page.getByRole("heading", { name: "Welcome to my little space on the internet" })).toBeVisible();
+});

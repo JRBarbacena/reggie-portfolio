@@ -7,10 +7,10 @@
   "trailingSlash": false,
   "functions": {
     "api/contact.js": {
-      "maxDuration": 10
+      "maxDuration": 15
     },
     "api/live-chat.js": {
-      "maxDuration": 10
+      "maxDuration": 15
     }
   },
   "redirects": [

@@ -9,6 +9,7 @@ const TechPage = lazy(() => import("./pages/TechPage.jsx"));
 const TravelPage = lazy(() => import("./pages/TravelPage.jsx"));
 const LifePage = lazy(() => import("./pages/LifePage.jsx"));
 const AdminPage = lazy(() => import("./pages/AdminPage.jsx"));
+const PrivacyPage = lazy(() => import("./pages/PrivacyPage.jsx"));
 const NotFoundPage = lazy(() => import("./pages/NotFoundPage.jsx"));
 
 export default function App() {
@@ -22,6 +23,7 @@ export default function App() {
             <Route path="/travel" element={<TravelPage />} />
             <Route path="/life" element={<LifePage />} />
             <Route path="/admin" element={<AdminPage />} />
+            <Route path="/privacy" element={<PrivacyPage />} />
             <Route path="*" element={<NotFoundPage />} />
           </Routes>
         </Suspense>

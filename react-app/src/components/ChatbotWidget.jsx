@@ -173,7 +173,7 @@ export default function ChatbotWidget() {
                 <label>Email<input name="email" type="email" autoComplete="email" maxLength="254" required /></label>
                 <label>Reason<select name="topic" defaultValue="General inquiry"><option>General inquiry</option><option>Project collaboration</option><option>Coffee chat</option><option>Speaking or event</option><option>Other</option></select></label>
                 <label>Message<textarea name="message" rows="4" maxLength="2000" minLength="10" required /></label>
-                <label className="chatbot-contact-form__consent"><input name="consent" type="checkbox" required /> <span>I&apos;m happy for Reggie to use these details to reply to me.</span></label>
+                <label className="chatbot-contact-form__consent"><input name="consent" type="checkbox" required /> <span>I&apos;m happy for Reggie to use these details and recent Zenith context to reply to me. See the <a href="/privacy">privacy notice</a>.</span></label>
                 <button type="submit" className="chatbot-panel__submit" disabled={busy}>{busy ? "Sending…" : "Send securely"}<SendIcon /></button>
               </form>
               {contactStatus && <p className={`chatbot-panel__status is-${contactStatus.type}`} role="status">{contactStatus.text}</p>}

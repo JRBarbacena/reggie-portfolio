@@ -7,6 +7,8 @@ import AdminLiveChatView from "./admin/AdminLiveChatView.jsx";
 
 const MAX_IMAGE_BYTES = 10 * 1024 * 1024;
 const MAX_UPLOAD_DIMENSION = 1920;
+const MAX_COVER_DIMENSION = 1280;
+const ALLOWED_IMAGE_TYPES = new Set(["image/jpeg", "image/png", "image/webp"]);
 
 function extensionFor(file) {
   const extension = file.name.split(".").pop()?.toLowerCase();
@@ -26,13 +28,13 @@ function blobFromCanvas(canvas) {
 // Album uploads are user-generated and cannot use the build-time Sharp pipeline.
 // Convert them in-browser when possible, cap their dimensions, and retain the
 // original file only as a safe fallback for formats the browser cannot decode.
-async function optimizeUploadImage(file) {
+async function optimizeUploadImage(file, maxDimension = MAX_UPLOAD_DIMENSION) {
   if (!globalThis.createImageBitmap || !globalThis.document?.createElement) return file;
   let bitmap;
   try {
     bitmap = await createImageBitmap(file, { imageOrientation: "from-image" });
     const longestSide = Math.max(bitmap.width, bitmap.height);
-    const scale = Math.min(1, MAX_UPLOAD_DIMENSION / longestSide);
+    const scale = Math.min(1, maxDimension / longestSide);
     const width = Math.max(1, Math.round(bitmap.width * scale));
     const height = Math.max(1, Math.round(bitmap.height * scale));
     const canvas = document.createElement("canvas");
@@ -53,7 +55,7 @@ async function optimizeUploadImage(file) {
 
 function validateImages(files) {
   return files.map((file) => {
-    if (!file.type.startsWith("image/")) return "Only image files can be uploaded.";
+    if (!ALLOWED_IMAGE_TYPES.has(file.type)) return "Use a JPEG, PNG, or WebP image.";
     if (file.size > MAX_IMAGE_BYTES) return "Each image must be 10 MB or smaller.";
     return null;
   }).find(Boolean);
@@ -233,7 +235,8 @@ export default function AdminPage() {
   };
 
   const upload = async (client, albumId, file, label) => {
-    const preparedFile = await optimizeUploadImage(file);
+    const preparedFile = await optimizeUploadImage(file, label === "cover" ? MAX_COVER_DIMENSION : MAX_UPLOAD_DIMENSION);
+    if (preparedFile.size > MAX_IMAGE_BYTES) throw new Error("The prepared image exceeds the 10 MB upload limit.");
     const path = `${albumId}/${label}-${crypto.randomUUID()}.${extensionFor(preparedFile)}`;
     const { error } = await client.storage.from("album-media").upload(path, preparedFile, { contentType: preparedFile.type, upsert: false });
     if (error) throw error;
@@ -343,6 +346,17 @@ export default function AdminPage() {
     } catch (error) { setMessage(error.message); } finally { setBusy(false); }
   };
 
+  const deleteInquiry = async (inquiry) => {
+    if (!window.confirm(`Permanently delete the message from ${inquiry.name}? This cannot be undone.`)) return;
+    setBusy(true); setMessage("");
+    try {
+      const { error } = await requireSupabase().from("contact_inquiries").delete().eq("id", inquiry.id);
+      if (error) throw error;
+      setInquiries((current) => current.filter((entry) => entry.id !== inquiry.id));
+      setMessage("Contact message permanently deleted.");
+    } catch (error) { setMessage(error.message); } finally { setBusy(false); }
+  };
+
   const replyToChat = async (chat, event) => {
     event.preventDefault();
     const form = event.currentTarget;
@@ -411,7 +425,7 @@ export default function AdminPage() {
       onCancelEdit={() => setEditing(null)}
       onRemovePhoto={removePhoto}
     />}
-    {view === "inbox" && <AdminInboxView inquiries={inquiries} inboxState={inboxState} busy={busy} onStatusChange={updateInquiryStatus} />}
+    {view === "inbox" && <AdminInboxView inquiries={inquiries} inboxState={inboxState} busy={busy} onStatusChange={updateInquiryStatus} onDelete={deleteInquiry} />}
     {view === "chats" && <AdminLiveChatView chats={chats} chatState={chatState} busy={busy} alertsEnabled={chatAlertsEnabled} onEnableAlerts={enableChatAlerts} onReply={replyToChat} onEnd={endChat} />}
   </section></main>;
 }

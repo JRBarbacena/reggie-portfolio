@@ -45,7 +45,7 @@ export default function DriftWall({
   const lastTsRef = useRef(null);
   const [containerHeight, setContainerHeight] = useState(520);
   const [activeId, setActiveId] = useState(null);
-  const [reduced, setReduced] = useState(false);
+  const [reduced, setReduced] = useState(prefersReducedMotion);
 
   useEffect(() => {
     const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -100,6 +100,14 @@ export default function DriftWall({
   }, [depth, roll, tilt, turn]);
 
   useEffect(() => {
+    if (reduced) {
+      applyPlaneTransform(0, 0);
+      trackRefs.current.forEach((track) => {
+        if (track) track.style.transform = "translate3d(0, 0, 0)";
+      });
+      return undefined;
+    }
+
     let isVisible = true;
     let isRunning = false;
 
@@ -122,14 +130,12 @@ export default function DriftWall({
         const meta = columnMeta[columnIndex];
         if (!track || !meta) continue;
 
-        if (!reduced) {
-          const paused = pauseOnHover && (wallHoveredRef.current || hoveredColRef.current === columnIndex);
-          const target = paused ? 0 : baseVelocities[columnIndex];
-          const easing = 1 - Math.exp(-delta / (target === 0 ? 0.16 : 0.28));
-          velocitiesRef.current[columnIndex] += (target - velocitiesRef.current[columnIndex]) * easing;
-          const rawOffset = (offsetsRef.current[columnIndex] ?? 0) + velocitiesRef.current[columnIndex] * delta;
-          offsetsRef.current[columnIndex] = ((rawOffset % meta.copyHeight) + meta.copyHeight) % meta.copyHeight;
-        }
+        const paused = pauseOnHover && (wallHoveredRef.current || hoveredColRef.current === columnIndex);
+        const target = paused ? 0 : baseVelocities[columnIndex];
+        const easing = 1 - Math.exp(-delta / (target === 0 ? 0.16 : 0.28));
+        velocitiesRef.current[columnIndex] += (target - velocitiesRef.current[columnIndex]) * easing;
+        const rawOffset = (offsetsRef.current[columnIndex] ?? 0) + velocitiesRef.current[columnIndex] * delta;
+        offsetsRef.current[columnIndex] = ((rawOffset % meta.copyHeight) + meta.copyHeight) % meta.copyHeight;
 
         track.style.transform = `translate3d(0, ${-(offsetsRef.current[columnIndex] ?? 0)}px, 0)`;
       }

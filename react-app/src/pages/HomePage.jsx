@@ -15,6 +15,7 @@ let homeEntryMountedThisDocument = false;
 function shouldShowHomeEntry() {
   if (homeEntryMountedThisDocument) return false;
   if (window.matchMedia("(prefers-reduced-motion: reduce)").matches || navigator.connection?.saveData) return false;
+  if (window.matchMedia("(max-width: 719px), (pointer: coarse)").matches) return false;
   if (initialBrowserPathname !== "/") return false;
   const navigationType = performance.getEntriesByType("navigation")[0]?.type ?? "navigate";
   if (initialBrowserPathname === "/" && navigationType === "reload") return true;

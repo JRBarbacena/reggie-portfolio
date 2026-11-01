@@ -8,7 +8,7 @@ import SmoothScroll from "./SmoothScroll.jsx";
 import ChatbotWidget from "./ChatbotWidget.jsx";
 
 const routeBodyClasses = ["home", "story-page", "tech-page", "travel-page", "life-page", "error-page"];
-const applicationRoutes = new Set(["/", "/tech", "/travel", "/life", "/admin"]);
+const applicationRoutes = new Set(["/", "/tech", "/travel", "/life", "/admin", "/privacy"]);
 
 export default function AppShell({ children }) {
   const { pathname } = useLocation();

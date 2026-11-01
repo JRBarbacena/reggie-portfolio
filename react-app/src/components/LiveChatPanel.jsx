@@ -67,7 +67,7 @@ export default function LiveChatPanel({ onBack }) {
     const run = async () => {
       if (cancelled || inFlight) return;
       if (document.visibilityState === "hidden") {
-        schedule(15_000);
+        schedule(30_000);
         return;
       }
       inFlight = true;
@@ -75,7 +75,7 @@ export default function LiveChatPanel({ onBack }) {
       inFlight = false;
       if (cancelled) return;
       failures = succeeded ? 0 : Math.min(failures + 1, 3);
-      schedule(succeeded ? 4_000 : 4_000 * (2 ** failures));
+      schedule(succeeded ? 8_000 : 4_000 * (2 ** failures));
     };
     const resumeWhenVisible = () => {
       if (document.visibilityState !== "visible") return;

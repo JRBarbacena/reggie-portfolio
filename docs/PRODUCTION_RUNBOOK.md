@@ -29,6 +29,11 @@ queue, custom database server, or always-on application host.
 6. Merge only when CI is green. After production deploy, repeat route and API
    smoke checks and confirm the new deployment is serving the expected commit.
 
+The dependency audit runs on pull requests, weekly, on demand, and on every push
+to `main`. Treat a high-severity finding as a failed release. Investigate the
+dependency path before changing versions; do not run `npm audit fix --force` or
+rewrite the lockfile as an incident shortcut.
+
 ## Edge abuse controls (manual provider configuration)
 
 The handlers include bounded per-instance throttles, body limits, and upstream
@@ -57,6 +62,9 @@ always-on service is required:
 - Alert before Supabase database or storage consumption reaches 80% of the plan.
 - Weekly, confirm the expired-chat cleanup job is still scheduled and that old
   sessions are being removed.
+- Weekly, confirm `cleanup-resolved-portfolio-inquiries` remains scheduled.
+  Review its deletion count using synthetic records only; it must affect only
+  replied or archived inquiries older than 180 days.
 
 Logs contain request IDs, action names, and error codes—not visitor messages,
 email addresses, live-chat tokens, or credentials. Use the response
@@ -102,6 +110,17 @@ quarterly and rotate according to provider policy.
 5. After recovery, verify every public route, admin sign-in, signed media,
    contact delivery, temporary-chat expiry, security headers, and service-worker
    update behavior. Record cause, timeline, affected data, and preventive action.
+
+## Visitor-data deletion
+
+- An allow-listed administrator can permanently delete an inquiry from the
+  private Inbox. Confirm the visitor and target message before accepting the
+  irreversible prompt.
+- Replied or archived inquiries are automatically removed after 180 days by
+  migration 008. New and read inquiries are not included.
+- If deletion is requested by email, verify the requester using the address on
+  the inquiry, delete only the matching record, and record completion without
+  copying the message body into operational logs.
 
 The static-site rollback target is 15 minutes when Vercel is healthy. Database
 and media recovery time and recovery point depend on the enabled Supabase plan

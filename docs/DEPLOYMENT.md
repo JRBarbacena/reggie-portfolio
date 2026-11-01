@@ -45,6 +45,12 @@ to an untrusted preview deployment. If a separate preview project is not
 available, omit the server-only variables from Preview; the static portfolio
 and local Zenith FAQ will still work.
 
+In Vercel, scope each value deliberately instead of selecting every environment
+by default. Keep Production secrets Production-only, use synthetic credentials
+and data for Preview, and leave server features disabled for untrusted forks.
+Confirm the Production Branch is `main` and require Vercel's successful preview
+plus both GitHub verification workflows before merging.
+
 Copy `.env.example` only as a naming reference. For local Vite work, place the
 two `VITE_` values in `react-app/.env.local`; keep server-only values in the
 Vercel dashboard or the local environment used by `vercel dev`.
@@ -74,7 +80,8 @@ a new magic link because an already-sent email keeps its original destination.
    chatbot fallback behavior, and one secure contact submission.
 4. Merge to `main` only after required checks pass.
 5. Verify `/`, `/tech`, `/travel`, `/life`, `/admin`, one legacy `.html` URL,
-   and a direct deep-link reload on production.
+   `/privacy`, and a direct deep-link reload on production. Confirm the deployed
+   commit SHA in Vercel before closing the release.
 
 ## Repository controls
 
@@ -102,6 +109,10 @@ each deployment. Do not commit `.vercel` credentials.
 - Repository: revert the cutover commit and allow Vercel to redeploy `main`.
 - Data: do not roll back Supabase migrations destructively; keep content private
   while application compatibility is restored.
+
+Record the last known-good deployment URL before each production promotion.
+After a rollback, verify the deployment SHA and repeat the production smoke
+checks; a Git revert alone is not evidence that Vercel finished promoting it.
 
 After rollback, clear or advance the service-worker shell version if clients are
 still receiving an incompatible cached shell.
