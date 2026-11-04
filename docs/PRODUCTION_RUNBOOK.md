@@ -18,11 +18,13 @@ queue, custom database server, or always-on application host.
 1. Use Node 22 and run `npm ci`.
 2. Run `npm run verify`, `npm run test:e2e`, and
    `npm audit --audit-level=high`.
-3. Review `git diff --check`, the complete diff, generated build sizes, and a
-   high-confidence secret scan. Do not paste secret values into logs or issues.
+3. Review `git diff --check`, the complete diff, generated build sizes, the
+   automated current-tree secret scan, and Git history when exposure is
+   suspected. Do not paste secret values into logs or issues.
 4. Apply unapplied Supabase migrations in order. Never edit a migration that is
    already deployed, and never run destructive migration repair without first
-   reconciling remote history.
+   reconciling remote history. The repository checksum check detects local
+   baseline drift but does not prove remote application or SQL behavior.
 5. Validate the Vercel Preview on desktop, tablet, and mobile. Exercise `/`,
    `/tech`, `/travel`, `/life`, `/admin`, a deep-link reload, offline fallback,
    one temporary chat, and one contact submission.

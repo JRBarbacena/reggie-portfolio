@@ -55,8 +55,9 @@ Copy `.env.example` only as a naming reference. For local Vite work, place the
 two `VITE_` values in `react-app/.env.local`; keep server-only values in the
 Vercel dashboard or the local environment used by `vercel dev`.
 
-Follow [CHATBOT_SETUP.md](CHATBOT_SETUP.md) for the ordered Supabase migration,
-Vercel secret, Responses API, and end-to-end verification steps.
+Follow [CHATBOT_SETUP.md](CHATBOT_SETUP.md) for the ordered Supabase migrations,
+Vercel server variables, optional Resend notification, and end-to-end
+verification steps. Zenith's reviewed FAQ does not use an AI-provider API.
 
 In **Supabase Dashboard → Authentication → URL Configuration**, set:
 
@@ -85,23 +86,28 @@ a new magic link because an already-sent email keeps its original destination.
 
 ## Repository controls
 
-The GitHub repository is public and `main` is protected. Pull requests must be
-up to date and pass these checks:
+The settings in this section are the intended/previously recorded provider
+state. They cannot be proved by repository source alone; verify them in GitHub
+and Vercel before each production release.
+
+The GitHub repository should be public and `main` should be protected. Pull
+requests should be up to date and pass these checks:
 
 - Generated, encoding, unit, React build, and route verification
 
 Browser interaction and motion are reviewed manually before merging; there is
 also a Playwright status check covering desktop, tablet, and mobile viewports.
 
-Linear history and resolved conversations are required. Protection applies to
-administrators; force-pushes and branch deletion are disabled. Approval count is
-zero because this is currently a single-maintainer repository.
+The recorded policy requires linear history and resolved conversations, applies
+protection to administrators, disables force-pushes and branch deletion, and
+uses zero required approvals for the current single-maintainer workflow. Confirm
+that GitHub still matches this policy.
 
-The Vercel CLI is authenticated and linked to `reggie-portfolio`. Both required
-Supabase variables are configured for Development, Preview, and Production. The
-dashboard retains generic framework defaults, while the committed `vercel.json`
-authoritatively overrides the framework, build command, and output directory for
-each deployment. Do not commit `.vercel` credentials.
+The previous runbook records the Vercel CLI as linked to `reggie-portfolio` and
+both required browser Supabase variables as configured for Development, Preview,
+and Production. Verify those claims without exposing values. The committed
+`vercel.json` defines the framework, build command, and output directory; avoid
+conflicting dashboard overrides and never commit `.vercel` credentials.
 
 ## Rollback
 

@@ -146,7 +146,9 @@ Zenith sends only one notification email per chat session to avoid inbox spam.
 ## 4. FAQ and temporary-chat pattern
 
 OpenAI is not required. Reviewed FAQ matching happens in the browser and does
-not store questions. Human-to-human chat uses this path:
+not persist questions by itself. If a visitor later submits the consent-based
+contact form, up to six recent FAQ messages are included as reply context, as
+described on `/privacy`. Human-to-human chat uses this path:
 
 ```text
 Visitor -> POST /api/live-chat -> Vercel Function -> private Supabase tables

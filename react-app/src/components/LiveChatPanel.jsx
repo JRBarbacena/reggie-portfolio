@@ -133,9 +133,14 @@ export default function LiveChatPanel({ onBack }) {
 
   const endChat = async () => {
     if (!session || !window.confirm("End this chat and delete its messages?")) return;
-    setBusy(true);
-    try { await chatRequest({ action: "end", sessionId: session.sessionId, token: session.token }); } catch { /* Clear locally even if cleanup completes later. */ }
-    clearSession("The temporary chat was ended and removed."); setBusy(false);
+    setBusy(true); setStatus("");
+    try {
+      await chatRequest({ action: "end", sessionId: session.sessionId, token: session.token });
+      clearSession("The temporary chat was ended and removed.");
+    } catch (error) {
+      if (error.status === 410) clearSession("That temporary chat already ended or expired.");
+      else setStatus(`${error.message} Your chat is still available here so you can retry erasing it.`);
+    } finally { setBusy(false); }
   };
 
   return <div className="zenith-live-chat">

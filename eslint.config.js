@@ -34,7 +34,7 @@ export default [
     },
   },
   {
-    files: ["api/**/*.js", "server/**/*.js", "tests/**/*.js", "*.config.js"],
+    files: ["api/**/*.js", "server/**/*.js", "scripts/**/*.mjs", "tests/**/*.js", "*.config.js"],
     languageOptions: {
       ecmaVersion: "latest",
       sourceType: "module",

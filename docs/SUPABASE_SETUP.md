@@ -40,5 +40,5 @@ helper function, and adds a separate daily job that deletes contact inquiries
 180 days after they are marked replied or archived. Albums are never touched by
 either cleanup job. Confirm `pg_cron` is enabled before applying migration 008.
 
-The complete click-by-click migration, Vercel variable, Responses API, and live
-verification procedure is in [CHATBOT_SETUP.md](CHATBOT_SETUP.md).
+The complete click-by-click migration, Vercel variable, optional notification,
+and live verification procedure is in [CHATBOT_SETUP.md](CHATBOT_SETUP.md).

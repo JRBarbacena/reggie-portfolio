@@ -33,8 +33,5 @@ jobs:
           node-version: 22
           cache: npm
 
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Run npm security audit
+      - name: Audit the locked dependency graph
         run: npm audit --audit-level=high

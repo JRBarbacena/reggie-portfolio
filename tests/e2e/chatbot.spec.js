@@ -122,6 +122,43 @@ test("a live reply identifies Reggie with his photo", async ({ page }) => {
   await expect(reply.locator("img")).toBeVisible();
 });
 
+test("a failed erase keeps the temporary chat available for retry", async ({ page }) => {
+  const expiresAt = new Date(Date.now() + 60 * 60_000).toISOString();
+  await page.route("**/api/live-chat", async (route) => {
+    const body = route.request().postDataJSON();
+    if (body.action === "presence") return route.fulfill({ json: { presence: "online" } });
+    if (body.action === "start") {
+      return route.fulfill({
+        status: 201,
+        json: {
+          sessionId: "00000000-0000-4000-8000-000000000002",
+          token: "b".repeat(43),
+          expiresAt,
+          presence: "online",
+          messages: [],
+        },
+      });
+    }
+    if (body.action === "end") {
+      return route.fulfill({ status: 502, json: { message: "Temporary live chat is unavailable right now." } });
+    }
+    return route.fulfill({ json: { messages: [], expiresAt, presence: "online" } });
+  });
+
+  await page.goto("/tech", { waitUntil: "domcontentloaded" });
+  await page.getByRole("button", { name: "Open Zenith" }).click();
+  await page.getByLabel("Ask about the portfolio").fill("Talk to Reggie");
+  await page.getByLabel("Ask about the portfolio").press("Enter");
+  await page.getByRole("button", { name: "Talk to Reggie" }).click();
+  await page.getByRole("button", { name: "Start temporary chat" }).click();
+  page.once("dialog", (dialog) => dialog.accept());
+  await page.getByRole("button", { name: "End & erase" }).click();
+
+  await expect(page.getByText(/still available here so you can retry erasing it/i)).toBeVisible();
+  await expect(page.getByRole("button", { name: "End & erase" })).toBeVisible();
+  await expect.poll(() => page.evaluate(() => sessionStorage.getItem("zenith-live-chat-session"))).not.toBeNull();
+});
+
 test("the launcher mascot subtly follows mouse movement", async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== "desktop", "Mouse-only behavior is covered on the desktop project.");
   await page.goto("/life", { waitUntil: "domcontentloaded" });
