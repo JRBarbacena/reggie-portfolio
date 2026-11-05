@@ -7,6 +7,8 @@ changes, then read the documents relevant to the task:
 - `docs/QUALITY_STANDARDS.md` — acceptance standards and current enforcement.
 - `docs/ROADMAP.md` — evidence-backed improvement priorities.
 - `docs/CONTINUOUS_IMPROVEMENT.md` — recurring supervised AI workflow.
+- `docs/WORKSPACE_MANAGEMENT.md` — workspace isolation, ownership, and
+  integration procedures.
 - `docs/DISCOVERY_REPORT.md` — current findings and external verification gaps.
 - `docs/DEPLOYMENT.md` and `docs/PRODUCTION_RUNBOOK.md` — release and recovery.
 - `docs/SUPABASE_SETUP.md` and `docs/CHATBOT_SETUP.md` — backend setup.
@@ -202,6 +204,32 @@ server keys is high risk: inspect and propose first, use an isolated project and
 synthetic data, and require explicit human authorization before implementation
 or production action.
 
+## AI usage and browser-verification efficiency
+
+Use the least expensive reliable method for development, debugging, and code
+changes. Reduce token and tool usage without weakening correctness, security,
+accessibility, or the verification standards below.
+
+- Inspect the relevant source and existing tests before using browser
+  automation. Read only the task-relevant documents and file sections; do not
+  repeatedly reload unchanged context during the same task.
+- Prefer static analysis, focused searches, and the smallest relevant automated
+  test for straightforward component, CSS, documentation, or logic changes.
+- Use Playwright Chromium only when actual browser behavior or visual evidence
+  is needed, such as responsive layout, rendering/alignment, interaction,
+  navigation, authentication, focus, touch, reduced motion, or a browser-only
+  defect. Do not launch it merely because a frontend file changed.
+- When Playwright is justified, target the affected route, state, viewport, and
+  test first. Reuse an active browser/server session when practical, inspect the
+  smallest useful DOM region, and capture screenshots only when visual review
+  materially helps. Avoid repeated navigation and unchanged screenshots.
+- Expand from focused checks to broader `verify` or end-to-end gates when a
+  failure, cross-cutting risk, release-level task, or the standards below require
+  it. Do not run unrelated extensive suites by default.
+- Keep progress updates and handoffs concise. Report files changed, tests run,
+  whether Chromium was used and why, remaining issues, and whether verification
+  succeeded.
+
 ## Testing and verification
 
 The normal commands, after an explicitly approved clean dependency install, are:
@@ -232,8 +260,10 @@ For acceptance criteria and missing automation, follow
 
 ## Git, pull-request, and deployment rules
 
-- Work only on the current development/feature/chore branch unless the user
-  explicitly directs otherwise.
+- Work only in the task's assigned workspace and non-production task or
+  integration branch. A Codex-managed detached worktree is allowed only when
+  its intended base branch and starting commit are recorded for the task,
+  unless the user explicitly directs otherwise.
 - Never merge or commit directly to `main`, and never force-push.
 - Do not push, open/merge a pull request, deploy, promote, or roll back without
   explicit authorization for that exact action.
@@ -278,3 +308,57 @@ Every completed task must report:
 
 Use the Observe → Evaluate → Prioritize → Implement → Test → Review → Document
 workflow in `docs/CONTINUOUS_IMPROVEMENT.md`.
+
+## Workspace isolation and concurrent development
+
+`docs/WORKSPACE_MANAGEMENT.md` is the canonical operating procedure for Local,
+Worktree, Cloud, CLI, desktop, and scheduled work. These requirements are
+permanent safety boundaries:
+
+- No two autonomous implementation tasks may modify the same Git working tree
+  simultaneously. Read-only inspection may be shared when it does not mutate
+  repository or provider state.
+- Every implementation task must have one assigned directory, one owner or
+  orchestrator, an assigned non-production task or integration branch, an
+  explicit scope and file-ownership boundary, and a recorded starting commit.
+  A detached managed worktree must still record its assigned base branch.
+- Before modifying files, run and review `pwd`, `git branch --show-current`,
+  `git rev-parse HEAD`, `git status --short`, and
+  `git worktree list --porcelain`. Identify Local, Worktree, or Cloud mode and
+  confirm that the directory is assigned to the task and has no other active
+  implementation owner.
+- Prefer a Codex-managed worktree for implementation. Concurrent local tasks
+  require distinct worktrees and must not share a mutable branch; a managed
+  detached HEAD remains isolated until a task branch is assigned. When the
+  developer is actively using the local checkout, unattended or background
+  implementation must use another worktree; otherwise it must remain read-only.
+- Each autonomous agent that may write must have its own assigned worktree and
+  ownership scope. Delegation, a new conversation, or a forked chat does not by
+  itself establish a separate directory; verify the reported workspace before
+  allowing the agent to implement.
+- Scheduled tasks default to read-only observation. Any explicitly authorized
+  scheduled implementation in this Git repository must use a dedicated
+  background worktree, never the developer's active Local checkout.
+- Never reset, stash, clean, overwrite, discard, or transfer another developer's
+  or agent's uncommitted work. Handoffs that move code between Local and a
+  worktree require human awareness and a reviewed destination state.
+- Worktrees isolate checked-out files, not shared databases, ports, browser
+  profiles, output directories, secrets, Vercel/Supabase/GitHub settings, or
+  external services. Assign and coordinate those resources separately.
+- Stop implementation when ownership, isolation, scope, or repository state is
+  ambiguous. Preserve the worktree, collect read-only evidence, and request
+  direction rather than resolving the ambiguity with Git mutations.
+- Integration is controlled: stop the implementation owner, review its complete
+  diff, run relevant checks, identify overlap with other worktrees, then use a
+  human-reviewed merge, pull request, Handoff, or cherry-pick. Never
+  automatically merge overlapping or unverified changes; rerun checks after
+  integration.
+- Record the source and integration commits plus the rollback method before
+  integration. If rollback is required, use a reviewed revert or the documented
+  release procedure; never rewrite shared history or discard another workspace's
+  changes to manufacture a rollback.
+
+`AGENTS.md` communicates policy to cooperating tools; it is not a filesystem
+lock and cannot prevent another process from writing. Safety depends on selecting
+the correct Codex execution mode, using Git worktrees and branches, recording
+ownership, and stopping when a collision is detected.
