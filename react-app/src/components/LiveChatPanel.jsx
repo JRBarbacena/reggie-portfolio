@@ -9,11 +9,12 @@ function savedSession() {
   try { return JSON.parse(sessionStorage.getItem(STORAGE_KEY) || "null"); } catch { return null; }
 }
 
-async function chatRequest(payload) {
+async function chatRequest(payload, signal) {
   return requestJson("/api/live-chat", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload),
+    signal,
   }, {
     timeoutMs: 8_000,
     fallbackMessage: "Temporary chat is unavailable.",
@@ -27,26 +28,41 @@ export default function LiveChatPanel({ onBack }) {
   const [status, setStatus] = useState("");
   const [busy, setBusy] = useState(false);
   const endRef = useRef(null);
+  const stateRevisionRef = useRef(0);
   const sessionId = session?.sessionId;
   const sessionToken = session?.token;
+
+  const advanceStateRevision = useCallback(() => {
+    stateRevisionRef.current += 1;
+  }, []);
+
+  const updateStatus = useCallback((message) => {
+    advanceStateRevision();
+    setStatus(message);
+  }, [advanceStateRevision]);
 
   const clearSession = useCallback((message = "") => {
     sessionStorage.removeItem(STORAGE_KEY);
     setSession(null);
     setMessages([]);
-    setStatus(message);
-  }, []);
+    updateStatus(message);
+  }, [updateStatus]);
 
-  const poll = useCallback(async (activeSession) => {
+  const poll = useCallback(async (activeSession, signal) => {
     if (!activeSession) return;
+    const stateRevision = stateRevisionRef.current;
     try {
-      const result = await chatRequest({ action: "poll", sessionId: activeSession.sessionId, token: activeSession.token });
+      const result = await chatRequest({ action: "poll", sessionId: activeSession.sessionId, token: activeSession.token }, signal);
+      if (signal?.aborted) return false;
+      if (stateRevisionRef.current !== stateRevision) return true;
       setMessages(result.messages ?? []);
       setPresence(result.presence ?? "offline");
       setSession((current) => current ? { ...current, expiresAt: result.expiresAt } : current);
       setStatus("");
       return true;
     } catch (error) {
+      if (error.name === "AbortError") return false;
+      if (stateRevisionRef.current !== stateRevision) return true;
       if (error.status === 410) clearSession("That temporary chat expired. You can start a new one.");
       else setStatus(error.message);
       return false;
@@ -60,6 +76,7 @@ export default function LiveChatPanel({ onBack }) {
     let failures = 0;
     let inFlight = false;
     let timer;
+    const controller = new AbortController();
 
     const schedule = (delay) => {
       if (!cancelled) timer = window.setTimeout(run, delay);
@@ -71,7 +88,7 @@ export default function LiveChatPanel({ onBack }) {
         return;
       }
       inFlight = true;
-      const succeeded = await poll(activeSession);
+      const succeeded = await poll(activeSession, controller.signal);
       inFlight = false;
       if (cancelled) return;
       failures = succeeded ? 0 : Math.min(failures + 1, 3);
@@ -87,6 +104,7 @@ export default function LiveChatPanel({ onBack }) {
     document.addEventListener("visibilitychange", resumeWhenVisible);
     return () => {
       cancelled = true;
+      controller.abort();
       window.clearTimeout(timer);
       document.removeEventListener("visibilitychange", resumeWhenVisible);
     };
@@ -105,14 +123,15 @@ export default function LiveChatPanel({ onBack }) {
 
   const start = async (event) => {
     event.preventDefault();
-    setBusy(true); setStatus("");
+    setBusy(true); updateStatus("");
     try {
       const name = new FormData(event.currentTarget).get("name");
       const result = await chatRequest({ action: "start", name });
       const next = { sessionId: result.sessionId, token: result.token, expiresAt: result.expiresAt };
+      advanceStateRevision();
       sessionStorage.setItem(STORAGE_KEY, JSON.stringify(next));
       setSession(next); setMessages([]); setPresence(result.presence ?? "offline");
-    } catch (error) { setStatus(error.message); } finally { setBusy(false); }
+    } catch (error) { updateStatus(error.message); } finally { setBusy(false); }
   };
 
   const send = async (event) => {
@@ -120,30 +139,31 @@ export default function LiveChatPanel({ onBack }) {
     const form = event.currentTarget;
     const message = String(new FormData(form).get("message") ?? "").trim();
     if (!message || !session) return;
-    setBusy(true); setStatus("");
+    setBusy(true); updateStatus("");
     try {
       const result = await chatRequest({ action: "send", sessionId: session.sessionId, token: session.token, message });
+      advanceStateRevision();
       form.reset(); setMessages(result.messages ?? []); setPresence(result.presence ?? "offline");
       setSession((current) => ({ ...current, expiresAt: result.expiresAt }));
     } catch (error) {
       if (error.status === 410) clearSession("That temporary chat expired. You can start a new one.");
-      else setStatus(error.message);
+      else updateStatus(error.message);
     } finally { setBusy(false); }
   };
 
   const endChat = async () => {
     if (!session || !window.confirm("End this chat and delete its messages?")) return;
-    setBusy(true); setStatus("");
+    setBusy(true); updateStatus("");
     try {
       await chatRequest({ action: "end", sessionId: session.sessionId, token: session.token });
       clearSession("The temporary chat was ended and removed.");
     } catch (error) {
       if (error.status === 410) clearSession("That temporary chat already ended or expired.");
-      else setStatus(`${error.message} Your chat is still available here so you can retry erasing it.`);
+      else updateStatus(`${error.message} Your chat is still available here so you can retry erasing it.`);
     } finally { setBusy(false); }
   };
 
-  return <div className="zenith-live-chat">
+  return <div className="zenith-live-chat" data-session-expires-at={session?.expiresAt || undefined}>
     <div className="chatbot-panel__section-heading">
       <div className="zenith-live-chat__peer"><img src={REGGIE_PHOTO} alt="John Reggie Barbacena" /><div><strong>Chat with Reggie</strong><span>Temporary messages expire one hour after the latest reply.</span></div></div>
       <button type="button" onClick={onBack}>Back to Zenith</button>

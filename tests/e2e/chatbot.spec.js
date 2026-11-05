@@ -123,7 +123,27 @@ test("a live reply identifies Reggie with his photo", async ({ page }) => {
 });
 
 test("a failed erase keeps the temporary chat available for retry", async ({ page }) => {
-  const expiresAt = new Date(Date.now() + 60 * 60_000).toISOString();
+  const initialExpiresAt = new Date(Date.now() + 30 * 60_000).toISOString();
+  const staleExpiresAt = new Date(Date.now() + 45 * 60_000).toISOString();
+  const newerExpiresAt = new Date(Date.now() + 60 * 60_000).toISOString();
+  const newerMessage = {
+    id: "visitor-newer",
+    sender: "visitor",
+    body: "Keep this newer message",
+    created_at: new Date().toISOString(),
+  };
+  const staleMessage = {
+    id: "admin-stale",
+    sender: "admin",
+    body: "This stale poll must not replace newer state",
+    created_at: new Date().toISOString(),
+  };
+  let releasePoll;
+  let markPollStarted;
+  let markPollCompleted;
+  const pollRelease = new Promise((resolve) => { releasePoll = resolve; });
+  const pollStarted = new Promise((resolve) => { markPollStarted = resolve; });
+  const pollCompleted = new Promise((resolve) => { markPollCompleted = resolve; });
   await page.route("**/api/live-chat", async (route) => {
     const body = route.request().postDataJSON();
     if (body.action === "presence") return route.fulfill({ json: { presence: "online" } });
@@ -133,16 +153,28 @@ test("a failed erase keeps the temporary chat available for retry", async ({ pag
         json: {
           sessionId: "00000000-0000-4000-8000-000000000002",
           token: "b".repeat(43),
-          expiresAt,
-          presence: "online",
+          expiresAt: initialExpiresAt,
+          presence: "offline",
           messages: [],
         },
+      });
+    }
+    if (body.action === "send") {
+      return route.fulfill({
+        json: { messages: [newerMessage], expiresAt: newerExpiresAt, presence: "online" },
       });
     }
     if (body.action === "end") {
       return route.fulfill({ status: 502, json: { message: "Temporary live chat is unavailable right now." } });
     }
-    return route.fulfill({ json: { messages: [], expiresAt, presence: "online" } });
+    if (body.action === "poll") {
+      markPollStarted();
+      await pollRelease;
+      await route.fulfill({ json: { messages: [staleMessage], expiresAt: staleExpiresAt, presence: "offline" } });
+      markPollCompleted();
+      return undefined;
+    }
+    return route.fulfill({ json: { messages: [], expiresAt: initialExpiresAt, presence: "offline" } });
   });
 
   await page.goto("/tech", { waitUntil: "domcontentloaded" });
@@ -151,10 +183,23 @@ test("a failed erase keeps the temporary chat available for retry", async ({ pag
   await page.getByLabel("Ask about the portfolio").press("Enter");
   await page.getByRole("button", { name: "Talk to Reggie" }).click();
   await page.getByRole("button", { name: "Start temporary chat" }).click();
+  await pollStarted;
+  await page.getByLabel("Message Reggie").fill(newerMessage.body);
+  await page.getByRole("button", { name: "Send live message" }).click();
+  await expect(page.getByText(newerMessage.body, { exact: true })).toBeVisible();
+  await expect(page.locator(".zenith-presence")).toContainText("Reggie is online");
+  await expect(page.locator(".zenith-live-chat")).toHaveAttribute("data-session-expires-at", newerExpiresAt);
   page.once("dialog", (dialog) => dialog.accept());
   await page.getByRole("button", { name: "End & erase" }).click();
 
   await expect(page.getByText(/still available here so you can retry erasing it/i)).toBeVisible();
+  releasePoll();
+  await pollCompleted;
+  await expect(page.getByText(/still available here so you can retry erasing it/i)).toBeVisible();
+  await expect(page.getByText(newerMessage.body, { exact: true })).toBeVisible();
+  await expect(page.getByText(staleMessage.body, { exact: true })).toHaveCount(0);
+  await expect(page.locator(".zenith-presence")).toContainText("Reggie is online");
+  await expect(page.locator(".zenith-live-chat")).toHaveAttribute("data-session-expires-at", newerExpiresAt);
   await expect(page.getByRole("button", { name: "End & erase" })).toBeVisible();
   await expect.poll(() => page.evaluate(() => sessionStorage.getItem("zenith-live-chat-session"))).not.toBeNull();
 });
