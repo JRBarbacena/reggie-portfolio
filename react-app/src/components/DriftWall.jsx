@@ -247,7 +247,9 @@ export default function DriftWall({
                         onBlur={release}
                       >
                         <span className="drift-wall__inner" style={{ "--tech-color": `#${item.hex}` }}>
-                          {item.icon ? (
+                          {item.image ? (
+                            <img className="drift-wall__logo-image" src={item.image} alt="" aria-hidden="true" />
+                          ) : item.icon ? (
                             <svg className="drift-wall__logo" viewBox="0 0 24 24" aria-hidden="true">
                               <path d={item.icon.path} />
                             </svg>
