@@ -32,7 +32,7 @@ Every change must:
 
 | Standard | Acceptance measure | Current mechanism | Status |
 |---|---|---|---|
-| No committed secrets | Zero private/service keys, tokens, private keys, or populated secret env values in the tracked tree | `.gitignore`, placeholder-only `.env.example`, `npm run check:secrets` | Enforced for common high-confidence patterns in repository text; Git history and provider scanning remain manual/external |
+| No committed secrets | Zero private/service keys, tokens, private keys, or populated secret env values in the tracked tree | `.gitignore`, placeholder-only `.env.example`, `npm run check:secrets` over eligible tracked and non-ignored untracked current-tree text | Enforced for common high-confidence patterns in valid UTF-8 text up to 2 MiB; binary content, larger files, Git history, and provider scanning remain outside this check |
 | Browser credential boundary | Only `VITE_SUPABASE_URL` and `VITE_SUPABASE_PUBLISHABLE_KEY` may be bundled into the client | `react-app/src/lib/supabase.js`, environment docs | Implemented |
 | Admin authorization | A Supabase session plus `is_album_admin() = true` is required; anonymous and ordinary authenticated users cannot access admin data | Database grants, RLS, Storage policies, Admin RPC check | Implemented; production state external |
 | Public content boundary | Anonymous clients can select only published albums/photos and their policy-authorized media | RLS and private `album-media` bucket | Implemented; production state external |

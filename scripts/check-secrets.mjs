@@ -1,4 +1,5 @@
 import { execFileSync } from "node:child_process";
+import { isUtf8 } from "node:buffer";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { pathToFileURL } from "node:url";
@@ -33,6 +34,29 @@ function decodesToServiceRole(token) {
   }
 }
 
+function listGitPaths(root, args) {
+  return execFileSync("git", ["ls-files", "-z", ...args], {
+    cwd: root,
+    encoding: "utf8",
+  })
+    .split("\0")
+    .filter(Boolean);
+}
+
+function isScannableText(contents) {
+  if (!isUtf8(contents)) return false;
+
+  for (const byte of contents) {
+    const isAllowedWhitespace = byte === 0x09
+      || byte === 0x0a
+      || byte === 0x0c
+      || byte === 0x0d;
+    if ((byte < 0x20 && !isAllowedWhitespace) || byte === 0x7f) return false;
+  }
+
+  return true;
+}
+
 export function scanTextForSecrets(file, text) {
   const findings = new Set();
 
@@ -55,14 +79,14 @@ export function scanTextForSecrets(file, text) {
 }
 
 export function scanTrackedFiles(root = process.cwd()) {
-  const tracked = execFileSync("git", ["ls-files", "-z", "--cached", "--others", "--exclude-standard"], { cwd: root, encoding: "utf8" })
-    .split("\0")
-    .filter(Boolean);
+  const deleted = new Set(listGitPaths(root, ["--deleted"]));
+  const candidates = listGitPaths(root, ["--cached", "--others", "--exclude-standard"])
+    .filter((file) => !deleted.has(file));
   const findings = [];
 
-  for (const file of tracked) {
+  for (const file of candidates) {
     const contents = readFileSync(resolve(root, file));
-    if (contents.length > MAX_SCANNED_BYTES || contents.includes(0)) continue;
+    if (contents.length > MAX_SCANNED_BYTES || !isScannableText(contents)) continue;
     findings.push(...scanTextForSecrets(file, contents.toString("utf8")));
   }
 
@@ -76,8 +100,8 @@ function main() {
     return;
   }
 
-  console.error("Potential committed secrets were detected (values are intentionally hidden):");
-  for (const finding of findings) console.error(`- ${finding.file}: ${finding.rule}`);
+  console.error("Potential secrets were detected in eligible repository text files (values are intentionally hidden):");
+  for (const finding of findings) console.error(`- ${JSON.stringify(finding.file)}: ${finding.rule}`);
   process.exitCode = 1;
 }
 
