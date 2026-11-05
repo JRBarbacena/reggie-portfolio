@@ -34,7 +34,8 @@ describe("Zenith FAQ", () => {
 
   it("answers detailed questions about the portfolio system", () => {
     expect(answerPortfolioFaq("How does the preloader work?")).toContain("Braille-style");
-    expect(answerPortfolioFaq("What does the ballpit do?")).toContain("65");
+    expect(answerPortfolioFaq("What does the ballpit do?")).toContain("57");
+    expect(PORTFOLIO_KNOWLEDGE.home.interactions).toContain("57-sphere Three.js Ballpit with cursor interaction and no cursor-following sphere");
     expect(answerPortfolioFaq("What tools are in the tech stack?")).toContain("TypeScript");
     expect(answerPortfolioFaq("Is live chat private?")).toContain("one hour");
   });

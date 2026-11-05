@@ -33,7 +33,7 @@ export const PORTFOLIO_KNOWLEDGE = Object.freeze({
     },
     interactions: [
       "Braille-style name scramble and lifting curtain on a fresh Home load or refresh",
-      "48-sphere Three.js Ballpit with cursor interaction and no cursor-following sphere",
+      "57-sphere Three.js Ballpit with cursor interaction and no cursor-following sphere",
       "photo windows styled with macOS controls",
       "destination carousel whose side card centers before a second click navigates",
       "social links that slide in after the visitor starts scrolling",

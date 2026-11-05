@@ -87,7 +87,7 @@ const FAQ_RULES = [
   {
     intent: "ballpit",
     terms: ["ballpit", "balls", "hero background", "three js", "webgl", "cursor interaction"],
-    answer: `The Home hero uses a Three.js Ballpit with 65 softly shaded spheres. It prepares during the entry sequence, moves beneath the lifting curtain, responds to cursor movement without a cursor-following ball, and pauses when it is genuinely off-screen to save work. ${DIRECT_CHAT_HINT}`,
+    answer: `The Home hero uses a Three.js Ballpit with 57 softly shaded spheres. It prepares during the entry sequence, moves beneath the lifting curtain, responds to cursor movement without a cursor-following ball, and pauses when it is genuinely off-screen to save work. ${DIRECT_CHAT_HINT}`,
   },
   {
     intent: "design",
