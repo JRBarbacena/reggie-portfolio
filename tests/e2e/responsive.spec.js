@@ -43,3 +43,38 @@ test("touch viewports skip the cinematic entry and expose home content immediate
   await expect(page.locator(".home-entry-preloader")).toHaveCount(0);
   await expect(page.getByRole("heading", { name: "Welcome to my little space on the internet" })).toBeVisible();
 });
+
+test("album viewer separates the title and description responsively", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto("/tech", { waitUntil: "domcontentloaded" });
+
+  const albumButton = page.getByRole("button", { name: /DevDays at Microsoft/ });
+  await albumButton.scrollIntoViewIfNeeded();
+  await albumButton.click();
+
+  const dialog = page.getByRole("dialog", { name: "DevDays at Microsoft" });
+  const description = dialog.locator(".album-masonry-modal__description");
+  await expect(dialog).toBeVisible();
+  await expect(description).toContainText("developer conversations");
+
+  const bounds = await dialog.locator(".album-masonry-modal__details").evaluate((details) => {
+    const title = details.querySelector(".album-masonry-modal__title-block").getBoundingClientRect();
+    const copy = details.querySelector(".album-masonry-modal__description").getBoundingClientRect();
+    return {
+      title: { top: title.top, right: title.right, bottom: title.bottom },
+      copy: { top: copy.top, left: copy.left },
+      viewportWidth: innerWidth,
+    };
+  });
+
+  if (bounds.viewportWidth <= 700) {
+    expect(bounds.copy.top).toBeGreaterThan(bounds.title.bottom);
+  } else {
+    // Both columns share a grid row; this tolerance only allows subpixel layout rounding.
+    expect(Math.abs(bounds.copy.top - bounds.title.top)).toBeLessThan(2);
+    expect(bounds.copy.left).toBeGreaterThan(bounds.title.right);
+  }
+
+  await dialog.getByRole("button", { name: "Close photo album" }).click();
+  await expect(albumButton).toBeFocused();
+});

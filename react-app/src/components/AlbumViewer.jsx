@@ -1,4 +1,5 @@
 import { lazy, Suspense, useEffect, useMemo, useRef, useState } from "react";
+import "./Masonry.css";
 
 const Masonry = lazy(() => import("./Masonry.jsx"));
 
@@ -50,10 +51,12 @@ export default function AlbumViewer({ album, titleId, onRequestClose }) {
   >
     {album && <article className="album-masonry-modal">
       <header className="album-masonry-modal__header">
-        <div>
-          <p>{album.location || "Photo album"} · {photos.length} {photos.length === 1 ? "photo" : "photos"}</p>
-          <h2 id={titleId}>{album.title}</h2>
-          {album.description && <span>{album.description}</span>}
+        <div className="album-masonry-modal__details">
+          <div className="album-masonry-modal__title-block">
+            <h2 id={titleId}>{album.title}</h2>
+            <p className="album-masonry-modal__meta">{album.location || "Photo album"} · {photos.length} {photos.length === 1 ? "photo" : "photos"}</p>
+          </div>
+          {album.description && <p className="album-masonry-modal__description">{album.description}</p>}
         </div>
         <button type="button" onClick={closeWithTransition} disabled={isClosing} aria-label="Close photo album">×</button>
       </header>

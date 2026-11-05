@@ -1,6 +1,5 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { gsap } from "gsap";
-import "./Masonry.css";
 
 const COLUMN_QUERIES = ["(min-width: 1200px)", "(min-width: 780px)", "(min-width: 520px)"];
 const COLUMN_VALUES = [4, 3, 2];
