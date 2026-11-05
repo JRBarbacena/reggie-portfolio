@@ -46,7 +46,7 @@ Every change must:
 | No sensitive logs | Logs contain event, request ID, action, and bounded error metadata—not visitor content, email, tokens, or credentials | `logServerError()` | Implemented; log review external |
 | Dependency security | Zero unresolved high-severity advisories before release | GitHub audit workflow and local `npm audit --audit-level=high` | Enforced, currently failing baseline |
 | Security headers | CSP, framing denial, `nosniff`, referrer policy, permissions policy, and HSTS in production | `vercel.json`; HSTS supplied by Vercel | Implemented/external |
-| Migration repository integrity | Existing migrations keep their ordered names and reviewed contents; migrations contain no connection target or psql shell command | `npm run check:migrations`, SHA-256 manifest | Enforced statically; SQL execution and remote state remain external |
+| Migration repository integrity | Existing migrations keep their ordered names and reviewed contents; migrations contain no connection target or psql shell command | `npm run check:migrations`, SHA-256 manifest, and mandatory diff review | Naming, encoding, target, and manifest consistency are enforced statically; reviewed-content immutability remains manual, while SQL execution and remote state remain external |
 
 Security-sensitive changes require explicit allow/deny tests for anonymous,
 ordinary authenticated, allow-listed admin, and server roles in an isolated
@@ -109,8 +109,10 @@ human review even after automated checks are added.
   leaking configuration or provider details.
 - PWA behavior must keep public cached content recoverable while refusing
   offline Admin access.
-- Facts shown by pages, Zenith, tests, and documentation must agree. The current
-  Ballpit 48/65/57 drift violates this standard and is tracked in `ROADMAP.md`.
+- Facts shown by pages, Zenith, tests, and documentation must agree. The former
+  Ballpit 48/65/57 drift was reconciled to the runtime's 57-sphere configuration
+  on 2026-11-05; future changes must update the runtime, knowledge, FAQ, tests,
+  and documentation together.
 
 Existing checks cover route markers, FAQ rules, selected API invalid paths,
 album signing, responsive overflow, Zenith interaction, and a mocked live reply.

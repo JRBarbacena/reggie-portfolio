@@ -41,7 +41,7 @@ There is no server-rendered React layer and no custom application server.
 | Styling | Plain CSS, shared design tokens, global/component styles |
 | Motion | Anime.js, GSAP, Lenis, CSS transitions, IntersectionObserver |
 | Graphics | Three.js/WebGL Ballpit, Canvas click sparks, inline SVG |
-| Icons | Phosphor Icons and Simple Icons |
+| Icons | Phosphor Icons, Simple Icons, and the Devicon Java mark |
 | Backend | Supabase Auth, Postgres/PostgREST, Storage, Realtime, RLS |
 | Server endpoints | Two Vercel Functions under `api/` |
 | Optional email | Resend, called only for the first visitor chat message |

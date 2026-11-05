@@ -23,8 +23,10 @@ queue, custom database server, or always-on application host.
    suspected. Do not paste secret values into logs or issues.
 4. Apply unapplied Supabase migrations in order. Never edit a migration that is
    already deployed, and never run destructive migration repair without first
-   reconciling remote history. The repository checksum check detects local
-   baseline drift but does not prove remote application or SQL behavior.
+   reconciling remote history. The repository checksum check detects migration
+   content that no longer matches the current manifest, but code review must
+   separately reject edits that merely update an existing migration and its
+   checksum together. Neither check proves remote application or SQL behavior.
 5. Validate the Vercel Preview on desktop, tablet, and mobile. Exercise `/`,
    `/tech`, `/travel`, `/life`, `/admin`, a deep-link reload, offline fallback,
    one temporary chat, and one contact submission.

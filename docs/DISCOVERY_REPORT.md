@@ -2,6 +2,10 @@
 
 Review date: 2026-11-01
 
+Baseline recovery update: 2026-11-04. The original discovery observations remain
+below for traceability; the local dependency and verification status is updated
+under **Baseline recovery update**.
+
 This report is a source inspection and non-mutating verification baseline. No
 application feature, database schema, production record, dependency, deployment,
 or secret was changed or accessed.
@@ -29,12 +33,13 @@ bodies, idempotent contacts, token-hashed chat sessions, database-enforced chat
 limits, retention jobs, CSP, private media, reduced-motion behavior, service-free
 browser tests, and rollback documentation.
 
-The immediate baseline is not release-green. The committed lockfile audit
-reports five high and eight moderate advisories, and the local dependency tree is
-incomplete/corrupt, so lint, type analysis, unit tests, build, and Playwright
-could not be executed in this review without reinstalling dependencies. The
-source-defined test suite is useful but lacks real Supabase/RLS integration,
-automated accessibility checks, coverage thresholds, and performance budgets.
+During the original 2026-11-01 review, the baseline was not release-green. The
+committed lockfile audit reported five high and eight moderate advisories, and
+the local dependency tree was incomplete/corrupt, so lint, type analysis, unit
+tests, build, and Playwright could not be executed without reinstalling
+dependencies. The 2026-11-04 recovery result is recorded below; the
+source-defined test suite still lacks real Supabase/RLS integration, automated
+accessibility checks, coverage thresholds, and performance budgets.
 
 ## What was inspected
 
@@ -95,10 +100,14 @@ The full component and data-flow description is in
 
 ### Findings and follow-up
 
+This table preserves the original discovery evidence. Items resolved in the
+working repository are labeled with their resolution date; provider-side and
+dependency findings remain outstanding until separately verified or remediated.
+
 | Priority | Finding | Why it matters | Recommended supervised action |
 |---|---|---|---|
 | P0 | Lockfile audit reports 5 high and 8 moderate advisories | The security workflow should fail today; Vite and transitive Zod findings include high severity | Review advisory reachability, update one dependency group at a time, run the full suite, and avoid `npm audit fix --force` |
-| P0 | Local `node_modules` is incomplete and has no `.bin` directory | The documented baseline cannot be reproduced in this checkout; `npm ls` reports many invalid/extraneous packages | With approval, run a clean `npm ci`, then rerun every gate before application work |
+| P0 | **Resolved locally 2026-11-04:** `node_modules` was incomplete and had no `.bin` directory | The original documented baseline could not be reproduced; the authorized recovery restored a lockfile-reproducible local tree | Preserve the committed lockfile and repeat `npm ci` plus the documented gates in clean release/CI environments |
 | P1 | Applied migration and cron state is not provable from source | Correct SQL does not guarantee production RLS, grants, retention, or caps are active | Compare remote migration history and cron jobs read-only; never auto-apply from an AI run |
 | P1 | API rate limits are process-local | Cold starts and multiple function instances reset/split counters; source-IP header trust is platform-dependent | Confirm the documented Vercel Firewall rules and observe 429/5xx behavior before tuning |
 | P1 | No real Supabase authorization integration tests | Current tests mostly inspect SQL text and mocked clients; policy regressions could pass CI | Add an isolated test project or local Supabase test job with synthetic users and explicit allow/deny cases |
@@ -107,7 +116,7 @@ The full component and data-flow description is in
 | P2 | No automated accessibility audit | Keyboard behavior is tested for Zenith, but WCAG regressions across pages/dialogs are not systematically detected | Add Playwright plus axe checks for public routes, modal states, and reduced motion |
 | P2 | No performance or bundle budgets | Animation libraries, WebGL, 6.7 MB of public assets, and roughly 9,300 CSS lines can regress silently | Record build chunks and add practical Lighthouse/bundle/image budgets after a clean build |
 | P2 | Built-in photos do not currently have responsive variants | `responsivePhotoSrcSet()` returns `undefined`; `sizes` attributes therefore do not select smaller files | Generate reviewed image variants and validate visual quality before enabling `srcset` |
-| P2 | Portfolio facts have drifted from implementation | Knowledge says 48 Ballpit spheres, FAQ says 65, implementation uses 57; the FAQ test asserts the stale 65 | Establish one reviewed source of truth and add implementation-linked contract tests |
+| P2 | **Resolved locally 2026-11-05:** Ballpit facts had drifted from implementation | Knowledge said 48 spheres, FAQ said 65, implementation used 57, and the FAQ test asserted the stale 65 | Keep the owner-reviewed 57-sphere runtime, knowledge, FAQ, test, and documentation contract synchronized |
 | P3 | CSS ownership is diffuse | Global base/component/legacy/responsive CSS and colocated files overlap, increasing visual-regression risk | Map selector ownership, remove dead rules only with screenshot review, and avoid broad AI rewrites |
 
 ### Authorization boundary summary
@@ -135,10 +144,14 @@ production Supabase was deliberately not queried.
 3. Vitest unit tests.
 4. The Vite production build.
 
-The source defines 39 expanded unit cases across request parsing, API contracts,
-FAQ matching, state precedence, album loading/signing, privacy, route markers,
-and upload rules. It defines 15 Playwright scenarios before the three-project
-desktop/tablet/mobile matrix, with project-specific skips for pointer behavior.
+As observed locally on 2026-11-05, `npx vitest list` discovers 51 unit test
+cases across request parsing, API contracts, FAQ matching, state precedence,
+album loading/signing, privacy, route markers, upload rules, and repository
+safeguards. `npx playwright test --list` discovers 17 logical Playwright
+scenarios, expanded by the desktop, tablet, and mobile projects into 51
+project-specific test instances before runtime skips. Discovery counts alone are
+not execution evidence. The current unit execution is recorded below; the
+expanded Playwright suite was listed but not rerun during this reconciliation.
 
 Important limits:
 
@@ -162,7 +175,7 @@ Important limits:
 - There is no source-controlled deployment workflow. Vercel Git integration is
   the expected CD boundary.
 
-### Local verification results
+### Local verification results — 2026-11-01
 
 | Check | Result |
 |---|---|
@@ -177,7 +190,42 @@ Important limits:
 | Lockfile security audit | 13 advisories: 5 high, 8 moderate |
 | `git diff --check` before edits | Passed |
 
-No dependency installation was attempted because it requires explicit approval.
+No dependency installation was attempted during the 2026-11-01 review because
+it required explicit approval.
+
+### Baseline recovery update — 2026-11-04
+
+Using checkpoint `c251f2e` on `chore/ai-continuous-improvement`, an explicitly
+authorized `npm ci` completed with Node 22.22.3 and npm 10.9.8. The install
+reproduced the committed lockfile without modifying it. `npm ls --depth=0`
+reported a healthy top-level tree.
+
+In that dated recovery run, `npm run verify` passed the dependency-free
+safeguards, configured lint and type analysis, 43 unit tests, and the production
+build. ESLint retained nine warnings and no errors. Vite retained the existing
+warning for the 540.42 kB minified Ballpit chunk. The same dated run's
+service-free Playwright suite targeted `127.0.0.1:4173` with Supabase browser
+variables cleared and completed 48 project instances: 43 passes and five
+intentional project-specific skips. This historical result does not establish
+that the later-added cases and scenario represented by the current 51-case and
+51-instance discovery counts have been executed successfully.
+
+The release baseline remains red for dependency security: `npm audit
+--audit-level=high` still reports 13 package-level findings (five high and eight
+moderate). No dependency version or lockfile change was made during recovery.
+
+### Repository reconciliation verification — 2026-11-05
+
+After the approved Ballpit factual correction, `npm run check:secrets` passed,
+all nine repository-safeguard tests passed, and `npm run verify` passed the
+repository safeguards, migration validation, lint with nine warnings and no
+errors, configured type analysis, all 51 current unit tests, and the production
+build. The existing 540.42 kB minified Ballpit chunk warning remains.
+
+`npx playwright test --list` confirmed 17 logical scenarios and 51
+project-expanded instances. The browser suite was not executed in this
+reconciliation because the runtime sphere count and interaction behavior did
+not change; this listing is not recorded as a Playwright pass.
 
 ### Accessibility and performance safeguards already present
 
@@ -230,10 +278,13 @@ Before describing the system as production-verified, a maintainer should confirm
 
 ### Phase 0 — restore a trustworthy green baseline
 
-1. Approve and perform `npm ci` in a controlled branch/worktree.
-2. Reproduce lint, configured type analysis, unit tests, build, and Playwright.
+1. **Completed 2026-11-04:** Approve and perform `npm ci` in a controlled
+   branch/worktree.
+2. **Completed 2026-11-04:** Reproduce lint, configured type analysis, unit
+   tests, build, and Playwright.
 3. Triage and patch the current npm advisories without force-fixing.
-4. Correct the Ballpit fact drift and any tests that encode stale facts.
+4. **Completed 2026-11-05:** Correct the Ballpit fact drift and tests that
+   encoded stale facts.
 5. Record build chunks and current screenshots before structural refactors.
 
 ### Phase 1 — prove security boundaries

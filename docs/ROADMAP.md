@@ -15,9 +15,15 @@ Selection rules:
 - Update this roadmap when evidence changes; do not keep completed or disproven
   findings as permanent work.
 
+Entries labeled **Status: Completed** are retained as dated engineering
+evidence. Entries without that label remain outstanding proposals and still
+require their stated authorization and verification.
+
 ## P0 — critical security, data integrity, or production reliability
 
 ### P0.1 Restore a reproducible local verification environment
+
+- **Status:** Completed locally on 2026-11-04 from checkpoint `c251f2e`.
 
 - **Problem:** The current local dependency tree is incomplete. There is no
   `node_modules/.bin`, `npm ls` reports invalid/extraneous packages, and the
@@ -34,6 +40,10 @@ Selection rules:
   versions and results without committing `node_modules`.
 - **Risk level:** Medium. `npm ci` replaces the local dependency tree and needs
   explicit authorization, but should not change tracked files.
+- **Completion evidence:** Node 22.22.3/npm 10.9.8 `npm ci` completed without a
+  lockfile change; `npm ls --depth=0`, `npm run verify`, and the service-free
+  Playwright desktop/tablet/mobile suite passed. The dependency-audit failure is
+  tracked separately in P0.2.
 
 ### P0.2 Resolve current high-severity dependency advisories
 
@@ -142,9 +152,11 @@ Selection rules:
 
 ### P1.5 Reconcile portfolio fact drift
 
-- **Problem:** The same implementation fact is represented inconsistently:
-  portfolio knowledge says 48 Ballpit spheres, Zenith says 65, and Home config
-  uses 57. A unit test protects the stale 65 response.
+- **Status:** Completed locally on 2026-11-05.
+- **Problem:** Before reconciliation, the same implementation fact was
+  represented inconsistently: portfolio knowledge said 48 Ballpit spheres,
+  Zenith said 65, Home config used 57, and a unit test protected the stale 65
+  response.
 - **Evidence:** `portfolio-knowledge.js`, `portfolio-faq.js`,
   `HeroBallpit.jsx`, and `portfolio-faq.test.js`.
 - **Affected components:** Home behavior documentation, Zenith answers, tests,
@@ -152,9 +164,14 @@ Selection rules:
 - **Expected outcome:** UI, FAQ, tests, and documentation share one owner-reviewed
   value or derive it from a stable source without coupling unrelated modules.
 - **Verification:** Confirm the intended count with the owner, update the minimum
-  set of files, run FAQ tests/build/E2E, and inspect Home performance/appearance.
+  set of files, and run the focused FAQ contract plus the full repository gate.
+  Run browser and visual checks if the runtime count or rendering behavior
+  changes.
 - **Risk level:** Low for factual correction; Medium if changing the actual
   sphere count because it affects performance and visuals.
+- **Completion evidence:** `HeroBallpit.jsx` remains configured for 57 spheres;
+  portfolio knowledge, Zenith's answer, and the focused FAQ contract test now
+  use the same value without changing rendering behavior.
 
 ### P1.6 Add successful API and lifecycle tests with synthetic data
 
