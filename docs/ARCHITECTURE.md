@@ -92,7 +92,7 @@ the viewport or while the document is hidden.
 ### Tech
 
 Tech contains an animated terminal, three experience/academic entries, a
-lazy-loaded `TechStackWall`, five certificate previews, two built-in event
+lazy-loaded `TechStackWall`, seven certificate previews, two built-in event
 albums, database-published Tech albums, and a closing statement. `DriftWall`
 renders five vertically moving columns of technology marks, applies pointer
 parallax, pauses its animation when not visible, and has a reduced-motion

@@ -1,5 +1,7 @@
+import { readFile } from "node:fs/promises";
 import { describe, expect, it } from "vitest";
 import { answerPortfolioFaq, getPortfolioFaqResponse } from "../../react-app/src/lib/portfolio-faq.js";
+import { PORTFOLIO_KNOWLEDGE } from "../../react-app/src/lib/portfolio-knowledge.js";
 
 describe("Zenith FAQ", () => {
   it("routes known questions to portfolio content", () => {
@@ -40,6 +42,7 @@ describe("Zenith FAQ", () => {
   it("answers detailed public facts without inventing them", () => {
     expect(answerPortfolioFaq("What is Reggie's full name?")).toContain("John Reggie M. Barbacena");
     expect(answerPortfolioFaq("Who issued the certificates?")).toContain("Certiport");
+    expect(answerPortfolioFaq("What sustainability certificates does he have?")).toContain("Driving Sustainability at Your Organization");
     expect(answerPortfolioFaq("Tell me about the DevDays album")).toContain("11 photos");
     expect(answerPortfolioFaq("What are the home interest icons?")).toContain("Macbook M4");
     expect(answerPortfolioFaq("What social media can I follow?")).toContain("@jjstr.rgg");
@@ -47,6 +50,19 @@ describe("Zenith FAQ", () => {
     expect(answerPortfolioFaq("Does he know Java?")).toContain("Java");
     expect(answerPortfolioFaq("What can Zenith access?")).toContain("public portfolio content");
     expect(answerPortfolioFaq("What is his phone number?")).toContain("not published");
+  });
+
+  it("uses the official AI Fluency title across certificate content", async () => {
+    const officialTitle = "AI Fluency: Framework & Foundations";
+    const incorrectTitle = "AI Fluency: Frameworks & Foundations";
+    const faqAnswer = answerPortfolioFaq("What AI Fluency certificate does he have?");
+    const knowledgeTitles = PORTFOLIO_KNOWLEDGE.tech.certificates.map(({ title }) => title);
+    const techPageSource = await readFile(new URL("../../react-app/src/pages/TechPage.jsx", import.meta.url), "utf8");
+
+    expect(faqAnswer).toContain(officialTitle);
+    expect(knowledgeTitles).toContain(officialTitle);
+    expect(techPageSource).toContain(officialTitle);
+    expect([faqAnswer, ...knowledgeTitles, techPageSource].join("\n")).not.toContain(incorrectTitle);
   });
 
   it("asks visitors to stop using profanity before matching other intents", () => {

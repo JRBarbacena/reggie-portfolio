@@ -56,7 +56,7 @@ were not accessed.
 | Area | Confirmed behavior |
 |---|---|
 | Home | Desktop entry curtain, animated hero, 57-sphere Ballpit, interest chips, and destination carousel |
-| Tech | Terminal, experience/education, DriftWall tool display, five certificates, two built-in galleries, and published galleries |
+| Tech | Terminal, experience/education, DriftWall tool display, seven certificates, two built-in galleries, and published galleries |
 | Travel | Supabase-published journals grouped as international/local with long-form modal reading |
 | Life | Sport, rides, coffee, home-base story, static photos, and published galleries |
 | Zenith FAQ | Reviewed local rules with typo tolerance; selected album questions may query public Supabase rows |

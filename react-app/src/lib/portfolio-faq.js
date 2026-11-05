@@ -151,8 +151,8 @@ const FAQ_RULES = [
   },
   {
     intent: "certificates",
-    terms: ["certificate", "certification", "credential", "python certificate", "matlab", "project management", "agile", "ai fluency", "anthropic"],
-    answer: `The Tech shelf contains Python, MATLAB, Project Management Ready, Agile Software Development, and AI Fluency: Frameworks & Foundations. Select a certificate to open its full modal preview. ${DIRECT_CHAT_HINT}`,
+    terms: ["certificate", "certification", "credential", "python certificate", "matlab", "project management", "agile", "esg", "sustainability", "ai fluency", "anthropic"],
+    answer: `The Tech shelf contains Python, MATLAB, Project Management Ready, Agile Software Development, Introduction to ESG: Environmental, Social, and Governance, Driving Sustainability at Your Organization, and AI Fluency: Framework & Foundations. Select a certificate to open its full modal preview. ${DIRECT_CHAT_HINT}`,
   },
   {
     intent: "certificate-issuers",
