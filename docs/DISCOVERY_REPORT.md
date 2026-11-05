@@ -227,6 +227,11 @@ project-expanded instances. The browser suite was not executed in this
 reconciliation because the runtime sphere count and interaction behavior did
 not change; this listing is not recorded as a Playwright pass.
 
+A fresh `npm audit --audit-level=high` reached the registry and failed with 11
+findings: five high and six moderate. This supersedes the current-risk count,
+while the 13-finding result above remains the dated 2026-11-01/2026-11-04
+historical evidence. No dependency or lockfile change was made.
+
 ### Accessibility and performance safeguards already present
 
 - skip link and semantic landmarks;

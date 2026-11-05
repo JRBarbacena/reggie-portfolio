@@ -49,9 +49,10 @@ require their stated authorization and verification.
 
 - **Problem:** The committed dependency graph does not meet the release standard
   of zero unresolved high-severity advisories.
-- **Evidence:** `npm audit --package-lock-only --audit-level=high` reported 13
-  advisories: five high and eight moderate, involving Vite, transitive Zod,
-  Vitest mocker, and Minimatch/ESLint paths.
+- **Evidence:** On 2026-11-05, `npm audit --audit-level=high` reported 11
+  vulnerabilities: five high and six moderate, involving Vite, transitive Zod,
+  Vitest mocker, and Minimatch/ESLint paths. The earlier 13-finding result is
+  retained as dated discovery history.
 - **Affected components:** `package.json`, `package-lock.json`, Vite dev/build
   tooling, Vitest, ESLint dependencies, and `@vercel/functions` transitive code.
 - **Expected outcome:** Zero high-severity audit findings with compatible,
