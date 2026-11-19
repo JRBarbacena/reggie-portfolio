@@ -4,6 +4,7 @@ import PortfolioTerminal from "../components/PortfolioTerminal.jsx";
 import useNearViewport from "../hooks/useNearViewport.js";
 import usePublishedAlbums from "../hooks/usePublishedAlbums.js";
 import { responsiveCertificatePath, responsiveCertificateSrcSet, responsivePhotoPath, responsivePhotoSrcSet } from "../responsive-photos.js";
+import "./ExperienceBanners.css";
 import "./TechHeadings.css";
 
 const certificates = [
@@ -118,7 +119,7 @@ export default function TechPage() {
     <section className="tech-path" aria-labelledby="path-title" data-viewport-section>
       <SectionHead id="path-title" variant="experience" title={<><strong>Experience</strong><span className="tech-heading__join">&amp;</span><em>Academic Background</em></>} />
       <ol className="experience-log tech-experience card" aria-label="Experience and academic timeline">
-        <li className="experience-log__entry is-current" data-reveal>
+        <li className="experience-log__entry experience-log__entry--acm is-current" data-reveal>
           <div className="experience-log__period"><span className="experience-log__type">Leadership</span><span className="experience-log__date">2026–2027</span></div>
           <span className="experience-log__rail" aria-hidden="true"><span className="experience-log__marker" /></span>
           <div className="experience-log__content">
@@ -128,7 +129,7 @@ export default function TechPage() {
           </div>
           <ExperienceLogo src="/images/brand/acm-chapter-cropped.png" className="experience-log__logo--acm" />
         </li>
-        <li className="experience-log__entry" data-reveal data-reveal-delay="1">
+        <li className="experience-log__entry experience-log__entry--flyrank" data-reveal data-reveal-delay="1">
           <div className="experience-log__period"><span className="experience-log__type">Internship</span><span className="experience-log__date">2026</span></div>
           <span className="experience-log__rail" aria-hidden="true"><span className="experience-log__marker" /></span>
           <div className="experience-log__content">
@@ -138,7 +139,7 @@ export default function TechPage() {
           </div>
           <ExperienceLogo src="/images/brand/flyrank.png" className="experience-log__logo--flyrank" />
         </li>
-        <li className="experience-log__entry is-current" data-reveal data-reveal-delay="2">
+        <li className="experience-log__entry experience-log__entry--feutech is-current" data-reveal data-reveal-delay="2">
           <div className="experience-log__period"><span className="experience-log__type">Academic</span><span className="experience-log__date">2023–Present</span></div>
           <span className="experience-log__rail" aria-hidden="true"><span className="experience-log__marker" /></span>
           <div className="experience-log__content">

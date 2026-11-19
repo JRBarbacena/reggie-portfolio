@@ -7,12 +7,12 @@ const primaryRoutes = routes.filter((route) => route.tier === "primary");
 
 export default function SiteNavigation() {
   const [menuOpen, setMenuOpen] = useState(false);
-  const [isMobile, setIsMobile] = useState(() => window.matchMedia("(max-width: 768px)").matches);
+  const [isMobile, setIsMobile] = useState(() => window.matchMedia("(max-width: 700px)").matches);
   const navRef = useRef(null);
   const menuButtonRef = useRef(null);
 
   useEffect(() => {
-    const query = window.matchMedia("(max-width: 768px)");
+    const query = window.matchMedia("(max-width: 700px)");
     const updateViewport = () => {
       setIsMobile(query.matches);
       if (!query.matches) setMenuOpen(false);
@@ -42,7 +42,7 @@ export default function SiteNavigation() {
     <NavLink className="site-nav__brand" to="/" aria-label="Home — Reggie" onClick={closeMenus}>
       <BrandMark />
     </NavLink>
-    <button ref={menuButtonRef} className="site-nav__mobile-toggle" type="button" aria-expanded={menuOpen} aria-controls="site-nav-menu" aria-label="Toggle navigation menu" onClick={() => setMenuOpen((open) => !open)}>☰</button>
+    <button ref={menuButtonRef} className="site-nav__mobile-toggle" type="button" aria-expanded={menuOpen} aria-controls="site-nav-menu" aria-label="Toggle navigation menu" onClick={() => setMenuOpen((open) => !open)}><span className="site-nav__mobile-icon" aria-hidden="true"><i /><i /><i /></span></button>
     <div className="site-nav__menu" id="site-nav-menu" inert={isMobile && !menuOpen ? true : undefined}>
       <ul className="site-nav__list">{primaryRoutes.map((route) => <li key={route.path}><NavLink className={linkClass} to={route.path} end={route.path === "/"} onClick={closeMenus}>{route.label}</NavLink></li>)}</ul>
     </div>

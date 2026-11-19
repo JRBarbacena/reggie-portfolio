@@ -25,7 +25,7 @@ export const PORTFOLIO_KNOWLEDGE = Object.freeze({
     heading: "Welcome to my little space on the internet",
     destinations: ["Tech", "Travel", "Life"],
     interestDetails: {
-      Laptop: "Acer Nitro 5 | Macbook M4",
+      Laptop: "Acer Nitro 5 | MacBook M5",
       Coffee: "White Chocolate Mocha",
       Volleyball: "Opposite Hitter",
       Agents: "Claude Code | Cursor | Codex | Kiro",

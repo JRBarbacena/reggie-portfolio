@@ -7,6 +7,8 @@ describe("Zenith FAQ", () => {
   it("routes known questions to portfolio content", () => {
     expect(answerPortfolioFaq("Where is your tech stack?")).toContain("Tech page");
     expect(answerPortfolioFaq("Can I see travel journals?")).toContain("Travel page");
+    expect(answerPortfolioFaq("Can I see travel journals?")).toContain("under construction");
+    expect(answerPortfolioFaq("What is on the life page?")).toContain("under construction");
     expect(answerPortfolioFaq("What kind of work does he build?")).toContain("development journey");
   });
 
@@ -45,7 +47,7 @@ describe("Zenith FAQ", () => {
     expect(answerPortfolioFaq("Who issued the certificates?")).toContain("Certiport");
     expect(answerPortfolioFaq("What sustainability certificates does he have?")).toContain("Driving Sustainability at Your Organization");
     expect(answerPortfolioFaq("Tell me about the DevDays album")).toContain("11 photos");
-    expect(answerPortfolioFaq("What are the home interest icons?")).toContain("Macbook M4");
+    expect(answerPortfolioFaq("What are the home interest icons?")).toContain("MacBook M5");
     expect(answerPortfolioFaq("What social media can I follow?")).toContain("@jjstr.rgg");
     expect(answerPortfolioFaq("How was this website built?")).toContain("React 19");
     expect(answerPortfolioFaq("Does he know Java?")).toContain("Java");

@@ -13,6 +13,11 @@ The committed `vercel.json` supplies these build values, security headers,
 legacy URL redirects, and React SPA fallback. Do not override them with conflicting
 dashboard values.
 
+The build also copies `react-app/public/favicon.ico` to the site root. It wraps
+the RB `favicon-32.png` image for browsers that request `/favicon.ico` directly;
+keep both files in sync when the brand icon changes. Verify the response is an
+icon rather than the SPA HTML fallback after deployment.
+
 Use Node 22 for local release checks and Vercel builds; `package.json` and CI
 declare that runtime explicitly.
 

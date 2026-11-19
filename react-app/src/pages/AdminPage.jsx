@@ -388,7 +388,7 @@ export default function AdminPage() {
   const newInquiryCount = inquiries.filter((inquiry) => inquiry.status === "new").length;
   const activeChatCount = chats.length;
 
-  if (!supabase) return <main id="main" className="react-admin"><h1>Admin setup required</h1><p>Add the Supabase values to <code>react-app/.env.local</code>.</p></main>;
+  if (!supabase) return <main id="main" className="react-admin"><section className="react-admin__panel react-admin__setup" aria-labelledby="admin-setup-title"><p className="react-eyebrow">Private portfolio workspace</p><h1 id="admin-setup-title">Admin setup required</h1><p className="react-muted">Add the Supabase values to <code>react-app/.env.local</code>.</p></section></main>;
 
   if (!session || !isAdmin) {
     return <AdminAuthView session={session} email={email} busy={busy} message={message} onEmailChange={(event) => setEmail(event.target.value)} onSubmit={sendMagicLink} />;

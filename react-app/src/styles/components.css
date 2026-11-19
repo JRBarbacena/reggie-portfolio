@@ -126,7 +126,8 @@
   max-width: var(--content-max-width);
   margin-inline: auto;
   min-height: 4.75rem;
-  padding: var(--space-2) var(--space-3);
+  padding-block: var(--space-2);
+  padding-inline: max(var(--space-3), env(safe-area-inset-left)) max(var(--space-3), env(safe-area-inset-right));
 }
 
 .site-nav__brand {
@@ -284,6 +285,25 @@
   box-shadow: var(--neu-pressed);
 }
 
+.site-nav__mobile-icon {
+  display: grid;
+  width: 1.05rem;
+  gap: 0.2rem;
+}
+
+.site-nav__mobile-icon i {
+  display: block;
+  width: 100%;
+  height: 2px;
+  border-radius: var(--radius-pill);
+  background: currentColor;
+  transition: transform var(--duration-base) var(--ease-fluid), opacity var(--duration-fast) var(--ease-standard);
+}
+
+.site-nav__mobile-toggle[aria-expanded="true"] .site-nav__mobile-icon i:first-child { transform: translateY(0.4rem) rotate(45deg); }
+.site-nav__mobile-toggle[aria-expanded="true"] .site-nav__mobile-icon i:nth-child(2) { opacity: 0; }
+.site-nav__mobile-toggle[aria-expanded="true"] .site-nav__mobile-icon i:last-child { transform: translateY(-0.4rem) rotate(-45deg); }
+
 /* --- Home navigation: logo top-left, links centered up top --------------- */
 @media (min-width: 769px) {
   .site-header--home .site-nav {
@@ -306,6 +326,7 @@
 /* --- Hero (shared) -------------------------------------------------------- */
 .hero {
   min-height: calc(100vh - 5rem);
+  min-height: calc(100dvh - 5rem);
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -1663,8 +1684,8 @@ body:not(.home) .contact-panel {
 
 .social-dock {
   position: fixed;
-  right: var(--space-3);
-  bottom: var(--space-3);
+  right: max(var(--space-3), env(safe-area-inset-right));
+  bottom: max(var(--space-3), env(safe-area-inset-bottom));
   z-index: var(--z-overlay);
   transition: opacity var(--duration-base) var(--ease-standard),
     transform var(--duration-base) var(--ease-standard);
@@ -1680,10 +1701,16 @@ body.home .social-dock {
   transform: translateX(calc(100% + var(--space-3)));
 }
 
-body.home.has-scrolled-home .social-dock {
+body.home.has-scrolled-home .social-dock,
+body.home .social-dock:focus-within {
   opacity: 1;
   pointer-events: auto;
   transform: translateX(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .social-dock { animation: none; transition: none; }
+  body.home .social-dock { opacity: 1; pointer-events: auto; transform: none; }
 }
 
 @keyframes social-dock-in {
@@ -1915,6 +1942,15 @@ body.home.has-scrolled-home .social-dock {
 
   .site-nav__overflow-toggle {
     display: none;
+  }
+}
+
+@media (pointer: coarse) {
+  .site-nav__link,
+  .site-nav__mobile-toggle,
+  .social-dock__link {
+    min-width: 2.75rem;
+    min-height: 2.75rem;
   }
 }
 
@@ -4695,22 +4731,6 @@ body.tech-page {
 @keyframes preloader-panel-in {
   from { opacity: 0; transform: translateY(var(--reveal-offset)); }
   to { opacity: 1; transform: translateY(0); }
-}
-
-/* Native page navigation gets a restrained cross-page fade with no loading
-   panel or progress indicator. */
-:where(.home, .tech-page, .travel-page, .life-page) {
-  animation: page-enter-fade 420ms var(--ease-fluid) both;
-  transition: opacity 220ms var(--ease-exit);
-}
-
-html.is-page-leaving body {
-  opacity: 0;
-}
-
-@keyframes page-enter-fade {
-  from { opacity: 0; }
-  to { opacity: 1; }
 }
 
 /* Home entrance choreography begins with the Welcome curtain lift. Elements

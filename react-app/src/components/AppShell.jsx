@@ -1,5 +1,5 @@
 import { useEffect, useLayoutEffect, useRef } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useNavigationType } from "react-router-dom";
 import SiteFooter from "./SiteFooter.jsx";
 import SiteNavigation from "./SiteNavigation.jsx";
 import NeoScrollbar from "./NeoScrollbar.jsx";
@@ -9,29 +9,29 @@ import ChatbotWidget from "./ChatbotWidget.jsx";
 
 const routeBodyClasses = ["home", "story-page", "tech-page", "travel-page", "life-page", "error-page"];
 const applicationRoutes = new Set(["/", "/tech", "/travel", "/life", "/admin", "/privacy"]);
-
 export default function AppShell({ children }) {
   const { pathname } = useLocation();
   const navigate = useNavigate();
+  const navigationType = useNavigationType();
   const isHome = pathname === "/";
   const headerRef = useRef(null);
   const hasReadPastHeroRef = useRef(false);
+  const pendingNavigationFocusRef = useRef(false);
 
   useEffect(() => {
     hasReadPastHeroRef.current = false;
     document.body.classList.remove(...routeBodyClasses, "page-scroll-started");
-    document.documentElement.classList.remove("is-page-leaving");
     if (isHome) document.body.classList.add("home");
     else if (pathname === "/tech") document.body.classList.add("story-page", "tech-page");
     else if (pathname === "/travel") document.body.classList.add("story-page", "travel-page");
     else if (pathname === "/life") document.body.classList.add("story-page", "life-page");
     else if (!applicationRoutes.has(pathname)) document.body.classList.add("error-page");
-    window.scrollTo({ top: 0, behavior: "instant" });
+    if (navigationType !== "POP") window.scrollTo({ top: 0, behavior: "instant" });
     return () => {
       hasReadPastHeroRef.current = false;
       document.body.classList.remove(...routeBodyClasses, "page-scroll-started");
     };
-  }, [isHome, pathname]);
+  }, [isHome, navigationType, pathname]);
 
   useEffect(() => {
     const header = headerRef.current;
@@ -71,10 +71,31 @@ export default function AppShell({ children }) {
     const destination = new URL(link.href, window.location.href);
     if (destination.origin !== window.location.origin || destination.pathname === window.location.pathname) return;
     event.preventDefault();
-    document.documentElement.classList.add("is-page-leaving");
-    const delay = window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : 220;
-    window.setTimeout(() => navigate(`${destination.pathname}${destination.search}${destination.hash}`), delay);
+    const nextLocation = `${destination.pathname}${destination.search}${destination.hash}`;
+    pendingNavigationFocusRef.current = Boolean(link.closest(".site-nav"));
+    navigate(nextLocation);
   };
+
+  useLayoutEffect(() => {
+    if (!pendingNavigationFocusRef.current) return undefined;
+    const root = document.getElementById("root");
+    let observer;
+    const focusHeading = () => {
+      const heading = root?.querySelector("main#main:not(.route-loading) h1");
+      if (!heading) return;
+      pendingNavigationFocusRef.current = false;
+      const hadTabIndex = heading.hasAttribute("tabindex");
+      if (!hadTabIndex) heading.setAttribute("tabindex", "-1");
+      heading.focus({ preventScroll: true });
+      if (!hadTabIndex) heading.addEventListener("blur", () => heading.removeAttribute("tabindex"), { once: true });
+      observer?.disconnect();
+    };
+    focusHeading();
+    if (!pendingNavigationFocusRef.current) return undefined;
+    observer = new MutationObserver(focusHeading);
+    observer.observe(root, { childList: true, subtree: true });
+    return () => observer.disconnect();
+  }, [pathname]);
 
   useLayoutEffect(() => {
     const elements = [...document.querySelectorAll("[data-reveal]")];

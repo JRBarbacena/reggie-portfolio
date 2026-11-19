@@ -26,16 +26,16 @@ function shouldShowHomeEntry() {
 }
 
 const photos = [
-  ["Hundred_Island.JPG", "Reggie at Hundred Islands", "pos-photo-1"],
-  ["Cursor_Cafe.JPG", "Reggie at Café Cursor Manila", "pos-photo-2"],
-  ["Patawow_VB.JPG", "Reggie with his volleyball team", "pos-photo-3"],
-  ["champs_vb.JPG", "Reggie with a volleyball championship trophy", "pos-photo-4"],
-  ["BuildNights_AWS.JPG", "AWS Build Nights event", "pos-photo-5"],
-  ["basketball.JPG", "Reggie playing basketball", "pos-photo-6"],
+  ["Hundred_Island.JPG", "Reggie at Hundred Islands", "pos-photo-1", "Island day"],
+  ["Cursor_Cafe.JPG", "Reggie at Café Cursor Manila", "pos-photo-2", "Café Cursor"],
+  ["Patawow_VB.JPG", "Reggie with his volleyball team", "pos-photo-3", "Volleyball crew"],
+  ["champs_vb.JPG", "Reggie with a volleyball championship trophy", "pos-photo-4", "Championship"],
+  ["BuildNights_AWS.JPG", "AWS Build Nights event", "pos-photo-5", "AWS Build Night"],
+  ["basketball.JPG", "Reggie playing basketball", "pos-photo-6", "On the court"],
 ];
 
 const chips = [
-  ["laptop", "Laptop", "Acer Nitro 5 | Macbook M4", "pos-chip-1"],
+  ["laptop", "Laptop", "Acer Nitro 5 | MacBook M5", "pos-chip-1"],
   ["volleyball", "Volleyball", "Opposite Hitter", "pos-chip-2"],
   ["coffee", "Coffee", "White Chocolate Mocha", "pos-chip-3"],
   ["agents", "Agents", "Claude Code | Cursor | Codex | Kiro", "pos-chip-4"],
@@ -54,8 +54,8 @@ function ChipIcon({ id }) {
 }
 
 function PhotoWindow({ photo, priority }) {
-  const [name, alt, position] = photo;
-  return <figure className={`photo-window ${position}`}><span className="photo-window__bar" aria-hidden="true"><i /><i /><i /><span className="photo-window__name">{name}</span></span><img className="photo-window__img" src={responsivePhotoPath(name, 640)} srcSet={responsivePhotoSrcSet(name)} sizes="(max-width: 720px) 42vw, 13vw" alt={alt} {...responsivePhotoDimensions(name)} loading={priority ? undefined : "lazy"} decoding="async" fetchPriority={priority ? "high" : undefined} /></figure>;
+  const [name, alt, position, label] = photo;
+  return <figure className={`photo-window ${position}`}><span className="photo-window__bar" aria-hidden="true"><i /><i /><i /><span className="photo-window__name">{label}</span></span><img className="photo-window__img" src={responsivePhotoPath(name, 640)} srcSet={responsivePhotoSrcSet(name)} sizes="(max-width: 720px) 42vw, 13vw" alt={alt} {...responsivePhotoDimensions(name)} loading={priority ? undefined : "lazy"} decoding="async" fetchPriority={priority ? "high" : undefined} /></figure>;
 }
 
 export default function HomePage() {
@@ -117,7 +117,7 @@ export default function HomePage() {
         {photos.map((photo, index) => <PhotoWindow key={photo[0]} photo={photo} priority={index === 0} />)}
         {chips.map(([id, title, detail, position]) => {
           const expanded = openChip === id;
-          return <button key={id} className={`hero-chip ${position}${expanded ? " is-open" : ""}`} type="button" aria-label={title} aria-expanded={expanded} aria-controls={`chip-${id}`} onClick={() => setOpenChip(expanded ? null : id)}><span className="hero-chip__icon" aria-hidden="true"><ChipIcon id={id} /></span><span className="hero-chip__detail" id={`chip-${id}`} role="status"><strong>{title}</strong>{detail}</span></button>;
+          return <button key={id} className={`hero-chip ${position}${expanded ? " is-open" : ""}`} type="button" aria-expanded={expanded} aria-controls={`chip-${id}`} onClick={() => setOpenChip(expanded ? null : id)}><span className="hero-chip__icon" aria-hidden="true"><ChipIcon id={id} /></span><span className="hero-chip__label">{title}</span><span className="hero-chip__detail" id={`chip-${id}`} role="status"><strong>{title}</strong>{detail}</span></button>;
         })}
       </div>
     </section>

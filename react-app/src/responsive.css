@@ -48,6 +48,7 @@ html, body { overflow-x: clip; }
     display: block;
     position: relative;
     inset: auto;
+    grid-column: span 2;
     width: 100%;
     transform: none;
     margin: 0;
@@ -63,6 +64,7 @@ html, body { overflow-x: clip; }
   body.home .hero--home .collage .hero-chip {
     position: relative;
     inset: auto;
+    grid-column: span 1;
     transform: none;
     width: 100%;
     min-width: 0;
@@ -74,21 +76,81 @@ html, body { overflow-x: clip; }
     max-width: min(16rem, 80vw);
     white-space: normal;
   }
+  body.home .hero--home .collage .hero-chip:first-of-type { grid-column-start: 2; }
   body.home .hero-ballpit { height: 100%; }
 }
 
 @media (min-width: 701px) and (max-width: 900px) {
   body.home .hero--home .collage { grid-template-columns: repeat(6, minmax(0, 1fr)); }
-  body.home .hero--home .collage .photo-window { grid-column: span 2; }
   body.home .hero--home .photo-window__img { height: clamp(8rem, 18vw, 11rem); }
+}
+
+/* Tablet portrait uses its space deliberately instead of padding the compact
+   collage to a full viewport. Short landscape layouts keep the denser frame. */
+@media (min-width: 701px) and (max-width: 1024px) and (orientation: portrait) {
+  body.home .hero--home {
+    min-height: 0;
+    padding-top: 7rem;
+    padding-bottom: clamp(3rem, 6vw, 4.5rem);
+  }
+}
+
+/* Four primary links fit comfortably from 701px. This final nav-only rule
+   leaves the existing tablet content breakpoints untouched. */
+@media (min-width: 701px) and (max-width: 768px) {
+  .site-nav__mobile-toggle { display: none; }
+  .site-nav__menu {
+    position: static;
+    display: flex;
+    max-height: none;
+    padding: 0;
+    overflow: visible;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+    opacity: 1;
+    pointer-events: auto;
+    transform: none;
+  }
+  .site-nav__list { width: auto; flex-direction: row; align-items: center; }
+  .site-nav__link { min-height: 2.75rem; }
+  .site-header--home .site-nav {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    max-width: none;
+  }
+  .site-header--home .site-nav__menu { justify-self: center; }
 }
 
 @media (max-width: 700px) {
   body.home .hero--home { gap: 1.4rem; padding-top: 6rem; }
   body.home .hero--home .collage { grid-template-columns: repeat(2, minmax(0, 1fr)); max-width: 28rem; }
-  body.home .hero--home .collage .photo-window:nth-of-type(n + 3),
-  body.home .hero--home .collage .hero-chip { display: none; }
+  body.home .hero--home .collage .photo-window,
+  body.home .hero--home .collage .hero-chip { grid-column: span 1; }
+  body.home .hero--home .collage .hero-chip:first-of-type { grid-column-start: auto; }
+  body.home .hero--home .collage .hero-chip:last-of-type {
+    grid-column: 1 / -1;
+    width: calc(50% - 0.5rem);
+    justify-self: center;
+  }
   body.home .hero--home .photo-window__img { height: clamp(9rem, 43vw, 13rem); }
+  body.home .hero--home .hero-chip { align-self: start; min-height: 5.5rem; }
+  body.home .hero--home .hero-chip__detail {
+    position: static;
+    display: none;
+    width: 100%;
+    max-width: 100%;
+    margin-top: 0.25rem;
+    padding: 0.55rem 0.65rem;
+    transform: none;
+    white-space: normal;
+  }
+  body.home .hero--home .hero-chip[aria-expanded="true"] .hero-chip__detail {
+    display: flex;
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+  }
   body.home .home-hero-intro__greeting { font-size: 0.85rem; max-width: 32ch; min-height: 2.7em; }
   body.home .home-hero-intro__headline { font-size: clamp(2rem, 9vw, 3.4rem); line-height: 1.02; }
   .app-shell .content-column { width: 100%; max-width: 100%; padding-inline: max(1rem, env(safe-area-inset-left)) max(1rem, env(safe-area-inset-right)); }
@@ -108,6 +170,75 @@ html, body { overflow-x: clip; }
   }
 }
 
+/* Reading surfaces need their own geometry rather than generic card widths. */
+.privacy-page {
+  width: 100%;
+  padding-block: clamp(3rem, 7vw, 6rem);
+}
+
+.privacy-page > .card {
+  width: min(100%, 52rem);
+  margin-inline: auto;
+  padding: clamp(2rem, 5vw, 4rem);
+}
+
+.privacy-page h1 {
+  max-width: 17ch;
+  margin: 0 0 0.75rem;
+  font-size: clamp(2.5rem, 5.4vw, 4rem);
+  line-height: 1.04;
+  text-wrap: balance;
+}
+
+.privacy-page h2 {
+  max-width: 68ch;
+  margin: 2.25rem 0 0.25rem;
+  font-size: clamp(1.65rem, 3vw, 2.15rem);
+  line-height: 1.12;
+}
+
+.privacy-page p:not(.react-eyebrow) {
+  max-width: 68ch;
+  margin-block: 0.4rem 0;
+  font-size: 1rem;
+  line-height: 1.68;
+}
+
+.react-admin__setup {
+  display: grid;
+  gap: 0.75rem;
+  max-width: 36rem;
+}
+
+.react-admin__setup :is(h1, p) { margin: 0; }
+
+/* A single empty Travel card should read as an intentional state, not an
+   unfinished first column. Real multi-card journal rows retain their grid. */
+.travel-journal-row:has(> .travel-coming-soon:only-child) {
+  grid-template-columns: minmax(0, 32rem);
+  justify-content: center;
+}
+
+@media (min-width: 701px) and (max-width: 1050px) {
+  .tech-page .album-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+/* Leave room for Zenith's launcher below the fixed social links. */
+@media (max-width: 1180px) {
+  .site-footer .social-dock { bottom: calc(max(var(--space-3), env(safe-area-inset-bottom)) + 4.5rem); }
+  .site-footer .social-dock__link { width: 2.75rem; height: 2.75rem; }
+}
+
+@media (min-width: 375px) and (max-width: 430px) {
+  .life-redesign .life-gallery { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .life-redesign .life-shot--wide { grid-column: 1 / -1; }
+  .life-redesign .life-shot:not(.life-shot--wide) { padding: 0.4rem; }
+  .life-redesign .life-shot:not(.life-shot--wide) :is(figure, img) { aspect-ratio: 3 / 4; }
+  .life-redesign .life-shot figcaption { inset-inline: 0.65rem; bottom: 0.65rem; }
+  .life-redesign .life-shot figcaption span { font-size: 0.56rem; }
+  .life-redesign .life-shot figcaption strong { font-size: 0.9rem; }
+}
+
 @media (max-width: 480px) {
   body.home .home-hero-intro,
   body.home .home-hero-intro__headline { max-width: 100%; }
@@ -118,21 +249,32 @@ html, body { overflow-x: clip; }
   .app-shell .home-lane-carousel { --lane-card-width: min(13.25rem, calc(100vw - 7.5rem)); }
   .tech-page .credential-book { min-width: 0; }
   .tech-page .credential-book figcaption strong { overflow-wrap: anywhere; }
+  .privacy-page { padding-block: 2.75rem 4rem; }
+  .privacy-page > .card { padding: 1.25rem; border-radius: 1.45rem; }
+  .privacy-page h1 { max-width: 13ch; font-size: clamp(2.15rem, 10vw, 2.45rem); }
+  .privacy-page h2 { margin-top: 2.4rem; font-size: 1.65rem; }
+  .privacy-page p:not(.react-eyebrow) { font-size: 1rem; line-height: 1.68; }
+  .site-footer__base { padding-inline: 3.75rem; }
 }
 
 @media (max-width: 375px) {
   .admin-dashboard__nav,
   .admin-dashboard__stats { grid-template-columns: 1fr; }
   .react-admin .admin-dashboard__nav button { font-size: 0.82rem; }
+  .tech-page .experience-log__entry { grid-template-columns: 1.1rem minmax(0, 1fr) 3.75rem; }
+  .tech-page .experience-log__logo { width: 3.75rem; height: 5.5rem; }
+  .tech-page .experience-log__logo--acm img { width: 5.25rem; transform: translateX(-0.55rem); }
+  .tech-page .experience-log__logo--flyrank img { max-width: 3.7rem; max-height: 4.5rem; }
+  .tech-page .experience-log__logo--feutech img { max-width: 3.6rem; max-height: 5rem; }
 }
 
 @media (hover: none), (pointer: coarse) {
   .app-shell :is(input, select, textarea) { font-size: 16px; }
-  .app-shell :is(.chatbot-panel__close, .certificate-modal__close, .album-modal__close) { min-width: 44px; min-height: 44px; }
+  .app-shell :is(.chatbot-panel__close, .certificate-modal__close, .album-modal__close, .social-dock__link, .site-nav__link) { min-width: 44px; min-height: 44px; }
   .app-shell .credential-book figcaption { opacity: 1; transform: none; }
   .app-shell .neo-scrollbar { display: none; }
   .app-shell .photo-window { backdrop-filter: none; -webkit-backdrop-filter: none; }
-  .app-shell .chatbot-panel { max-height: calc(100dvh - 6rem - env(safe-area-inset-bottom)); overflow-y: auto; }
+  .app-shell .chatbot-panel { max-height: calc(100dvh - 6rem - env(safe-area-inset-top) - env(safe-area-inset-bottom)); }
   .app-shell .chatbot-message { overflow-wrap: anywhere; }
   .app-shell :is(.chatbot-panel__messages, .zenith-live-chat__messages) { min-height: 0; }
 }

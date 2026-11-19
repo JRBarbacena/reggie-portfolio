@@ -7,7 +7,12 @@ test("portfolio assistant opens, accepts focus, and restores launcher focus on E
   await expect(launcher).toBeVisible();
   await expect(launcher).toHaveAccessibleName("Open Zenith");
   const launcherBounds = await launcher.boundingBox();
-  expect(launcherBounds?.x ?? Number.POSITIVE_INFINITY).toBeLessThan(200);
+  const viewport = page.viewportSize();
+  if (viewport.width <= 1180) {
+    expect(viewport.width - ((launcherBounds?.x ?? 0) + (launcherBounds?.width ?? 0))).toBeLessThan(64);
+  } else {
+    expect(launcherBounds?.x ?? Number.POSITIVE_INFINITY).toBeLessThan(200);
+  }
   await launcher.click();
   const dialog = page.getByRole("dialog", { name: "Ask about Reggie's work" });
   await expect(dialog).toBeVisible();

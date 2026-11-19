@@ -1,6 +1,7 @@
 .album-viewer.album-viewer--masonry {
   inset: 0;
-  width: 100vw;
+  width: 100%;
+  height: 100vh;
   height: 100dvh;
   max-width: none;
   max-height: none;
@@ -121,6 +122,7 @@
 .album-masonry-modal__scroll {
   min-height: 0;
   padding: clamp(0.6rem, 1.5vw, 1.1rem);
+  padding-bottom: max(clamp(0.6rem, 1.5vw, 1.1rem), env(safe-area-inset-bottom));
   overflow-x: hidden;
   overflow-y: auto;
   overscroll-behavior: contain;
@@ -224,19 +226,23 @@
 }
 
 @media (max-width: 700px) {
-  .album-masonry-modal__header { gap: 0.75rem; padding-bottom: 0.8rem; }
+  .album-masonry-modal__header {
+    max-height: min(46dvh, 20rem);
+    gap: 0.75rem;
+    padding-bottom: 0.8rem;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+  }
   .album-masonry-modal__details {
     grid-template-columns: minmax(0, 1fr);
     row-gap: 0.6rem;
   }
   .album-masonry-modal__description {
-    display: -webkit-box;
-    overflow: hidden;
     padding-left: 0;
     border-left: 0;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 3;
   }
+  .album-masonry-modal__header button { position: sticky; top: 0; }
 }
 
 @media (prefers-reduced-motion: reduce) {

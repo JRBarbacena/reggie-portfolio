@@ -12,7 +12,7 @@ html.home-entry-pending #root {
 
 body { margin: 0; }
 
-.app-shell { min-height: 100vh; }
+.app-shell { min-height: 100vh; min-height: 100dvh; }
 
 .click-spark {
   position: fixed;
@@ -21,6 +21,7 @@ body { margin: 0; }
   display: block;
   width: 100vw;
   height: 100vh;
+  height: 100dvh;
   pointer-events: none;
   user-select: none;
 }
@@ -749,7 +750,7 @@ body.home .contact-panel .status-list dd {
   }
 }
 
-.react-admin { display: grid; min-height: calc(100vh - 10rem); place-items: center; padding: 3rem 1rem; }
+.react-admin { display: grid; min-height: calc(100vh - 10rem); min-height: calc(100dvh - 10rem); place-items: center; padding: 3rem 1rem; }
 .react-admin__panel { width: min(100%, 44rem); padding: clamp(1.5rem, 5vw, 3rem); border: 1px solid rgb(255 255 255 / 55%); border-radius: 1.5rem; background: rgb(255 255 255 / 25%); box-shadow: 12px 12px 30px rgb(102 117 139 / 18%), -10px -10px 24px rgb(255 255 255 / 60%); }
 .react-admin h1 { margin-top: 0; font-size: clamp(2.25rem, 6vw, 4rem); letter-spacing: -0.05em; }
 .react-admin form { display: grid; gap: 1rem; }
@@ -776,6 +777,7 @@ body.home .contact-panel .status-list dd {
 .admin-dashboard {
   display: block;
   min-height: calc(100vh - 8rem);
+  min-height: calc(100dvh - 8rem);
   padding: clamp(1.5rem, 4vw, 3rem) var(--space-3) var(--space-6);
 }
 

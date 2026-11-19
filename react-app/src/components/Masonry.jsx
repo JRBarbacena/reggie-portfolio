@@ -1,21 +1,11 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { gsap } from "gsap";
 
-const COLUMN_QUERIES = ["(min-width: 1200px)", "(min-width: 780px)", "(min-width: 520px)"];
-const COLUMN_VALUES = [4, 3, 2];
-
-function useColumns() {
-  const read = () => COLUMN_VALUES[COLUMN_QUERIES.findIndex((query) => matchMedia(query).matches)] ?? 1;
-  const [columns, setColumns] = useState(() => typeof window === "undefined" ? 1 : read());
-
-  useEffect(() => {
-    const media = COLUMN_QUERIES.map((query) => matchMedia(query));
-    const update = () => setColumns(read());
-    media.forEach((entry) => entry.addEventListener("change", update));
-    return () => media.forEach((entry) => entry.removeEventListener("change", update));
-  }, []);
-
-  return columns;
+function columnsForWidth(width) {
+  if (width >= 1200) return 4;
+  if (width >= 780) return 3;
+  if (width >= 520) return 2;
+  return 1;
 }
 
 function useMeasure() {
@@ -62,8 +52,8 @@ export default function Masonry({
   hoverScale = 1.015,
   blurToFocus = true,
 }) {
-  const columns = useColumns();
   const [containerRef, width] = useMeasure();
+  const columns = columnsForWidth(width);
   const [ratios, setRatios] = useState(null);
   const hasMounted = useRef(false);
   const pointerBounds = useRef(new WeakMap());
@@ -131,6 +121,7 @@ export default function Masonry({
   }, [animateFrom, blurToFocus, columns, containerRef, duration, ease, layout, stagger]);
 
   const handlePointerEnter = (event) => {
+    if (matchMedia("(prefers-reduced-motion: reduce), (pointer: coarse)").matches) return;
     const element = event.currentTarget;
     pointerBounds.current.set(element, element.getBoundingClientRect());
     const image = element.querySelector("img");
@@ -151,6 +142,7 @@ export default function Masonry({
   };
 
   const handlePointerLeave = (event) => {
+    if (matchMedia("(prefers-reduced-motion: reduce), (pointer: coarse)").matches) return;
     const element = event.currentTarget;
     pointerBounds.current.delete(element);
     gsap.to(element, { scale: 1, duration: 0.32, ease: "power2.out", overwrite: "auto" });

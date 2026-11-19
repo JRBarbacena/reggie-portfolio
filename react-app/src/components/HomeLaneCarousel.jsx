@@ -24,11 +24,20 @@ export default function HomeLaneCarousel({ lanes }) {
   const introPlayingRef = useRef(false);
   const [centerIndex, setCenterIndex] = useState(Math.floor(lanes.length / 2));
   const [reducedMotion, setReducedMotion] = useState(false);
+  const [phoneRail, setPhoneRail] = useState(() => window.matchMedia("(max-width: 430px)").matches);
   const [hasEntered, setHasEntered] = useState(false);
 
   useEffect(() => {
     const query = window.matchMedia("(prefers-reduced-motion: reduce)");
     const update = () => setReducedMotion(query.matches);
+    update();
+    query.addEventListener?.("change", update);
+    return () => query.removeEventListener?.("change", update);
+  }, []);
+
+  useEffect(() => {
+    const query = window.matchMedia("(max-width: 430px)");
+    const update = () => setPhoneRail(query.matches);
     update();
     query.addEventListener?.("change", update);
     return () => query.removeEventListener?.("change", update);
@@ -56,6 +65,16 @@ export default function HomeLaneCarousel({ lanes }) {
     const stage = stageRef.current;
     if (!stage || lanes.length === 0) return undefined;
     let resizeFrame = 0;
+
+    if (phoneRail) {
+      const cards = cardRefs.current.filter(Boolean);
+      introTimelineRef.current?.kill();
+      cards.forEach((card) => { card.dataset.centered = "true"; });
+      gsap.killTweensOf(cards);
+      gsap.set(cards, { clearProps: "transform,opacity,zIndex,willChange" });
+      firstLayoutRef.current = true;
+      return () => gsap.killTweensOf(cards);
+    }
 
     if (!hasEntered && !reducedMotion) {
       cardRefs.current.forEach((card, index) => {
@@ -163,7 +182,7 @@ export default function HomeLaneCarousel({ lanes }) {
       introPlayingRef.current = false;
       gsap.killTweensOf(cardRefs.current.filter(Boolean));
     };
-  }, [centerIndex, hasEntered, lanes.length, reducedMotion]);
+  }, [centerIndex, hasEntered, lanes.length, phoneRail, reducedMotion]);
 
   if (lanes.length === 0) return null;
 
@@ -171,9 +190,9 @@ export default function HomeLaneCarousel({ lanes }) {
     setCenterIndex((current) => (current + direction + lanes.length) % lanes.length);
   };
 
-  const carouselReady = hasEntered || reducedMotion;
+  const carouselReady = phoneRail || hasEntered || reducedMotion;
 
-  return <div className={`home-lane-carousel${carouselReady ? " is-entered" : ""}`} role="region" aria-roledescription="carousel" aria-label="Portfolio destinations">
+  return <div className={`home-lane-carousel${carouselReady ? " is-entered" : ""}${phoneRail ? " is-phone-rail" : ""}`} role="region" aria-roledescription="carousel" aria-label="Portfolio destinations">
     <div className="home-lane-carousel__stage" ref={stageRef}>
       {lanes.map((lane, index) => <Link
         className="home-lane-card"
@@ -185,7 +204,7 @@ export default function HomeLaneCarousel({ lanes }) {
         tabIndex={carouselReady ? undefined : -1}
         data-center-before-navigation
         onClick={(event) => {
-          if (index === centerIndex) return;
+          if (phoneRail || index === centerIndex) return;
           event.preventDefault();
           setCenterIndex(index);
         }}
@@ -194,7 +213,7 @@ export default function HomeLaneCarousel({ lanes }) {
           <img src={responsivePhotoPath(lane.image, 640)} srcSet={responsivePhotoSrcSet(lane.image)} sizes="(max-width: 640px) calc(100vw - 6rem), 17rem" alt={lane.alt} {...responsivePhotoDimensions(lane.image)} loading="lazy" decoding="async" />
           <figcaption>View {lane.title}</figcaption>
         </figure>
-        <p>{lane.description}</p>
+        <div className="home-lane-card__copy"><strong>{lane.title}</strong><p>{lane.description}</p><span>Explore {lane.title} <span aria-hidden="true">→</span></span></div>
       </Link>)}
     </div>
     <div className="home-lane-carousel__controls" aria-label="Carousel controls">

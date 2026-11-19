@@ -67,16 +67,17 @@ integrity hashes are in `package-lock.json`.
 |---|---|
 | `/` | Home |
 | `/tech` | Technology story, credentials, tools, and albums |
-| `/travel` | Published local and international travel journals |
-| `/life` | Interests, sport, rides, coffee, and albums |
+| `/travel` | Temporary construction screen; journal implementation retained in source |
+| `/life` | Temporary construction screen; interests and album implementation retained in source |
 | `/admin` | Authenticated content, inbox, and chat dashboard |
 | `/privacy` | Visitor-data and service disclosures |
 | `*` | React 404 view |
 
-`AppShell` supplies the skip link, route transition handling, shared footer,
-custom scrollbar, smooth scrolling, pointer sparks, reveal observers, and
-Zenith. The regular header is omitted on Home because Home renders its header
-inside the hero. Zenith is omitted on `/admin`.
+`AppShell` supplies the skip link, immediate internal route navigation, shared
+footer, custom scrollbar, smooth scrolling, pointer sparks, reveal observers,
+and Zenith. Navigation links move keyboard focus to the destination heading
+after its lazy route renders. The regular header is omitted on Home because
+Home renders its header inside the hero. Zenith is omitted on `/admin`.
 
 ## Public pages
 
@@ -100,16 +101,18 @@ layout. Album galleries lazy-load the GSAP masonry component.
 
 ### Travel
 
-Travel contains a terminal introduction and database-published travel journals
-grouped by `travel_scope` into International and Local collections. Opening a
-journal shows its cover, long-form description, location, category, and signed
-supporting images in a native modal dialog.
+Travel currently shows a temporary construction screen. The retained page
+implementation contains a terminal introduction and database-published travel
+journals grouped by `travel_scope` into International and Local collections.
+Opening a journal shows its cover, long-form description, location, category,
+and signed supporting images in a native modal dialog when the page returns.
 
 ### Life
 
-Life presents volleyball, motorcycles, coffee, basketball, San Mateo, and a
-small static photo story. A shared published-album section adds database-backed
-Life galleries. It ends with a personal philosophy statement.
+Life currently shows a temporary construction screen. The retained page
+implementation presents volleyball, motorcycles, coffee, basketball, San Mateo,
+and a small static photo story. A shared published-album section adds
+database-backed Life galleries when the page returns.
 
 ### Privacy and 404
 
