@@ -16,7 +16,7 @@ concurrency:
 
 jobs:
   verify:
-    name: Repository safeguards, lint, types, unit tests, and build
+    name: Lint, types, unit tests, and production build
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
