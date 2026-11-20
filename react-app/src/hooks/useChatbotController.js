@@ -70,6 +70,7 @@ export default function useChatbotController() {
   const panelStateRef = useRef(panelState);
   const activityRef = useRef(activity);
   const requestInFlightRef = useRef(false);
+  const contactSubmissionIdRef = useRef(crypto.randomUUID());
 
   const updatePanelState = useCallback((nextState) => {
     panelStateRef.current = nextState;
@@ -212,6 +213,7 @@ export default function useChatbotController() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...contact,
+          submissionId: contactSubmissionIdRef.current,
           transcript: safeChatHistory(messages, 6),
         }),
       }, {
@@ -219,6 +221,7 @@ export default function useChatbotController() {
         fallbackMessage: "Your message could not be sent right now.",
       });
       setContactStatus({ type: "success", text: "Your message is on its way. Reggie will reply by email." });
+      contactSubmissionIdRef.current = crypto.randomUUID();
       updateActivity("success");
       return true;
     } catch (error) {

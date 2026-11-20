@@ -13,12 +13,15 @@
     "test": "vitest --run",
     "test:unit": "vitest --run",
     "test:e2e": "playwright test",
+    "check:secrets": "node scripts/check-secrets.mjs",
+    "check:migrations": "node scripts/validate-migrations.mjs",
+    "check:repository": "npm run check:secrets && npm run check:migrations",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit -p jsconfig.json",
     "preview": "vite preview --config react.vite.config.js",
     "dev:react": "vite --config react.vite.config.js",
     "build:react": "vite build --config react.vite.config.js",
-    "verify": "npm run lint && npm run typecheck && npm run test:unit && npm run build:react",
+    "verify": "npm run check:repository && npm run lint && npm run typecheck && npm run test:unit && npm run build:react",
     "qa": "npm run verify"
   },
   "devDependencies": {

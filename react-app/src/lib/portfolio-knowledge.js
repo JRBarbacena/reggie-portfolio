@@ -25,7 +25,7 @@ export const PORTFOLIO_KNOWLEDGE = Object.freeze({
     heading: "Welcome to my little space on the internet",
     destinations: ["Tech", "Travel", "Life"],
     interestDetails: {
-      Laptop: "Acer Nitro 5 | Macbook M4",
+      Laptop: "Acer Nitro 5 | MacBook M5",
       Coffee: "White Chocolate Mocha",
       Volleyball: "Opposite Hitter",
       Agents: "Claude Code | Cursor | Codex | Kiro",
@@ -33,7 +33,7 @@ export const PORTFOLIO_KNOWLEDGE = Object.freeze({
     },
     interactions: [
       "Braille-style name scramble and lifting curtain on a fresh Home load or refresh",
-      "48-sphere Three.js Ballpit with cursor interaction and no cursor-following sphere",
+      "57-sphere Three.js Ballpit with cursor interaction and no cursor-following sphere",
       "photo windows styled with macOS controls",
       "destination carousel whose side card centers before a second click navigates",
       "social links that slide in after the visitor starts scrolling",
@@ -64,7 +64,9 @@ export const PORTFOLIO_KNOWLEDGE = Object.freeze({
       { title: "MATLAB", issuer: "LinkedIn Learning" },
       { title: "Project Management Ready", issuer: "PMI" },
       { title: "Agile Software Development", issuer: "LinkedIn Learning" },
-      { title: "AI Fluency: Frameworks & Foundations", issuer: "Anthropic" },
+      { title: "Introduction to ESG: Environmental, Social, and Governance", issuer: "LinkedIn Learning" },
+      { title: "Driving Sustainability at Your Organization", issuer: "LinkedIn Learning" },
+      { title: "AI Fluency: Framework & Foundations", issuer: "Anthropic" },
     ],
     builtInAlbum: {
       title: "DevDays at Microsoft",

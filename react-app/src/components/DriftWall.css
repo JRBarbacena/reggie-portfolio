@@ -87,13 +87,18 @@
     box-shadow 0.42s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-.drift-wall__logo {
+.drift-wall__logo,
+.drift-wall__logo-image {
   width: 2.65rem;
   height: 2.65rem;
+  object-fit: contain;
+  transition: color 0.35s ease, filter 0.35s ease, transform 0.35s ease;
+}
+
+.drift-wall__logo {
   color: var(--tech-color);
   fill: currentcolor;
   filter: grayscale(0);
-  transition: color 0.35s ease, filter 0.35s ease, transform 0.35s ease;
 }
 
 .drift-wall__wordmark {
@@ -134,8 +139,8 @@
   transform: translateZ(var(--dw-lift));
 }
 
-.drift-wall__tile.is-active :is(.drift-wall__logo, .drift-wall__wordmark),
-.drift-wall__tile:focus-visible :is(.drift-wall__logo, .drift-wall__wordmark) {
+.drift-wall__tile.is-active :is(.drift-wall__logo, .drift-wall__logo-image, .drift-wall__wordmark),
+.drift-wall__tile:focus-visible :is(.drift-wall__logo, .drift-wall__logo-image, .drift-wall__wordmark) {
   color: var(--tech-color);
   filter: grayscale(0);
   transform: scale(1.08);
@@ -152,7 +157,7 @@
 }
 
 @media (max-width: 640px) {
-  .drift-wall__logo {
+  :is(.drift-wall__logo, .drift-wall__logo-image) {
     width: 2.25rem;
     height: 2.25rem;
   }
@@ -170,6 +175,7 @@
 
   .drift-wall__inner,
   .drift-wall__logo,
+  .drift-wall__logo-image,
   .drift-wall__wordmark {
     transition-duration: 0.01ms;
   }

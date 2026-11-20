@@ -13,7 +13,6 @@ import {
   siMysql,
   siNextdotjs,
   siNodedotjs,
-  siOpenjdk,
   siPhp,
   siPostgresql,
   siPython,
@@ -37,7 +36,7 @@ const techStack = [
   siFigma,
   siNodedotjs,
   siPython,
-  { ...siOpenjdk, title: "Java" },
+  { title: "Java", shortTitle: "JAVA", hex: "E76F00", image: "/images/brand/java.svg" },
   siPhp,
   siLaravel,
   siMysql,
@@ -57,6 +56,7 @@ const techStack = [
   shortTitle: icon.shortTitle,
   hex: icon.hex,
   icon: icon.path ? icon : null,
+  image: icon.image,
 }));
 
 export default function TechStackWall() {

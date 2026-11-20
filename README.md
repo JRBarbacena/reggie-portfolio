@@ -1,4 +1,4 @@
-# Reggie — Portfolio 
+# Reggie — Portfolio
 
 A React/Vite developer portfolio with four public stories—Home, Tech, Travel,
 and Life—and a private Supabase-backed content dashboard. The interface combines
@@ -13,6 +13,7 @@ bright-white glassmorphism and neumorphism with a restrained red identity accent
 | `/travel` | International and Local travel journals |
 | `/life` | Sport, coffee, rides, and published Life albums |
 | `/admin` | Authenticated content dashboard |
+| `/privacy` | Visitor-data, retention, and service disclosures |
 
 Unknown paths render the React 404 view. `/offline.html` remains a physical PWA
 fallback document. Legacy `.html` links redirect to the matching React route;
@@ -67,7 +68,8 @@ npm run verify
 npm audit --audit-level=high
 ```
 
-- `verify` runs the current React unit tests and production build.
+- `verify` runs lint, the configured JavaScript type analysis, unit tests, and
+  the production build.
 - Manual release review covers browser interaction, motion, responsive layout,
   accessibility, PWA/offline behavior, Admin, and album states.
 
@@ -80,6 +82,18 @@ media sources.
 
 Provider setup, environment variables, preview acceptance, production promotion,
 and rollback are documented in [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md).
+
+Future engineering work starts with [AGENTS.md](AGENTS.md). The source-backed
+system map is in [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md), and the current
+discovery baseline is in
+[docs/DISCOVERY_REPORT.md](docs/DISCOVERY_REPORT.md). Acceptance criteria and
+priorities are maintained in
+[docs/QUALITY_STANDARDS.md](docs/QUALITY_STANDARDS.md) and
+[docs/ROADMAP.md](docs/ROADMAP.md). AI-assisted maintenance must follow the
+recurring workflow in
+[docs/CONTINUOUS_IMPROVEMENT.md](docs/CONTINUOUS_IMPROVEMENT.md); the extended
+operating contract remains in
+[docs/AI_CONTINUOUS_IMPROVEMENT.md](docs/AI_CONTINUOUS_IMPROVEMENT.md).
 
 ## Editing rules
 

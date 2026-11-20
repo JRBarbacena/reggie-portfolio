@@ -1,6 +1,8 @@
 name: Dependency Security Audit
 
 on:
+  push:
+    branches: [main]
   pull_request:
     branches: [main]
   schedule:
@@ -31,8 +33,5 @@ jobs:
           node-version: 22
           cache: npm
 
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Run npm security audit
+      - name: Audit the locked dependency graph
         run: npm audit --audit-level=high

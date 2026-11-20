@@ -18,16 +18,25 @@ queue, custom database server, or always-on application host.
 1. Use Node 22 and run `npm ci`.
 2. Run `npm run verify`, `npm run test:e2e`, and
    `npm audit --audit-level=high`.
-3. Review `git diff --check`, the complete diff, generated build sizes, and a
-   high-confidence secret scan. Do not paste secret values into logs or issues.
+3. Review `git diff --check`, the complete diff, generated build sizes, the
+   automated current-tree secret scan, and Git history when exposure is
+   suspected. Do not paste secret values into logs or issues.
 4. Apply unapplied Supabase migrations in order. Never edit a migration that is
    already deployed, and never run destructive migration repair without first
-   reconciling remote history.
+   reconciling remote history. The repository checksum check detects migration
+   content that no longer matches the current manifest, but code review must
+   separately reject edits that merely update an existing migration and its
+   checksum together. Neither check proves remote application or SQL behavior.
 5. Validate the Vercel Preview on desktop, tablet, and mobile. Exercise `/`,
    `/tech`, `/travel`, `/life`, `/admin`, a deep-link reload, offline fallback,
    one temporary chat, and one contact submission.
 6. Merge only when CI is green. After production deploy, repeat route and API
    smoke checks and confirm the new deployment is serving the expected commit.
+
+The dependency audit runs on pull requests, weekly, on demand, and on every push
+to `main`. Treat a high-severity finding as a failed release. Investigate the
+dependency path before changing versions; do not run `npm audit fix --force` or
+rewrite the lockfile as an incident shortcut.
 
 ## Edge abuse controls (manual provider configuration)
 
@@ -57,6 +66,9 @@ always-on service is required:
 - Alert before Supabase database or storage consumption reaches 80% of the plan.
 - Weekly, confirm the expired-chat cleanup job is still scheduled and that old
   sessions are being removed.
+- Weekly, confirm `cleanup-resolved-portfolio-inquiries` remains scheduled.
+  Review its deletion count using synthetic records only; it must affect only
+  replied or archived inquiries older than 180 days.
 
 Logs contain request IDs, action names, and error codes—not visitor messages,
 email addresses, live-chat tokens, or credentials. Use the response
@@ -102,6 +114,17 @@ quarterly and rotate according to provider policy.
 5. After recovery, verify every public route, admin sign-in, signed media,
    contact delivery, temporary-chat expiry, security headers, and service-worker
    update behavior. Record cause, timeline, affected data, and preventive action.
+
+## Visitor-data deletion
+
+- An allow-listed administrator can permanently delete an inquiry from the
+  private Inbox. Confirm the visitor and target message before accepting the
+  irreversible prompt.
+- Replied or archived inquiries are automatically removed after 180 days by
+  migration 008. New and read inquiries are not included.
+- If deletion is requested by email, verify the requester using the address on
+  the inquiry, delete only the matching record, and record completion without
+  copying the message body into operational logs.
 
 The static-site rollback target is 15 minutes when Vercel is healthy. Database
 and media recovery time and recovery point depend on the enabled Supabase plan

@@ -4,6 +4,7 @@ import PortfolioTerminal from "../components/PortfolioTerminal.jsx";
 import useNearViewport from "../hooks/useNearViewport.js";
 import usePublishedAlbums from "../hooks/usePublishedAlbums.js";
 import { responsiveCertificatePath, responsiveCertificateSrcSet, responsivePhotoPath, responsivePhotoSrcSet } from "../responsive-photos.js";
+import "./ExperienceBanners.css";
 import "./TechHeadings.css";
 
 const certificates = [
@@ -11,7 +12,9 @@ const certificates = [
   ["cert-matlab.png", "cert-matlab.png", "MATLAB", "LinkedIn Learning", "Open the Learning MATLAB certificate", "LinkedIn Learning MATLAB course completion certificate awarded to John Reggie Barbacena"],
   ["cert-barbacena.png", "cert-barbacena.png", "Project Management Ready", "PMI", "Open the PMI Project Management Ready certificate", "PMI Project Management Ready credential awarded to John Reggie Manuel Barbacena"],
   ["cert-agile.png", "cert-agile.png", "Agile Software Development", "LinkedIn Learning", "Open the Agile Software Development certificate", "LinkedIn Learning Agile Software Development course completion certificate awarded to John Reggie Barbacena"],
-  ["cert-new-certificate.png", "cert-new-certificate.pdf", "AI Fluency: Frameworks & Foundations", "Anthropic", "Open the AI Fluency: Frameworks & Foundations certificate", "Anthropic AI Fluency: Frameworks & Foundations certificate of completion"],
+  ["cert-esg-introduction.png", "cert-esg-introduction", "Introduction to ESG: Environmental, Social, and Governance", "LinkedIn Learning", "Open the Introduction to ESG certificate", "LinkedIn Learning Introduction to ESG course completion certificate awarded to John Reggie Barbacena", "png"],
+  ["cert-driving-sustainability.png", "cert-driving-sustainability", "Driving Sustainability at Your Organization", "LinkedIn Learning", "Open the Driving Sustainability at Your Organization certificate", "LinkedIn Learning Driving Sustainability at Your Organization course completion certificate awarded to John Reggie Barbacena", "png"],
+  ["cert-ai-fluency.png", "cert-ai-fluency", "AI Fluency: Framework & Foundations", "Anthropic", "Open the AI Fluency: Framework & Foundations certificate", "Anthropic AI Fluency: Framework & Foundations certificate of completion awarded to John Reggie Barbacena", "png"],
 ];
 const TechStackWall = lazy(() => import("../components/TechStackWall.jsx"));
 const CERTIFICATES_PER_ROW = 4;
@@ -116,7 +119,7 @@ export default function TechPage() {
     <section className="tech-path" aria-labelledby="path-title" data-viewport-section>
       <SectionHead id="path-title" variant="experience" title={<><strong>Experience</strong><span className="tech-heading__join">&amp;</span><em>Academic Background</em></>} />
       <ol className="experience-log tech-experience card" aria-label="Experience and academic timeline">
-        <li className="experience-log__entry is-current" data-reveal>
+        <li className="experience-log__entry experience-log__entry--acm is-current" data-reveal>
           <div className="experience-log__period"><span className="experience-log__type">Leadership</span><span className="experience-log__date">2026–2027</span></div>
           <span className="experience-log__rail" aria-hidden="true"><span className="experience-log__marker" /></span>
           <div className="experience-log__content">
@@ -126,7 +129,7 @@ export default function TechPage() {
           </div>
           <ExperienceLogo src="/images/brand/acm-chapter-cropped.png" className="experience-log__logo--acm" />
         </li>
-        <li className="experience-log__entry" data-reveal data-reveal-delay="1">
+        <li className="experience-log__entry experience-log__entry--flyrank" data-reveal data-reveal-delay="1">
           <div className="experience-log__period"><span className="experience-log__type">Internship</span><span className="experience-log__date">2026</span></div>
           <span className="experience-log__rail" aria-hidden="true"><span className="experience-log__marker" /></span>
           <div className="experience-log__content">
@@ -136,7 +139,7 @@ export default function TechPage() {
           </div>
           <ExperienceLogo src="/images/brand/flyrank.png" className="experience-log__logo--flyrank" />
         </li>
-        <li className="experience-log__entry is-current" data-reveal data-reveal-delay="2">
+        <li className="experience-log__entry experience-log__entry--feutech is-current" data-reveal data-reveal-delay="2">
           <div className="experience-log__period"><span className="experience-log__type">Academic</span><span className="experience-log__date">2023–Present</span></div>
           <span className="experience-log__rail" aria-hidden="true"><span className="experience-log__marker" /></span>
           <div className="experience-log__content">
@@ -173,14 +176,14 @@ function CertificateShelf({ onSelect }) {
     <SectionHead id="certificates-title" variant="certificates" title={<>Certifications <span>&amp;</span> <em>Awards</em></>} />
     <div className={`credential-shelf credential-shelf--${rows}-rows`} style={{ "--shelf-rows": rows }} data-reveal>
       {certificates.map((certificate, index) => {
-        const [preview, document, title, , label, alt] = certificate;
+        const [preview, document, title, , label, alt, format] = certificate;
         return <button className="credential-book" type="button" aria-label={label} aria-haspopup="dialog" data-reveal data-reveal-delay={index || undefined} key={document} onClick={(event) => {
           const restoreFocus = event.detail === 0;
           if (!restoreFocus) event.currentTarget.blur();
           onSelect(certificate, event.currentTarget, restoreFocus);
         }}>
           <figure>
-            <img src={responsiveCertificatePath(preview, 720)} srcSet={responsiveCertificateSrcSet(preview)} sizes="(max-width: 700px) 42vw, 20vw" alt={alt} width="1584" height="1224" loading="lazy" decoding="async" />
+            <img src={responsiveCertificatePath(preview, 720, format)} srcSet={responsiveCertificateSrcSet(preview, format)} sizes="(max-width: 700px) 42vw, 20vw" alt={alt} width="1584" height="1224" loading="lazy" decoding="async" />
             <figcaption><strong>{title}</strong></figcaption>
           </figure>
         </button>;
@@ -192,11 +195,11 @@ function CertificateShelf({ onSelect }) {
 function CertificateDialog({ dialogRef, selectedCertificate, closeCertificate, onClosed }) {
   if (!selectedCertificate) return <dialog ref={dialogRef} className="album-modal certificate-modal" aria-labelledby="certificate-modal-title" onCancel={(event) => { event.preventDefault(); closeCertificate(); }} onClick={(event) => { if (event.target === event.currentTarget) closeCertificate(); }} onClose={onClosed} />;
 
-  const [preview, , title, source] = selectedCertificate;
+  const [preview, , title, source, , , format] = selectedCertificate;
   return <dialog ref={dialogRef} className="album-modal certificate-modal" aria-labelledby="certificate-modal-title" onCancel={(event) => { event.preventDefault(); closeCertificate(); }} onClick={(event) => { if (event.target === event.currentTarget) closeCertificate(); }} onClose={onClosed}>
     <article className="certificate-modal__surface">
       <figure className="certificate-modal__preview">
-        <img src={responsiveCertificatePath(preview)} srcSet={responsiveCertificateSrcSet(preview)} sizes="min(76vw, 58rem)" alt={`${title} certificate from ${source}`} decoding="async" />
+        <img src={responsiveCertificatePath(preview, 1200, format)} srcSet={responsiveCertificateSrcSet(preview, format)} sizes="min(76vw, 58rem)" alt={`${title} certificate from ${source}`} decoding="async" />
       </figure>
       <div className="certificate-modal__body">
         <h2 id="certificate-modal-title">{title}</h2>

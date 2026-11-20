@@ -15,6 +15,7 @@ const BODY_LIMIT_BYTES = 24 * 1024;
 const RATE_LIMIT = 5;
 const rateLimit = createSlidingWindowLimiter({ windowMs: 10 * 60_000 });
 const TOPICS = new Set(["General inquiry", "Project collaboration", "Coffee chat", "Speaking or event", "Other"]);
+const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
 function safeTranscript(transcript) {
   if (!Array.isArray(transcript)) return [];
@@ -53,7 +54,8 @@ export default async function handler(request, response) {
   const topic = TOPICS.has(body.topic) ? body.topic : "General inquiry";
   const message = String(body.message ?? "").trim().slice(0, 2000);
   const consent = body.consent === true || body.consent === "on";
-  if (name.length < 2 || !validEmail(email) || message.length < 10 || !consent) {
+  const submissionId = String(body.submissionId ?? "").trim();
+  if (name.length < 2 || !validEmail(email) || message.length < 10 || !consent || !UUID_PATTERN.test(submissionId)) {
     return sendJson(response, 400, { message: "Please complete your name, email, message, and consent before sending." }, id);
   }
 
@@ -68,7 +70,8 @@ export default async function handler(request, response) {
       auth: { persistSession: false, autoRefreshToken: false },
       global: { fetch: createTimedFetch(6_500) },
     });
-    const { error } = await client.from("contact_inquiries").insert({
+    const { error } = await client.from("contact_inquiries").upsert({
+      submission_id: submissionId,
       name,
       email,
       topic,
@@ -76,7 +79,7 @@ export default async function handler(request, response) {
       transcript: safeTranscript(body.transcript),
       consented_at: new Date().toISOString(),
       source: "portfolio-chatbot",
-    });
+    }, { onConflict: "submission_id", ignoreDuplicates: true });
     if (error) throw error;
     return sendJson(response, 201, { ok: true }, id);
   } catch (error) {

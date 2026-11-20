@@ -14,6 +14,8 @@ import {
 } from "../server/request-security.js";
 
 const BODY_LIMIT_BYTES = 8 * 1024;
+const RESPONSE_MESSAGE_LIMIT = 100;
+const SESSION_MESSAGE_LIMIT = 200;
 const RATE_LIMITS = { start: 8, send: 30, poll: 90, presence: 60, end: 10, unknown: 20 };
 const rateLimit = createSlidingWindowLimiter({ windowMs: 60_000 });
 
@@ -125,14 +127,17 @@ export default async function handler(request, response) {
     if (body.action === "send") {
       const message = String(body.message ?? "").trim().slice(0, 1200);
       if (!message) return sendJson(response, 400, { message: "Write a message before sending." }, id);
-      const { count: existingVisitorMessages, error: countError } = await client.from("chat_messages")
-        .select("id", { count: "exact", head: true })
-        .eq("session_id", session.id)
-        .eq("sender", "visitor");
-      if (countError) throw countError;
+      const [visitorCount, totalCount] = await Promise.all([
+        client.from("chat_messages").select("id", { count: "exact", head: true }).eq("session_id", session.id).eq("sender", "visitor"),
+        client.from("chat_messages").select("id", { count: "exact", head: true }).eq("session_id", session.id),
+      ]);
+      if (visitorCount.error || totalCount.error) throw visitorCount.error || totalCount.error;
+      if ((totalCount.count ?? 0) >= SESSION_MESSAGE_LIMIT) {
+        return sendJson(response, 409, { message: "This chat reached its message limit. End it and start a new conversation." }, id);
+      }
       const { error } = await client.from("chat_messages").insert({ session_id: session.id, sender: "visitor", body: message });
       if (error) throw error;
-      if (existingVisitorMessages === 0) {
+      if (visitorCount.count === 0) {
         waitUntil(sendNewChatEmail({ sessionId: session.id, visitorName: session.visitor_name, message, requestId: id }));
       }
     } else if (body.action === "end") {
@@ -141,13 +146,25 @@ export default async function handler(request, response) {
       return sendJson(response, 200, { ended: true }, id);
     }
 
-    const [{ data: messages, error }, { data: refreshed, error: refreshError }] = await Promise.all([
-      client.from("chat_messages").select("id,sender,body,created_at").eq("session_id", session.id).order("created_at"),
-      client.from("chat_sessions").select("expires_at").eq("id", session.id).single(),
+    const refreshSession = body.action === "send"
+      ? client.from("chat_sessions").select("expires_at").eq("id", session.id).single()
+      : Promise.resolve({ data: { expires_at: session.expires_at }, error: null });
+    const [{ data: newestMessages, error }, { data: refreshed, error: refreshError }, currentPresence] = await Promise.all([
+      client.from("chat_messages")
+        .select("id,sender,body,created_at")
+        .eq("session_id", session.id)
+        .order("created_at", { ascending: false })
+        .limit(RESPONSE_MESSAGE_LIMIT),
+      refreshSession,
+      presence(client),
     ]);
     if (error || refreshError) throw error || refreshError;
-    return sendJson(response, 200, { messages: messages ?? [], expiresAt: refreshed?.expires_at ?? session.expires_at, presence: await presence(client) }, id);
+    const messages = [...(newestMessages ?? [])].reverse();
+    return sendJson(response, 200, { messages, expiresAt: refreshed?.expires_at ?? session.expires_at, presence: currentPresence }, id);
   } catch (error) {
+    if (error?.code === "23514" && /message limit/i.test(String(error?.message))) {
+      return sendJson(response, 409, { message: "This chat reached its message limit. End it and start a new conversation." }, id);
+    }
     logServerError("live_chat.request_failed", error, { requestId: id, action });
     return sendJson(response, 502, { message: "Temporary live chat is unavailable right now." }, id);
   }

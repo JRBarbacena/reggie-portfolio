@@ -3,7 +3,7 @@ export function inquiryDate(value) {
   return Number.isNaN(date.getTime()) ? "Unknown date" : date.toLocaleString(undefined, { year: "numeric", month: "short", day: "numeric", hour: "numeric", minute: "2-digit" });
 }
 
-export default function AdminInboxView({ inquiries, inboxState, busy, onStatusChange }) {
+export default function AdminInboxView({ inquiries, inboxState, busy, onStatusChange, onDelete }) {
   return <section className="admin-inbox" aria-labelledby="inbox-title">
     <div className="admin-content-list__heading"><div><p className="react-eyebrow">Private messages</p><h2 id="inbox-title">Contact inbox</h2></div><span>{inboxState === "ready" ? `${inquiries.length} total` : "Server-managed"}</span></div>
     {inboxState === "loading" && <p className="react-muted">Loading private messages…</p>}
@@ -16,6 +16,7 @@ export default function AdminInboxView({ inquiries, inboxState, busy, onStatusCh
         <p className="admin-inbox-card__message">{inquiry.message}</p>
         {Array.isArray(inquiry.transcript) && inquiry.transcript.length > 0 && <details className="admin-inbox-card__transcript"><summary>Conversation context ({inquiry.transcript.length})</summary><ol>{inquiry.transcript.map((entry, index) => <li key={`${inquiry.id}-${index}`}><strong>{entry.role === "assistant" ? "Assistant" : "Visitor"}:</strong> {entry.content}</li>)}</ol></details>}
         <label className="admin-inbox-card__status">Status<select value={inquiry.status} disabled={busy} onChange={(event) => onStatusChange(inquiry, event.target.value)}><option value="new">New</option><option value="read">Read</option><option value="replied">Replied</option><option value="archived">Archived</option></select></label>
+        <button type="button" className="react-admin__danger" disabled={busy} onClick={() => onDelete(inquiry)}>Delete permanently</button>
       </article>)}
     </div>}
   </section>;

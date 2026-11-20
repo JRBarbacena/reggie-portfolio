@@ -27,20 +27,29 @@ contact form has a destination:
 8. Sign in at `/admin`, open **Inbox**, and confirm that the empty state loads.
 
 For the temporary visitor/admin chat foundation, repeat the same copy-and-run
-process with `supabase/migrations/20260904_006_ephemeral_live_chat.sql`. This
-creates only the disposable `chat_sessions` and `chat_messages` tables plus a
-cleanup job; it does not delete albums or permanent contact inquiries.
+process with `supabase/migrations/20260904_006_ephemeral_live_chat.sql`. Then
+apply `supabase/migrations/20261026_008_privacy_and_grants.sql` for explicit
+browser-role grants, the admin-only manual deletion policy, and resolved-inquiry
+retention. Apply `supabase/migrations/20261026_009_contact_idempotency.sql`
+before deploying the matching contact API; it adds an opaque unique retry key
+so network retries do not create duplicate messages. Finally apply
+`supabase/migrations/20261026_010_live_chat_message_cap.sql`, which caps each
+temporary conversation at 200 combined visitor/admin messages. None of these
+migrations deletes albums.
 
 ### Temporary chat retention
 
 - Sessions expire one hour after their latest message.
 - Each valid visitor or admin message extends that session by one hour.
+- A conversation accepts at most 200 combined messages. End it and start a new
+  temporary conversation if that limit is reached.
 - Expired sessions must be treated as unavailable immediately by the API/UI.
 - Supabase Cron runs every ten minutes and removes expired sessions.
 - `chat_messages.session_id` uses `on delete cascade`, so all messages belonging
   to a deleted session are removed automatically.
-- Contact-form inquiries remain permanent until an admin archives or deletes
-  them; they are not casual live-chat messages.
+- Contact-form inquiries remain until an admin deletes them. After migration
+  008, replied or archived inquiries are automatically deleted 180 days after
+  their last update; new and read inquiries are retained for follow-up.
 
 The migration is idempotent for its table, trigger, index, and policies, so
 running this exact file again should not create duplicate objects.
@@ -137,7 +146,9 @@ Zenith sends only one notification email per chat session to avoid inbox spam.
 ## 4. FAQ and temporary-chat pattern
 
 OpenAI is not required. Reviewed FAQ matching happens in the browser and does
-not store questions. Human-to-human chat uses this path:
+not persist questions by itself. If a visitor later submits the consent-based
+contact form, up to six recent FAQ messages are included as reply context, as
+described on `/privacy`. Human-to-human chat uses this path:
 
 ```text
 Visitor -> POST /api/live-chat -> Vercel Function -> private Supabase tables
@@ -160,8 +171,11 @@ admin dashboard also subscribes to secured Postgres changes.
 6. Enable chat alerts for the dashboard session and confirm a new visitor reply produces a sound and visual notice.
 7. If Resend is configured, confirm the first visitor message sends an email containing the visitor name.
 8. End the test chat and confirm it disappears from both screens.
-9. Submit one test contact message, then verify it under **Inbox**.
-10. Check Vercel Function logs if an endpoint returns `502` or `503`.
+9. Submit one test contact message, then verify it under **Inbox**. Test manual
+   deletion only with synthetic data, never a real visitor message.
+10. Open `/privacy` and confirm its retention and service disclosures match the
+    enabled production integrations.
+11. Check Vercel Function logs if an endpoint returns `502` or `503`.
 
 When using `npm run dev:react` at `localhost:5173`, FAQ works but Vercel
 Functions do not run. Use a Vercel preview deployment for the simplest full

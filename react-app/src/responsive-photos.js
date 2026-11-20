@@ -18,13 +18,14 @@ export function responsivePhotoSrcSet() {
   return undefined;
 }
 
-export function responsiveCertificatePath(filename, width = 1200) {
+export function responsiveCertificatePath(filename, width = 1200, format = "webp") {
   const { directory, stem } = sourceParts(filename);
-  return `/images/certificates/optimized-webp/${directory}${stem}-${width}.webp`;
+  const assetFormat = format === "png" ? "png" : "webp";
+  return `/images/certificates/optimized-${assetFormat}/${directory}${stem}-${width}.${assetFormat}`;
 }
 
-export function responsiveCertificateSrcSet(filename) {
-  return [720, 1200].map((width) => `${responsiveCertificatePath(filename, width)} ${width}w`).join(", ");
+export function responsiveCertificateSrcSet(filename, format = "webp") {
+  return [720, 1200].map((width) => `${responsiveCertificatePath(filename, width, format)} ${width}w`).join(", ");
 }
 
 export function responsivePhotoDimensions(filename) {

@@ -27,13 +27,13 @@ const FAQ_RULES = [
   {
     intent: "capabilities",
     terms: ["what can you do", "help me", "your purpose", "how can you help", "what do you know"],
-    answer: `I can explain Reggie’s background, every public page, tech stack, certificates, albums, travel journals, interests, portfolio interactions, and private contact options. I use reviewed local facts instead of a paid AI service. ${DIRECT_CHAT_HINT}`,
+    answer: `I can explain Reggie’s background, available pages, tech stack, certificates, interests, portfolio interactions, and private contact options. Travel and Life are temporarily under construction. I use reviewed local facts instead of a paid AI service. ${DIRECT_CHAT_HINT}`,
   },
   {
     intent: "overview",
     priority: 8,
     terms: ["tell me everything", "portfolio overview", "summarize the portfolio", "whole website", "whole portfolio", "what is this portfolio"],
-    answer: `${KNOWLEDGE.owner.fullName} is a ${KNOWLEDGE.owner.role} at ${KNOWLEDGE.owner.school}. Home introduces his personality and interests; Tech covers his education, tools, certificates, and developer-community albums; Travel holds local and international journals; and Life covers volleyball, rides, coffee, friends, and everyday moments. The site is a responsive React PWA backed by Supabase and Vercel. ${DIRECT_CHAT_HINT}`,
+    answer: `${KNOWLEDGE.owner.fullName} is a ${KNOWLEDGE.owner.role} at ${KNOWLEDGE.owner.school}. Home introduces his personality and interests; Tech covers his education, tools, certificates, and developer-community albums. Travel and Life are temporarily under construction. The site is a responsive React PWA backed by Supabase and Vercel. ${DIRECT_CHAT_HINT}`,
   },
   {
     intent: "full-name",
@@ -50,7 +50,7 @@ const FAQ_RULES = [
   {
     intent: "navigation",
     terms: ["where should i start", "where do i start", "best place to start", "navigate", "navigation", "pages", "sections"],
-    answer: `The portfolio has Home, Tech, Travel, and Life. Start with Tech for Reggie’s developer journey, Travel for journals, or Life for the person beyond the work. The logo and top navigation return you to Home. ${DIRECT_CHAT_HINT}`,
+    answer: `The portfolio has Home, Tech, Travel, and Life. Start with Tech for Reggie’s developer journey. Travel and Life currently show temporary construction screens. The logo and top navigation return you to Home. ${DIRECT_CHAT_HINT}`,
   },
   {
     intent: "about",
@@ -70,7 +70,7 @@ const FAQ_RULES = [
   {
     intent: "home-interests",
     priority: 8,
-    terms: ["home icons", "interest icons", "laptop icon", "agent icon", "agents icon", "what are the icons", "acer nitro", "macbook m4", "claude code", "cursor codex kiro"],
+    terms: ["home icons", "interest icons", "laptop icon", "agent icon", "agents icon", "what are the icons", "acer nitro", "macbook m5", "claude code", "cursor codex kiro"],
     answer: `The Home icons reveal these details: Laptop—${KNOWLEDGE.home.interestDetails.Laptop}; Coffee—${KNOWLEDGE.home.interestDetails.Coffee}; Volleyball—${KNOWLEDGE.home.interestDetails.Volleyball}; Agents—${KNOWLEDGE.home.interestDetails.Agents}; and Motorcycle—${KNOWLEDGE.home.interestDetails.Motorcycle}. ${DIRECT_CHAT_HINT}`,
   },
   {
@@ -87,7 +87,7 @@ const FAQ_RULES = [
   {
     intent: "ballpit",
     terms: ["ballpit", "balls", "hero background", "three js", "webgl", "cursor interaction"],
-    answer: `The Home hero uses a Three.js Ballpit with 65 softly shaded spheres. It prepares during the entry sequence, moves beneath the lifting curtain, responds to cursor movement without a cursor-following ball, and pauses when it is genuinely off-screen to save work. ${DIRECT_CHAT_HINT}`,
+    answer: `The Home hero uses a Three.js Ballpit with 57 softly shaded spheres. It prepares during the entry sequence, moves beneath the lifting curtain, responds to cursor movement without a cursor-following ball, and pauses when it is genuinely off-screen to save work. ${DIRECT_CHAT_HINT}`,
   },
   {
     intent: "design",
@@ -118,7 +118,7 @@ const FAQ_RULES = [
   {
     intent: "terminal",
     terms: ["terminal", "whoami", "get content destination", "portfolio terminal"],
-    answer: `Tech’s terminal runs “whoami” and returns “Software Engineer | Philanthropist | System Design & AI.” Travel’s terminal runs “Get-Content Destination” and returns “Journey, Passport, & Hidden Gems.” ${DIRECT_CHAT_HINT}`,
+    answer: `Tech’s terminal runs “whoami” and returns “Software Engineer | Philanthropist | System Design & AI.” Travel’s terminal is temporarily unavailable while its page is under construction. ${DIRECT_CHAT_HINT}`,
   },
   {
     intent: "stack",
@@ -151,8 +151,8 @@ const FAQ_RULES = [
   },
   {
     intent: "certificates",
-    terms: ["certificate", "certification", "credential", "python certificate", "matlab", "project management", "agile", "ai fluency", "anthropic"],
-    answer: `The Tech shelf contains Python, MATLAB, Project Management Ready, Agile Software Development, and AI Fluency: Frameworks & Foundations. Select a certificate to open its full modal preview. ${DIRECT_CHAT_HINT}`,
+    terms: ["certificate", "certification", "credential", "python certificate", "matlab", "project management", "agile", "esg", "sustainability", "ai fluency", "anthropic"],
+    answer: `The Tech shelf contains Python, MATLAB, Project Management Ready, Agile Software Development, Introduction to ESG: Environmental, Social, and Governance, Driving Sustainability at Your Organization, and AI Fluency: Framework & Foundations. Select a certificate to open its full modal preview. ${DIRECT_CHAT_HINT}`,
   },
   {
     intent: "certificate-issuers",
@@ -174,17 +174,17 @@ const FAQ_RULES = [
   {
     intent: "travel",
     terms: ["travel page", "travel", "journey", "destination", "passport", "hidden gems", "international travel", "local travel", "travel journal"],
-    answer: `The Travel page is a growing journal titled “Drifting around the world.” It separates International Travel from Local Travel around the Philippines; selecting a published cover opens its full journal and story images. Each collection keeps a “More coming soon” card. ${DIRECT_CHAT_HINT}`,
+    answer: `The Travel page is temporarily under construction while its local and international journal is being prepared. Please check back soon. ${DIRECT_CHAT_HINT}`,
   },
   {
     intent: "life",
     terms: ["life page", "life beyond code", "hobby", "interest", "what keeps him moving", "outside software"],
-    answer: `Life covers Reggie beyond the screen: volleyball, open-road rides, coffee, friends, and everyday moments. Its theme is “Life feels better in motion.” ${DIRECT_CHAT_HINT}`,
+    answer: `The Life page is temporarily under construction. Reggie is refreshing the stories about volleyball, rides, coffee, friends, and everyday moments. ${DIRECT_CHAT_HINT}`,
   },
   {
     intent: "volleyball",
     terms: ["volleyball", "opposite hitter", "opposite", "sport", "court", "basketball"],
-    answer: `Reggie plays volleyball as an opposite hitter. The Life page highlights rallies, teamwork, his volleyball crew and championship moment, plus an occasional basketball game. ${DIRECT_CHAT_HINT}`,
+    answer: `Reggie plays volleyball as an opposite hitter. His Life page is temporarily under construction; its planned stories include rallies, teamwork, his volleyball crew and championship moment, plus an occasional basketball game. ${DIRECT_CHAT_HINT}`,
   },
   {
     intent: "rides",
@@ -199,13 +199,13 @@ const FAQ_RULES = [
   {
     intent: "albums",
     terms: ["album", "photo", "picture", "gallery", "published content", "media collection"],
-    answer: `Published database albums appear only in their selected Tech, Travel, or Life destination. Tech and Life use photo galleries; Travel uses journal-style stories with covers and supporting images. ${DIRECT_CHAT_HINT}`,
+    answer: `Published Tech albums can appear on the Tech page. Travel and Life are temporarily under construction, so their journals and albums are not currently shown on those pages. ${DIRECT_CHAT_HINT}`,
   },
   {
     intent: "album-viewer",
     priority: 8,
     terms: ["album viewer", "photo modal", "masonry gallery", "masonry effect", "view album", "open photos", "photo parallax"],
-    answer: `Tech and Life albums open into a full-screen black masonry gallery. Images enter with restrained staggered motion and use gentle pointer parallax; the viewer supports keyboard focus, Escape, and a visible close control. Travel opens a journal-style modal instead. ${DIRECT_CHAT_HINT}`,
+    answer: `Tech albums open into a full-screen black masonry gallery. The viewer supports keyboard focus, Escape, and a visible close control. Travel and Life are temporarily under construction. ${DIRECT_CHAT_HINT}`,
   },
   {
     intent: "live-chat",

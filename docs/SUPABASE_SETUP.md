@@ -9,6 +9,9 @@
    - `20260904_005_chatbot_inbox.sql`
    - `20260904_006_ephemeral_live_chat.sql`
    - `20261009_007_storage_guardrails.sql`
+   - `20261026_008_privacy_and_grants.sql`
+   - `20261026_009_contact_idempotency.sql`
+   - `20261026_010_live_chat_message_cap.sql`
 4. Run each migration as a separate query.
 5. In a new query, run the allow-list statement from migration 001 after replacing its placeholder with the exact email invited under **Authentication → Users**.
 6. Keep the `album-media` bucket private. Migration 001 creates it and its policies automatically; migration 007 enforces the same 10 MB JPEG/PNG/WebP limits used by the admin client.
@@ -32,7 +35,10 @@ The new migration creates `contact_inquiries` with RLS enabled. Visitors cannot 
 Migration 006 keeps temporary live chat separate from albums and permanent
 inquiries. A session expires one hour after its latest message; its messages are
 deleted through `on delete cascade` when the scheduled cleanup runs every ten
-minutes. Albums and `contact_inquiries` are never touched by that cleanup.
+minutes. Migration 008 narrows browser-role table grants, hardens the admin
+helper function, and adds a separate daily job that deletes contact inquiries
+180 days after they are marked replied or archived. Albums are never touched by
+either cleanup job. Confirm `pg_cron` is enabled before applying migration 008.
 
-The complete click-by-click migration, Vercel variable, Responses API, and live
-verification procedure is in [CHATBOT_SETUP.md](CHATBOT_SETUP.md).
+The complete click-by-click migration, Vercel variable, optional notification,
+and live verification procedure is in [CHATBOT_SETUP.md](CHATBOT_SETUP.md).

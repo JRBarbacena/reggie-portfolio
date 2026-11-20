@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import PortfolioTerminal from "../components/PortfolioTerminal.jsx";
+import UnderConstructionPage from "../components/UnderConstructionPage.jsx";
 import useNearViewport from "../hooks/useNearViewport.js";
 import usePublishedAlbums from "../hooks/usePublishedAlbums.js";
 
@@ -25,7 +26,16 @@ function excerptFor(story) {
   return plainText.length > 150 ? `${plainText.slice(0, 147)}…` : plainText;
 }
 
+// Keep the journal implementation below for restoration after this temporary screen.
+const showConstructionPage = true;
+
 export default function TravelPage() {
+  return showConstructionPage
+    ? <UnderConstructionPage destination="Travel" title="Travel" description="The travel journal is getting a little more room to grow, with stories and photos still being prepared." />
+    : <TravelPageContent />;
+}
+
+function TravelPageContent() {
   const [selectedJournal, setSelectedJournal] = useState(null);
   const dialogRef = useRef(null);
   const triggerRef = useRef(null);

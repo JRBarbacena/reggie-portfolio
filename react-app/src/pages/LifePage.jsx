@@ -1,5 +1,7 @@
 import { CoffeeIcon, HouseLineIcon, MotorcycleIcon, VolleyballIcon } from "@phosphor-icons/react";
 import PublishedAlbumSection from "../components/PublishedAlbumSection.jsx";
+import PortfolioTerminal from "../components/PortfolioTerminal.jsx";
+import UnderConstructionPage from "../components/UnderConstructionPage.jsx";
 import { responsivePhotoPath, responsivePhotoSrcSet } from "../responsive-photos.js";
 
 const rhythms = [
@@ -23,16 +25,28 @@ const rhythms = [
   },
 ];
 
+// Keep the original Life content below for restoration after this temporary screen.
+const showConstructionPage = true;
+
 export default function LifePage() {
+  return showConstructionPage
+    ? <UnderConstructionPage destination="Life" title="Life" description="I'm refreshing this corner of the site before sharing more moments from beyond the screen." />
+    : <LifePageContent />;
+}
+
+function LifePageContent() {
   return (
     <main id="main" className="content-column life-redesign">
-      <section className="story-hero life-hero" aria-labelledby="life-title" data-viewport-section>
+      <section className="tech-hero" aria-labelledby="life-title" data-viewport-section>
+        <div data-reveal>
+          <h1 id="life-title">Life feels better in motion.</h1>
+          <p className="tech-hero__subhead">Away from code and classes, I recharge through sport, open roads, familiar coffee, and the people who make ordinary days memorable.</p>
+        </div>
+        <PortfolioTerminal command="whoami" output="Play / Ride / Reset" ariaLabel="Animated life introduction" />
+      </section>
+      <section className="story-hero life-hero" aria-label="Life at a glance" data-viewport-section>
         <div className="story-hero__copy" data-reveal>
           <p className="story-kicker"><span>Beyond the screen</span></p>
-          <h1 id="life-title">Life feels better <em>in motion.</em></h1>
-          <p className="hero__lead">
-            Away from code and classes, I recharge through sport, open roads, familiar coffee, and the people who make ordinary days memorable.
-          </p>
           <dl className="story-stats" aria-label="Life at a glance">
             <div><dt>Home</dt><dd>Rizal</dd></div>
             <div><dt>Position</dt><dd>Opposite</dd></div>

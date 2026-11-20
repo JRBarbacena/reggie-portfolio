@@ -1,6 +1,7 @@
 .album-viewer.album-viewer--masonry {
   inset: 0;
-  width: 100vw;
+  width: 100%;
+  height: 100vh;
   height: 100dvh;
   max-width: none;
   max-height: none;
@@ -48,7 +49,6 @@
   z-index: 5;
   display: flex;
   align-items: flex-start;
-  justify-content: space-between;
   gap: 2rem;
   padding: max(1.1rem, env(safe-area-inset-top)) max(1.25rem, env(safe-area-inset-right)) 1rem max(1.25rem, env(safe-area-inset-left));
   border-bottom: 1px solid rgb(255 255 255 / 12%);
@@ -57,10 +57,19 @@
   -webkit-backdrop-filter: blur(18px);
 }
 
-.album-masonry-modal__header > div { min-width: 0; }
+.album-masonry-modal__details {
+  display: grid;
+  min-width: 0;
+  flex: 1 1 auto;
+  grid-template-columns: minmax(11rem, max-content) minmax(18rem, 1fr);
+  align-items: start;
+  column-gap: clamp(0.85rem, 2.5vw, 1.75rem);
+}
 
-.album-masonry-modal__header p {
-  margin: 0 0 0.25rem;
+.album-masonry-modal__title-block { min-width: 0; }
+
+.album-masonry-modal__meta {
+  margin: 0.42rem 0 0;
   color: var(--accent-primary);
   font-size: 0.66rem;
   font-weight: var(--weight-bold);
@@ -76,10 +85,11 @@
   line-height: 1.1;
 }
 
-.album-masonry-modal__header span {
-  display: block;
+.album-masonry-modal__description {
   max-width: 70ch;
-  margin-top: 0.42rem;
+  margin: 0;
+  padding-left: clamp(0.85rem, 2.5vw, 1.75rem);
+  border-left: 1px solid rgb(255 255 255 / 20%);
   color: rgb(255 255 255 / 58%);
   font-size: 0.78rem;
   line-height: 1.45;
@@ -112,6 +122,7 @@
 .album-masonry-modal__scroll {
   min-height: 0;
   padding: clamp(0.6rem, 1.5vw, 1.1rem);
+  padding-bottom: max(clamp(0.6rem, 1.5vw, 1.1rem), env(safe-area-inset-bottom));
   overflow-x: hidden;
   overflow-y: auto;
   overscroll-behavior: contain;
@@ -214,14 +225,24 @@
   to { opacity: 0; }
 }
 
-@media (max-width: 600px) {
-  .album-masonry-modal__header { gap: 0.75rem; padding-bottom: 0.8rem; }
-  .album-masonry-modal__header span {
-    display: -webkit-box;
-    overflow: hidden;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 1;
+@media (max-width: 700px) {
+  .album-masonry-modal__header {
+    max-height: min(46dvh, 20rem);
+    gap: 0.75rem;
+    padding-bottom: 0.8rem;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
   }
+  .album-masonry-modal__details {
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: 0.6rem;
+  }
+  .album-masonry-modal__description {
+    padding-left: 0;
+    border-left: 0;
+  }
+  .album-masonry-modal__header button { position: sticky; top: 0; }
 }
 
 @media (prefers-reduced-motion: reduce) {
